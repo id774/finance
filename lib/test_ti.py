@@ -7,6 +7,7 @@ def test_get_macd():
     ema_26 = 28.21
     macd = ti.get_macd(ema_12, ema_26)
     eq_(str(round(macd, 2)), "1.03")
+    return macd
 
 def test_get_macd_ema():
     ti = TechnicalIndicators()
@@ -25,6 +26,7 @@ def test_get_macd_ema():
         prev_signal = tmp_signal
         signals.append(tmp_signal)
     eq_(str(round(signals[14], 3)), "61.608")
+    return signals
 
 def test_get_macd_histogram():
     ti = TechnicalIndicators()
@@ -32,3 +34,9 @@ def test_get_macd_histogram():
     ema_9 = 0.88
     macd_hist = ti.get_macd_histogram(macd, ema_9)
     eq_(str(round(macd_hist, 2)), "0.13")
+    return macd_hist
+
+if __name__ == '__main__':
+    print(test_get_macd())
+    print(test_get_macd_ema())
+    print(test_get_macd_histogram())

@@ -15,3 +15,7 @@ def test_calc_rsi():
     result = rsi.ix['2014-10-30', 'Adj Close']
     expected = 55.935331193638028
     eq_(expected, result)
+    return result
+
+if __name__ == '__main__':
+    print(test_calc_rsi())
