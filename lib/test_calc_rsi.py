@@ -1,8 +1,6 @@
 from nose.tools import *
 import os
-import datetime
 import pandas as pd
-import pandas.io.data as web
 from calc_rsi import calc_rsi
 
 def test_calc_rsi():
