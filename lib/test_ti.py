@@ -37,5 +37,8 @@ def test_get_macd():
     return macd
 
 if __name__ == '__main__':
-    print(test_get_prices())
-    print(test_get_macd())
+    prices = test_get_prices()
+    macd = test_get_macd()
+    df = pd.merge(prices, macd,
+                  left_index=True, right_index=True)
+    print(df)
