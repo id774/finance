@@ -22,6 +22,16 @@ def test_get_prices():
     eq_(expected, result)
     return prices
 
+def test_get_rsi():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    rsi = ti.get_rsi()
+
+    expected = 74.982651133316381
+    result = rsi.ix['2015-03-20', 'rsi']
+    eq_(expected, result)
+    return rsi
+
 def test_get_macd():
     stock = testdata()
     ti = TechnicalIndicators(stock)
@@ -36,9 +46,29 @@ def test_get_macd():
     eq_(expected, result)
     return macd
 
+def test_get_bbands():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    bbands = ti.get_bbands()
+
+    expected = (19116.12719129512,
+                16560.231199999998,
+                14004.335208704877)
+    result = (bbands.ix['2015-03-20', 'boll_upper'],
+              bbands.ix['2015-03-20', 'boll_middle'],
+              bbands.ix['2015-03-20', 'boll_lower'])
+    eq_(expected, result)
+    return bbands
+
 if __name__ == '__main__':
     prices = test_get_prices()
+    rsi = test_get_rsi()
     macd = test_get_macd()
-    df = pd.merge(prices, macd,
+    bbands = test_get_bbands()
+    df = pd.merge(prices, rsi,
                   left_index=True, right_index=True)
-    print(df)
+    df = pd.merge(df, macd,
+                  left_index=True, right_index=True)
+    df = pd.merge(df, bbands,
+                  left_index=True, right_index=True)
+    print(df.tail(10))

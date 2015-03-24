@@ -13,10 +13,24 @@ class TechnicalIndicators():
         self.analysis['prices'] = self.prices
         return self.analysis
 
+    def get_rsi(self):
+        self.analysis['rsi'] = ta.RSI(self.prices)
+        return self.analysis
+
     def get_macd(self):
         macd, macdsignal, macdhist = ta.MACD(
             self.prices, fastperiod=12, slowperiod=26, signalperiod=9)
         self.analysis['macd'] = macd
         self.analysis['macdsignal'] = macdsignal
         self.analysis['macdhist'] = macdhist
+        return self.analysis
+
+    def get_bbands(self):
+        sma50 = ta.SMA(self.prices, timeperiod=50)
+        sma200 = ta.SMA(self.prices, timeperiod=200)
+        boll_upper, boll_middle, boll_lower = ta.BBANDS(
+            self.prices, timeperiod=200, nbdevup=2, nbdevdn=2, matype=0)
+        self.analysis['boll_upper'] = boll_upper
+        self.analysis['boll_middle'] = boll_middle
+        self.analysis['boll_lower'] = boll_lower
         return self.analysis
