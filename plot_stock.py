@@ -16,7 +16,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                              'lib'))
 from ohlc_plot import OhlcPlot
 from jpstock import JpStock
-from calc_rsi import calc_rsi
+from ti import TechnicalIndicators
 
 
 def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
@@ -48,6 +48,7 @@ def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
 
         days = days * -1
         stock_d = stock_tse.asfreq('B')[days:]
+        ti = TechnicalIndicators(stock_d)
 
         plt.figure()
 
@@ -82,13 +83,16 @@ def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
 
         plt.figure()
 
-        rsi9 = calc_rsi(stock_d, n=9)
-        rsi14 = calc_rsi(stock_d, n=14)
-        rsi9['Adj Close'].plot(label="RSI9")
-        rsi14['Adj Close'].plot(label="RSI14")
+        rsi9 = ti.get_rsi(timeperiod=9)
+        rsi14 = ti.get_rsi(timeperiod=14)
+        rsi = pd.merge(rsi9, rsi14,
+                       left_index=True, right_index=True)
+        rsi.columns=(['rsi9', 'rsi14'])
+
+        rsi.plot()
         plt.subplots_adjust(bottom=0.20)
 
-        closed = round(rsi14.ix[-1:, 'Adj Close'][0], 2)
+        closed = rsi.ix[-1:, 'rsi14']
         plt.xlabel("".join(
                    [name, '(', stock, '):',
                     str(closed)]),
