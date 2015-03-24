@@ -13,8 +13,9 @@ class TechnicalIndicators():
         self.analysis['prices'] = self.prices
         return self.analysis
 
-    def get_rsi(self):
-        self.analysis['rsi'] = ta.RSI(self.prices)
+    def get_rsi(self, timeperiod=14):
+        self.analysis['rsi'] = ta.RSI(self.prices,
+                                      timeperiod=timeperiod)
         return self.analysis
 
     def get_macd(self):
