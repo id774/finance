@@ -14,6 +14,12 @@ class TechnicalIndicators():
         self.analysis['prices'] = self.prices
         return self.analysis
 
+    def get_sma(self, timeperiod=5):
+        column = 'sma' + str(timeperiod)
+        self.analysis[column] = ta.SMA(self.prices,
+                                       timeperiod=timeperiod)
+        return self.analysis
+
     def get_ewma(self, span=5):
         column = 'ewma' + str(span)
         self.analysis[column] = ewma(self.prices, span=span)

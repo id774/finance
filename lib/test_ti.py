@@ -22,19 +22,35 @@ def test_get_prices():
     eq_(expected, result)
     return prices
 
+def test_get_sma():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    sma = ti.get_sma()
+    sma = ti.get_sma(timeperiod=25)
+    sma = ti.get_sma(timeperiod=75)
+
+    expected = (19452.864000000001,
+                18791.391599999999,
+                17902.110666666667)
+    result = (sma.ix['2015-03-20', 'sma5'],
+              sma.ix['2015-03-20', 'sma25'],
+              sma.ix['2015-03-20', 'sma75'])
+    eq_(expected, result)
+    return sma
+
 def test_get_ewma():
     stock = testdata()
     ti = TechnicalIndicators(stock)
-    ewma5 = ti.get_ewma()
-    ewma25 = ti.get_ewma(span=25)
-    ewma75 = ti.get_ewma(span=75)
+    ewma = ti.get_ewma()
+    ewma = ti.get_ewma(span=25)
+    ewma = ti.get_ewma(span=75)
 
     expected = (19428.781669154043,
                 18821.274391427934,
                 17990.951309119995)
-    result = (ewma5.ix['2015-03-20', 'ewma5'],
-              ewma25.ix['2015-03-20', 'ewma25'],
-              ewma75.ix['2015-03-20', 'ewma75'])
+    result = (ewma.ix['2015-03-20', 'ewma5'],
+              ewma.ix['2015-03-20', 'ewma25'],
+              ewma.ix['2015-03-20', 'ewma75'])
     eq_(expected, result)
     return ewma
 
@@ -78,10 +94,16 @@ def test_get_bbands():
 
 if __name__ == '__main__':
     prices = test_get_prices()
+    sma = test_get_sma()
+    ewma = test_get_ewma()
     rsi = test_get_rsi()
     macd = test_get_macd()
     bbands = test_get_bbands()
-    df = pd.merge(prices, rsi,
+    df = pd.merge(prices, sma,
+                  left_index=True, right_index=True)
+    df = pd.merge(df, ewma,
+                  left_index=True, right_index=True)
+    df = pd.merge(df, rsi,
                   left_index=True, right_index=True)
     df = pd.merge(df, macd,
                   left_index=True, right_index=True)

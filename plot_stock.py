@@ -8,9 +8,6 @@ import pandas.io.data as web
 import pandas.tools.plotting as plotting
 import matplotlib.pyplot as plt
 from pandas.stats.moments import ewma
-from matplotlib.dates import AutoDateFormatter
-from matplotlib.dates import AutoDateLocator
-from matplotlib.dates import date2num
 from matplotlib import font_manager
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                              'lib'))
@@ -64,9 +61,9 @@ def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
         # sma25.plot(label="SMA25")
         # sma5.plot(label="SMA5")
 
-        ewma75 = ewma(stock_d['Adj Close'], span=75)
-        ewma25 = ewma(stock_d['Adj Close'], span=25)
-        ewma5 = ewma(stock_d['Adj Close'], span=5)
+        ewma75 = ti.get_ewma(span=75)
+        ewma25 = ti.get_ewma(span=25)
+        ewma5 = ti.get_ewma(span=5)
         ewma75.plot(label="EWMA75")
         ewma25.plot(label="EWMA25")
         ewma5.plot(label="EWMA5")
