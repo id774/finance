@@ -62,6 +62,10 @@ def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
         ewma['ewma5'].plot(label="EWMA5")
         ewma['ewma25'].plot(label="EWMA25")
         ewma['ewma75'].plot(label="EWMA75")
+        bbands = ti.get_bbands()
+        bbands['boll_upper'].plot(label="UPPER")
+        bbands['boll_middle'].plot(label="MIDDLE")
+        bbands['boll_lower'].plot(label="LOWER")
 
         plt.subplots_adjust(bottom=0.20)
         closed = stock_d.ix[-1:, 'Adj Close'][0]
@@ -81,6 +85,10 @@ def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
         rsi = ti.get_rsi(timeperiod=14)
         rsi['rsi9'].plot(label="RSI9")
         rsi['rsi14'].plot(label="RSI14")
+        macd = ti.get_macd()
+        macd['macd'].plot(label="MACD")
+        macd['macdsignal'].plot(label="MACD-SIGNAL")
+        macd['macdhist'].plot(label="MACD-HIST")
 
         plt.subplots_adjust(bottom=0.20)
 
