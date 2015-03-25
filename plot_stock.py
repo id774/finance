@@ -100,8 +100,8 @@ def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
         io.save_data(io.merge_df(stock_d, ti.get_data()),
                      stock, 'ti_')
 
-    except ValueError:
-        print("Value Error occured in", stock)
+    except (ValueError, KeyError):
+        print("Error occured in", stock)
 
 def read_csv(filename, start, days):
     stocks = pd.read_csv(filename, header=True)
