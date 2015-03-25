@@ -31,7 +31,7 @@ def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
                              start=start,
                              end=end,
                              filename=filename)
-    if not stocke_tse:
+    if not stock_tse:
         pass
     if not filename:
         io.save_data(stock_tse, stock, 'stock_')
