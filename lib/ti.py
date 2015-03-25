@@ -40,8 +40,6 @@ class TechnicalIndicators():
         return self.analysis
 
     def get_bbands(self):
-        sma50 = ta.SMA(self.prices, timeperiod=50)
-        sma200 = ta.SMA(self.prices, timeperiod=200)
         boll_upper, boll_middle, boll_lower = ta.BBANDS(
             self.prices, timeperiod=200, nbdevup=2, nbdevdn=2, matype=0)
         self.analysis['boll_upper'] = boll_upper

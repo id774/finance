@@ -93,20 +93,23 @@ def test_get_bbands():
     return bbands
 
 if __name__ == '__main__':
+    stock = testdata()
     prices = test_get_prices()
     sma = test_get_sma()
     ewma = test_get_ewma()
     rsi = test_get_rsi()
     macd = test_get_macd()
     bbands = test_get_bbands()
-    df = pd.merge(prices, sma,
-                  left_index=True, right_index=True)
-    df = pd.merge(df, ewma,
-                  left_index=True, right_index=True)
-    df = pd.merge(df, rsi,
-                  left_index=True, right_index=True)
-    df = pd.merge(df, macd,
-                  left_index=True, right_index=True)
-    df = pd.merge(df, bbands,
-                  left_index=True, right_index=True)
-    print(df.tail(10))
+    stock = pd.merge(stock, prices,
+                     left_index=True, right_index=True)
+    stock = pd.merge(stock, sma,
+                     left_index=True, right_index=True)
+    stock = pd.merge(stock, ewma,
+                     left_index=True, right_index=True)
+    stock = pd.merge(stock, rsi,
+                     left_index=True, right_index=True)
+    stock = pd.merge(stock, macd,
+                     left_index=True, right_index=True)
+    stock = pd.merge(stock, bbands,
+                     left_index=True, right_index=True)
+    print(stock.tail(10))
