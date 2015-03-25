@@ -24,8 +24,11 @@ class FileIO():
                 start = datetime.datetime.strptime(start, '%Y-%m-%d')
                 stock_tse = web.DataReader('^N225', 'yahoo', start, end)
             else:
-                jpstock = JpStock()
-                stock_tse = jpstock.get(int(stock), start=start)
+                try:
+                    jpstock = JpStock()
+                    stock_tse = jpstock.get(int(stock), start=start)
+                except ValueError:
+                    print("Value Error occured in", stock)
         return stock_tse
 
     def merge_df(self, left, right):
