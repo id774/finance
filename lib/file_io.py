@@ -28,7 +28,7 @@ class FileIO():
                     jpstock = JpStock()
                     stock_tse = jpstock.get(int(stock), start=start)
                 except ValueError:
-                    stock_tse = pd.DataFrame([])
+                    stock_tse = None
                     print("Value Error occured in", stock)
         return stock_tse
 
