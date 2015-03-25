@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import talib as ta
+from pandas.stats.moments import ewma
 
 class TechnicalIndicators():
 
@@ -13,9 +14,15 @@ class TechnicalIndicators():
         self.analysis['prices'] = self.prices
         return self.analysis
 
+    def get_ewma(self, span=5):
+        column = 'ewma' + str(span)
+        self.analysis[column] = ewma(self.prices, span=span)
+        return self.analysis
+
     def get_rsi(self, timeperiod=14):
-        self.analysis['rsi'] = ta.RSI(self.prices,
-                                      timeperiod=timeperiod)
+        column = 'rsi' + str(timeperiod)
+        self.analysis[column] = ta.RSI(self.prices,
+                                       timeperiod=timeperiod)
         return self.analysis
 
     def get_macd(self):

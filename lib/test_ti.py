@@ -22,13 +22,29 @@ def test_get_prices():
     eq_(expected, result)
     return prices
 
+def test_get_ewma():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    ewma5 = ti.get_ewma()
+    ewma25 = ti.get_ewma(span=25)
+    ewma75 = ti.get_ewma(span=75)
+
+    expected = (19428.781669154043,
+                18821.274391427934,
+                17990.951309119995)
+    result = (ewma5.ix['2015-03-20', 'ewma5'],
+              ewma25.ix['2015-03-20', 'ewma25'],
+              ewma75.ix['2015-03-20', 'ewma75'])
+    eq_(expected, result)
+    return ewma
+
 def test_get_rsi():
     stock = testdata()
     ti = TechnicalIndicators(stock)
     rsi = ti.get_rsi()
 
     expected = 74.982651133316381
-    result = rsi.ix['2015-03-20', 'rsi']
+    result = rsi.ix['2015-03-20', 'rsi14']
     eq_(expected, result)
     return rsi
 
