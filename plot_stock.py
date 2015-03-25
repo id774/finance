@@ -54,10 +54,10 @@ def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
         ewma['ewma5'].plot(label="EWMA5")
         ewma['ewma25'].plot(label="EWMA25")
         ewma['ewma75'].plot(label="EWMA75")
-        # bbands = ti.get_bbands()
-        # bbands['boll_upper'].plot(label="UPPER")
-        # bbands['boll_middle'].plot(label="MIDDLE")
-        # bbands['boll_lower'].plot(label="LOWER")
+        bbands = ti.get_bbands()
+        bbands['boll_upper'].plot(label="UPPER")
+        bbands['boll_middle'].plot(label="MIDDLE")
+        bbands['boll_lower'].plot(label="LOWER")
 
         plt.subplots_adjust(bottom=0.20)
         closed = stock_d.ix[-1:, 'Adj Close'][0]
@@ -102,7 +102,7 @@ def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
         print("Value Error occured in", stock)
 
 def read_csv(filename, start, days):
-    stocks = pd.read_csv(filename, header=None)
+    stocks = pd.read_csv(filename, header=True)
     for s in stocks.values:
         _plot_stock(stock=str(s[0]),
                     name=s[1],
