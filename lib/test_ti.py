@@ -12,6 +12,29 @@ def testdata():
                             index_col=0, parse_dates=True)
     return stock_tse.asfreq('B')[days:]
 
+def test_set_data():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+
+    stock.ix['2015-03-20', 'Adj Close'] = 20000.00
+    ti.set_data(stock)
+    prices = ti.get_prices()
+
+    expected = 20000.00
+    result = prices.ix['2015-03-20', 'prices']
+    eq_(expected, result)
+    return result
+
+def test_get_data():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    ti.get_prices()
+    data = ti.get_data()
+    expected = 19560.22
+    result = data.ix['2015-03-20', 'prices']
+    eq_(expected, result)
+    return data
+
 def test_get_prices():
     stock = testdata()
     ti = TechnicalIndicators(stock)
@@ -112,4 +135,3 @@ if __name__ == '__main__':
                      left_index=True, right_index=True)
     stock = pd.merge(stock, bbands,
                      left_index=True, right_index=True)
-    print(stock.tail(10))

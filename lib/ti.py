@@ -10,6 +10,15 @@ class TechnicalIndicators():
         self.prices = np.array(stock)
         self.analysis = pd.DataFrame(index=stock.index.values)
 
+    def set_data(self, stock):
+        stock = stock.asfreq('B')['Adj Close'].dropna()
+        self.prices = np.array(stock)
+        self.analysis = pd.DataFrame(index=stock.index.values)
+        return self.analysis
+
+    def get_data(self):
+        return self.analysis
+
     def get_prices(self):
         self.analysis['prices'] = self.prices
         return self.analysis
