@@ -4,14 +4,13 @@ import sys
 import os
 import datetime
 import pandas as pd
-import pandas.io.data as web
 import pandas.tools.plotting as plotting
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                              'lib'))
+from file_io import FileIO
 from ohlc_plot import OhlcPlot
-from jpstock import JpStock
 from ti import TechnicalIndicators
 
 
@@ -28,21 +27,15 @@ def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
         days = 90
     else:
         days = int(days)
+    days = days * -1
+
+    io = FileIO()
+    stock_tse = io.read_data(stock,
+                             start=start,
+                             end=end,
+                             filename=filename)
 
     try:
-        if filename:
-            stock_tse = pd.read_csv(filename,
-                                    index_col=0, parse_dates=True)
-        else:
-            if stock == 'N225':
-                start = datetime.datetime.strptime(start, '%Y-%m-%d')
-                stock_tse = web.DataReader('^N225', 'yahoo', start, end)
-            else:
-                jpstock = JpStock()
-                stock_tse = jpstock.get(int(stock), start=start)
-            stock_tse.to_csv("".join(["stock_", stock, ".csv"]))
-
-        days = days * -1
         stock_d = stock_tse.asfreq('B')[days:]
 
         plt.figure()
@@ -75,11 +68,10 @@ def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
                    fontdict={"fontproperties": fontprop})
         plt.legend(loc="best")
         plt.show()
-        plt.savefig("".join(["stock_", stock, ".png"]))
+        plt.savefig("".join(["ohlc_", stock, ".png"]))
         plt.close()
 
         plt.figure()
-        ti = TechnicalIndicators(stock_d)
 
         rsi = ti.get_rsi(timeperiod=9)
         rsi = ti.get_rsi(timeperiod=14)
@@ -101,9 +93,11 @@ def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
         plt.ylim = ([0, 100])
         plt.legend(loc="best")
         plt.show()
-        plt.savefig("".join(["rsi_", stock, ".png"]))
+        plt.savefig("".join(["osci_", stock, ".png"]))
         plt.legend(loc="best")
         plt.close()
+        io.save_data(io.merge_df(stock_d, ti.get_data()),
+                     stock, 'ti_')
 
     except ValueError:
         print("Value Error occured in", stock)
