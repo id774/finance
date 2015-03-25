@@ -29,7 +29,7 @@ class FileIO():
                     stock_tse = jpstock.get(int(stock), start=start)
                 except:
                     stock_tse = pd.DataFrame([])
-                    print("Value Error occured in", stock)
+                    print("Error occured in", stock)
         return stock_tse
 
     def merge_df(self, left, right):
