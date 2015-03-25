@@ -7,12 +7,12 @@ class TechnicalIndicators():
 
     def __init__(self, stock, **kwargs):
         stock = stock.asfreq('B')['Adj Close'].dropna()
-        self.prices = np.array(stock)
+        self.prices = np.array(stock, dtype='f8')
         self.analysis = pd.DataFrame(index=stock.index.values)
 
     def set_data(self, stock):
         stock = stock.asfreq('B')['Adj Close'].dropna()
-        self.prices = np.array(stock)
+        self.prices = np.array(stock, dtype='f8')
         self.analysis = pd.DataFrame(index=stock.index.values)
         return self.analysis
 
