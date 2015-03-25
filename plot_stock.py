@@ -50,9 +50,15 @@ def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
 
         stock_d.plot(kind='ohlc')
 
-        ewma = ti.get_ewma(span=75)
-        ewma = ti.get_ewma(span=25)
+        # sma = ti.get_sma()
+        # sma = ti.get_sma(timeperiod=25)
+        # sma = ti.get_sma(timeperiod=75)
+        # sma['sma5'].plot(label="SMA5")
+        # sma['sma25'].plot(label="SMA25")
+        # sma['sma75'].plot(label="SMA75")
         ewma = ti.get_ewma(span=5)
+        ewma = ti.get_ewma(span=25)
+        ewma = ti.get_ewma(span=75)
         ewma['ewma5'].plot(label="EWMA5")
         ewma['ewma25'].plot(label="EWMA25")
         ewma['ewma75'].plot(label="EWMA75")
@@ -73,7 +79,9 @@ def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
 
         rsi = ti.get_rsi(timeperiod=9)
         rsi = ti.get_rsi(timeperiod=14)
-        rsi.plot()
+        rsi['rsi9'].plot(label="RSI9")
+        rsi['rsi14'].plot(label="RSI14")
+
         plt.subplots_adjust(bottom=0.20)
 
         closed = round(rsi.ix[-1:, 'rsi14'][0], 2)
