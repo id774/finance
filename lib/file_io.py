@@ -26,7 +26,6 @@ class FileIO():
             else:
                 jpstock = JpStock()
                 stock_tse = jpstock.get(int(stock), start=start)
-            self.save_data(stock_tse, stock, 'stock_')
         return stock_tse
 
     def merge_df(self, left, right):

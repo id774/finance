@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import sys
 import os
 import datetime
@@ -12,7 +10,6 @@ sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 from file_io import FileIO
 from ohlc_plot import OhlcPlot
 from ti import TechnicalIndicators
-
 
 def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
     plotting._all_kinds.append('ohlc')
@@ -34,6 +31,8 @@ def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
                              start=start,
                              end=end,
                              filename=filename)
+    if not filename:
+        io.save_data(stock_tse, stock, 'stock_')
 
     try:
         stock_d = stock_tse.asfreq('B')[days:]
