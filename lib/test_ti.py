@@ -1,5 +1,5 @@
-from nose.tools import *
-from ti import *
+from nose.tools import eq_
+from ti import TechnicalIndicators
 import os
 import pandas as pd
 

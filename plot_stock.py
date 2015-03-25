@@ -7,7 +7,6 @@ import pandas as pd
 import pandas.io.data as web
 import pandas.tools.plotting as plotting
 import matplotlib.pyplot as plt
-from pandas.stats.moments import ewma
 from matplotlib import font_manager
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                              'lib'))
@@ -45,29 +44,20 @@ def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
 
         days = days * -1
         stock_d = stock_tse.asfreq('B')[days:]
-        ti = TechnicalIndicators(stock_d)
 
         plt.figure()
-
-        # stock_tse.plot(kind='ohlc')
-        # plt.show()
-        # plt.savefig('image.png')
+        ti = TechnicalIndicators(stock_d)
 
         stock_d.plot(kind='ohlc')
+
+        ewma = ti.get_ewma(span=75)
+        ewma = ti.get_ewma(span=25)
+        ewma = ti.get_ewma(span=5)
+        ewma['ewma5'].plot(label="EWMA5")
+        ewma['ewma25'].plot(label="EWMA25")
+        ewma['ewma75'].plot(label="EWMA75")
+
         plt.subplots_adjust(bottom=0.20)
-
-        # sma25 = pd.rolling_mean(stock_d['Adj Close'], window=25)
-        # sma5 = pd.rolling_mean(stock_d['Adj Close'], window=5)
-        # sma25.plot(label="SMA25")
-        # sma5.plot(label="SMA5")
-
-        ewma75 = ti.get_ewma(span=75)
-        ewma25 = ti.get_ewma(span=25)
-        ewma5 = ti.get_ewma(span=5)
-        ewma75.plot(label="EWMA75")
-        ewma25.plot(label="EWMA25")
-        ewma5.plot(label="EWMA5")
-
         closed = stock_d.ix[-1:, 'Adj Close'][0]
         plt.xlabel("".join(
                    [name, '(', stock, '):',
@@ -79,17 +69,14 @@ def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
         plt.close()
 
         plt.figure()
+        ti = TechnicalIndicators(stock_d)
 
-        rsi9 = ti.get_rsi(timeperiod=9)
-        rsi14 = ti.get_rsi(timeperiod=14)
-        rsi = pd.merge(rsi9, rsi14,
-                       left_index=True, right_index=True)
-        rsi.columns=(['rsi9', 'rsi14'])
-
+        rsi = ti.get_rsi(timeperiod=9)
+        rsi = ti.get_rsi(timeperiod=14)
         rsi.plot()
         plt.subplots_adjust(bottom=0.20)
 
-        closed = rsi.ix[-1:, 'rsi14']
+        closed = round(rsi.ix[-1:, 'rsi14'][0], 2)
         plt.xlabel("".join(
                    [name, '(', stock, '):',
                     str(closed)]),
