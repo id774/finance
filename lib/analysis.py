@@ -19,7 +19,7 @@ class Analysis():
         self.start = start
         self.end = datetime.datetime.now()
         self.days = int(days) * -1
-        self.filename=filename
+        self.filename = filename
 
     def run(self):
         io = FileIO()

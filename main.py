@@ -10,7 +10,7 @@ else:
 from analysis import Analysis
 
 def read_csv(filename, start, days):
-    stocks = pd.read_csv(filename, header=True)
+    stocks = pd.read_csv(filename, header=None)
     for s in stocks.values:
         analysis = Analysis(stock=str(s[0]),
                             name=s[1],
@@ -35,6 +35,7 @@ def main():
     parser.add_option("-y", "--days", dest="days",
                       help="plot days as '-90', specify 0 for all days")
     (options, args) = parser.parse_args()
+
     if len(args) != 0:
         parser.error("incorrect number of arguments")
 
