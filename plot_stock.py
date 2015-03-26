@@ -5,8 +5,12 @@ import pandas as pd
 import pandas.tools.plotting as plotting
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                             'lib'))
+p = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), 'lib')
+if p in sys.path:
+    pass
+else:
+    sys.path.append(p)
 from file_io import FileIO
 from ohlc_plot import OhlcPlot
 from ti import TechnicalIndicators
