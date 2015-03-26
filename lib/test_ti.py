@@ -52,12 +52,13 @@ def test_get_sma():
     sma = ti.get_sma(timeperiod=25)
     sma = ti.get_sma(timeperiod=75)
 
-    expected = (19452.864000000001,
-                18791.391599999999,
-                17902.110666666667)
+    expected = [19453.,
+                18791.,
+                17902.]
     result = (sma.ix['2015-03-20', 'sma5'],
               sma.ix['2015-03-20', 'sma25'],
               sma.ix['2015-03-20', 'sma75'])
+    result = [round(x, 0) for x in result]
     eq_(expected, result)
     return sma
 
@@ -68,13 +69,15 @@ def test_get_ewma():
     ewma = ti.get_ewma(span=25)
     ewma = ti.get_ewma(span=75)
 
-    expected = (19428.781669154043,
-                18821.274391427934,
-                17990.951309119995)
+    expected = [19429.,
+                18821.,
+                17991.]
     result = (ewma.ix['2015-03-20', 'ewma5'],
               ewma.ix['2015-03-20', 'ewma25'],
               ewma.ix['2015-03-20', 'ewma75'])
+    result = [round(x, 0) for x in result]
     eq_(expected, result)
+    result = [round(x, 0) for x in result]
     return ewma
 
 def test_get_rsi():
@@ -82,8 +85,9 @@ def test_get_rsi():
     ti = TechnicalIndicators(stock)
     rsi = ti.get_rsi()
 
-    expected = 74.982651133316381
+    expected = 74.98
     result = rsi.ix['2015-03-20', 'rsi14']
+    result = round(result, 2)
     eq_(expected, result)
     return rsi
 
@@ -92,12 +96,13 @@ def test_get_macd():
     ti = TechnicalIndicators(stock)
     macd = ti.get_macd()
 
-    expected = (382.99041705210402,
-                345.64437737584518,
-                37.34603967625884)
+    expected = [383.,
+                346.,
+                37.]
     result = (macd.ix['2015-03-20', 'macd'],
               macd.ix['2015-03-20', 'macdsignal'],
               macd.ix['2015-03-20', 'macdhist'])
+    result = [round(x, 0) for x in result]
     eq_(expected, result)
     return macd
 
@@ -106,12 +111,13 @@ def test_get_bbands():
     ti = TechnicalIndicators(stock)
     bbands = ti.get_bbands()
 
-    expected = (19116.12719129512,
-                16560.231199999998,
-                14004.335208704877)
+    expected = [19116.,
+                16560.,
+                14004.]
     result = (bbands.ix['2015-03-20', 'boll_upper'],
               bbands.ix['2015-03-20', 'boll_middle'],
               bbands.ix['2015-03-20', 'boll_lower'])
+    result = [round(x, 0) for x in result]
     eq_(expected, result)
     return bbands
 
@@ -135,3 +141,4 @@ if __name__ == '__main__':
                      left_index=True, right_index=True)
     stock = pd.merge(stock, bbands,
                      left_index=True, right_index=True)
+    print(stock.tail(10))
