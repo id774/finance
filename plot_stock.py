@@ -11,12 +11,61 @@ from file_io import FileIO
 from ohlc_plot import OhlcPlot
 from ti import TechnicalIndicators
 
-def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
+
+def plot_ohlc(stock, name, stock_d, ewma, bbands):
     plotting._all_kinds.append('ohlc')
     plotting._common_kinds.append('ohlc')
     plotting._plot_klass['ohlc'] = OhlcPlot
     fontprop = font_manager.FontProperties(
         fname="/usr/share/fonts/truetype/fonts-japanese-gothic.ttf")
+
+    plt.figure()
+    stock_d.plot(kind='ohlc')
+    # sma['sma5'].plot(label="SMA5")
+    # sma['sma25'].plot(label="SMA25")
+    # sma['sma75'].plot(label="SMA75")
+    ewma['ewma5'].plot(label="EWMA5")
+    ewma['ewma25'].plot(label="EWMA25")
+    ewma['ewma75'].plot(label="EWMA75")
+    bbands['boll_upper'].plot(label="UPPER")
+    bbands['boll_middle'].plot(label="MIDDLE")
+    bbands['boll_lower'].plot(label="LOWER")
+    plt.subplots_adjust(bottom=0.20)
+    closed = stock_d.ix[-1:, 'Adj Close'][0]
+    plt.xlabel("".join(
+               [name, '(', stock, '):',
+                str(closed)]),
+               fontdict={"fontproperties": fontprop})
+    plt.legend(loc="best")
+    plt.show()
+    plt.savefig("".join(["ohlc_", stock, ".png"]))
+    plt.close()
+
+def plot_osci(stock, name, rsi, macd):
+    fontprop = font_manager.FontProperties(
+        fname="/usr/share/fonts/truetype/fonts-japanese-gothic.ttf")
+
+    plt.figure()
+    rsi['rsi9'].plot(label="RSI9")
+    rsi['rsi14'].plot(label="RSI14")
+    macd['macd'].plot(label="MACD")
+    macd['macdsignal'].plot(label="MACD-SIGNAL")
+    macd['macdhist'].plot(label="MACD-HIST")
+    plt.subplots_adjust(bottom=0.20)
+    closed = round(rsi.ix[-1:, 'rsi14'][0], 2)
+    plt.xlabel("".join(
+               [name, '(', stock, '):',
+                str(closed)]),
+               fontdict={"fontproperties": fontprop})
+    # plt.ylim = (np.arange(0, 110, step=10))
+    plt.ylim = ([0, 100])
+    plt.legend(loc="best")
+    plt.show()
+    plt.savefig("".join(["osci_", stock, ".png"]))
+    plt.legend(loc="best")
+    plt.close()
+
+def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
 
     end = datetime.datetime.now()
 
@@ -39,64 +88,22 @@ def _plot_stock(stock="", name="", start='2014-09-01', days=0, filename=None):
     try:
         stock_d = stock_tse.asfreq('B')[days:]
 
-        plt.figure()
         ti = TechnicalIndicators(stock_d)
-
-        stock_d.plot(kind='ohlc')
 
         # sma = ti.get_sma()
         # sma = ti.get_sma(timeperiod=25)
         # sma = ti.get_sma(timeperiod=75)
-        # sma['sma5'].plot(label="SMA5")
-        # sma['sma25'].plot(label="SMA25")
-        # sma['sma75'].plot(label="SMA75")
         ewma = ti.get_ewma(span=5)
         ewma = ti.get_ewma(span=25)
         ewma = ti.get_ewma(span=75)
-        ewma['ewma5'].plot(label="EWMA5")
-        ewma['ewma25'].plot(label="EWMA25")
-        ewma['ewma75'].plot(label="EWMA75")
         bbands = ti.get_bbands()
-        bbands['boll_upper'].plot(label="UPPER")
-        bbands['boll_middle'].plot(label="MIDDLE")
-        bbands['boll_lower'].plot(label="LOWER")
-
-        plt.subplots_adjust(bottom=0.20)
-        closed = stock_d.ix[-1:, 'Adj Close'][0]
-        plt.xlabel("".join(
-                   [name, '(', stock, '):',
-                    str(closed)]),
-                   fontdict={"fontproperties": fontprop})
-        plt.legend(loc="best")
-        plt.show()
-        plt.savefig("".join(["ohlc_", stock, ".png"]))
-        plt.close()
-
-        plt.figure()
+        plot_ohlc(stock, name, stock_d, ewma, bbands)
 
         rsi = ti.get_rsi(timeperiod=9)
         rsi = ti.get_rsi(timeperiod=14)
-        rsi['rsi9'].plot(label="RSI9")
-        rsi['rsi14'].plot(label="RSI14")
         macd = ti.get_macd()
-        macd['macd'].plot(label="MACD")
-        macd['macdsignal'].plot(label="MACD-SIGNAL")
-        macd['macdhist'].plot(label="MACD-HIST")
+        plot_osci(stock, name, rsi, macd)
 
-        plt.subplots_adjust(bottom=0.20)
-
-        closed = round(rsi.ix[-1:, 'rsi14'][0], 2)
-        plt.xlabel("".join(
-                   [name, '(', stock, '):',
-                    str(closed)]),
-                   fontdict={"fontproperties": fontprop})
-        # plt.ylim = (np.arange(0, 110, step=10))
-        plt.ylim = ([0, 100])
-        plt.legend(loc="best")
-        plt.show()
-        plt.savefig("".join(["osci_", stock, ".png"]))
-        plt.legend(loc="best")
-        plt.close()
         io.save_data(io.merge_df(stock_d, ti.get_data()),
                      stock, 'ti_')
 
