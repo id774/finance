@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import pandas as pd
 import pandas.tools.plotting as plotting
 from matplotlib.dates import AutoDateFormatter
