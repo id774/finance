@@ -31,9 +31,9 @@ class FileIO():
             print("Error occured in", stock)
             return pd.DataFrame([])
 
-    def read_data(self, stock, start, end, filename=None):
-        if filename:
-            df = self._read_from_csv(filename)
+    def read_data(self, stock, start, end, csvfile=None):
+        if csvfile:
+            df = self._read_from_csv(csvfile)
         else:
             if stock == 'N225':
                 df = self._read_from_web(start, end)

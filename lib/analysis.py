@@ -1,7 +1,6 @@
 import sys
 import os
 import datetime
-import pandas as pd
 p = os.path.dirname(os.path.abspath(__file__))
 if p in sys.path:
     pass
@@ -13,26 +12,27 @@ from draw import Draw
 
 class Analysis():
 
-    def __init__(self, stock="", name="", start='2014-09-01', days=90, filename=None):
+    def __init__(self, stock="", name="", start='2014-09-01',
+                 days=90, csvfile=None):
         self.stock = stock
         self.name = name
         self.start = start
         self.end = datetime.datetime.now()
         self.days = int(days) * -1
-        self.filename = filename
+        self.csvfile = csvfile
 
     def run(self):
         io = FileIO()
         stock_tse = io.read_data(self.stock,
                                  start=self.start,
                                  end=self.end,
-                                 filename=self.filename)
+                                 csvfile=self.csvfile)
 
         if stock_tse.empty:
             print("Data empty", self.stock)
             return None
 
-        if not self.filename:
+        if not self.csvfile:
             io.save_data(stock_tse, self.stock, 'stock_')
 
         try:

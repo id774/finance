@@ -40,7 +40,7 @@ def main():
         parser.error("incorrect number of arguments")
 
     if options.stocktxt:
-        read_csv(filename=options.stocktxt,
+        read_csv(csvfile=options.stocktxt,
                  start=options.startdate,
                  days=options.days)
     else:
@@ -48,7 +48,7 @@ def main():
                             name=options.stockname,
                             start=options.startdate,
                             days=options.days,
-                            filename=options.csvfile)
+                            csvfile=options.csvfile)
         analysis.run()
 
 if __name__ == '__main__':
