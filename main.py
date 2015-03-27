@@ -16,6 +16,7 @@ def read_csv(filename, start, days, update):
                             name=s[1],
                             start=start,
                             days=days,
+                            csvfile="".join(['stock_', str(s[0]), '.csv']),
                             update=update)
         analysis.run()
 
@@ -44,7 +45,7 @@ def main():
         parser.error("incorrect number of arguments")
 
     if options.stocktxt:
-        read_csv(csvfile=options.stocktxt,
+        read_csv(filename=options.stocktxt,
                  start=options.startdate,
                  days=options.days,
                  update=options.update)
