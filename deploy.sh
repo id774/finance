@@ -1,10 +1,11 @@
 #!/bin/sh
 
-sudo cp -av main.py /var/stock/
-sudo cp -av lib /var/stock/
-sudo chown -R root:adm /var/stock/
-sudo chmod 750 /var/stock
-sudo chmod 750 /var/stock/lib
-sudo chmod 640 /var/stock/*.py
-sudo chmod 640 /var/stock/lib/*.py
-
+TARGET_DIR=/var/stock
+test -d $TARGET_DIR || sudo mkdir -p $TARGET_DIR
+sudo cp -av main.py $TARGET_DIR
+sudo cp -av lib $TARGET_DIR
+sudo chmod 750 $TARGET_DIR
+test -d $TARGET_DIR/data || sudo mkdir -p $TARGET_DIR/data
+sudo cp -av run.sh $TARGET_DIR/
+sudo chmod 750 $TARGET_DIR/run.sh
+sudo chown -R root:adm $TARGET_DIR
