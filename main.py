@@ -9,13 +9,14 @@ else:
     sys.path.append(p)
 from analysis import Analysis
 
-def read_csv(filename, start, days):
+def read_csv(filename, start, days, update):
     stocks = pd.read_csv(filename, header=None)
     for s in stocks.values:
         analysis = Analysis(stock=str(s[0]),
                             name=s[1],
                             start=start,
-                            days=days)
+                            days=days,
+                            update=update)
         analysis.run()
 
 def main():
@@ -30,6 +31,9 @@ def main():
                       help="read scraping stock names from text file")
     parser.add_option("-r", "--readfile", dest="csvfile",
                       help="read stock data from csv file")
+    parser.add_option("-u", "--update",
+                      help="update csvfile",
+                      action="store_true", dest="update")
     parser.add_option("-d", "--date", dest="startdate",
                       help="specify start date as '2014-09-01'")
     parser.add_option("-y", "--days", dest="days",
@@ -42,13 +46,15 @@ def main():
     if options.stocktxt:
         read_csv(csvfile=options.stocktxt,
                  start=options.startdate,
-                 days=options.days)
+                 days=options.days,
+                 update=options.update)
     else:
         analysis = Analysis(stock=options.stockcode,
                             name=options.stockname,
                             start=options.startdate,
                             days=options.days,
-                            csvfile=options.csvfile)
+                            csvfile=options.csvfile,
+                            update=options.update)
         analysis.run()
 
 if __name__ == '__main__':

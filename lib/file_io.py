@@ -13,11 +13,17 @@ from jpstock import JpStock
 class FileIO():
 
     def save_data(self, df, stock, prefix):
-        df.to_csv("".join([prefix, stock, ".csv"]))
+        if df.empty:
+            pass
+        else:
+            df.to_csv("".join([prefix, stock, ".csv"]))
 
-    def _read_from_csv(self, filename):
-        return pd.read_csv(filename,
-                           index_col=0, parse_dates=True)
+    def read_from_csv(self, filename):
+        if os.path.exists(filename):
+            return pd.read_csv(filename,
+                               index_col=0, parse_dates=True)
+        else:
+            return pd.DataFrame([])
 
     def _read_from_web(self, start, end):
         start = datetime.datetime.strptime(start, '%Y-%m-%d')
@@ -28,18 +34,13 @@ class FileIO():
             jpstock = JpStock()
             return jpstock.get(int(stock), start=start)
         except:
-            print("Error occured in", stock)
             return pd.DataFrame([])
 
-    def read_data(self, stock, start, end, csvfile=None):
-        if csvfile:
-            df = self._read_from_csv(csvfile)
+    def read_data(self, stock, start, end):
+        if stock == 'N225':
+            return self._read_from_web(start, end)
         else:
-            if stock == 'N225':
-                df = self._read_from_web(start, end)
-            else:
-                df = self._read_with_jpstock(stock, start)
-        return df
+            return self._read_with_jpstock(stock, start)
 
     def merge_df(self, left, right):
         return pd.merge(left, right,

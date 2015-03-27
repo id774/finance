@@ -13,20 +13,31 @@ from draw import Draw
 class Analysis():
 
     def __init__(self, stock="", name="", start='2014-09-01',
-                 days=90, csvfile=None):
+                 days=90, csvfile=None, update=False):
         self.stock = stock
         self.name = name
         self.start = start
         self.end = datetime.datetime.now()
         self.days = int(days) * -1
         self.csvfile = csvfile
+        self.update = update
 
     def run(self):
         io = FileIO()
-        stock_tse = io.read_data(self.stock,
-                                 start=self.start,
-                                 end=self.end,
-                                 csvfile=self.csvfile)
+
+        if self.csvfile:
+            stock_tse = io.read_from_csv(self.csvfile)
+            if self.update:
+                t = stock_tse.index[-1].strftime('%Y-%m-%d')
+                newdata = io.read_data(self.stock,
+                                       start=t,
+                                       end=self.end)
+                stock_tse = stock_tse.combine_first(newdata)
+                io.save_data(stock_tse, self.stock, 'stock_')
+        else:
+            stock_tse = io.read_data(self.stock,
+                                     start=self.start,
+                                     end=self.end)
 
         if stock_tse.empty:
             print("Data empty", self.stock)
@@ -59,4 +70,4 @@ class Analysis():
                          self.stock, 'ti_')
 
         except (ValueError, KeyError):
-            print("Error occured in", stock)
+            print("Error occured in", self.stock)
