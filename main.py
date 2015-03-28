@@ -17,7 +17,7 @@ def read_csv(filename, start, days, update):
                             start=start,
                             days=days,
                             csvfile="".join(['stock_', str(s[0]), '.csv']),
-                            update=update)
+                            update=True)
         analysis.run()
 
 def main():
