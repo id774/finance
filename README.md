@@ -3,8 +3,8 @@ finance
 
 **Python for Financial Data Analysis with pandas**
 
-Fuctions
---------
+Functions
+---------
 
 * JpStock - Scraping stocks data.
 * OhlcPlot - Plotting OHLC Chart.
