@@ -122,9 +122,9 @@ def test_get_bbands():
     expected = [19626.0,
                 18920.0,
                 18215.0]
-    result = (bbands.ix['2015-03-20', 'boll_upper'],
-              bbands.ix['2015-03-20', 'boll_middle'],
-              bbands.ix['2015-03-20', 'boll_lower'])
+    result = (bbands.ix['2015-03-20', 'upperband'],
+              bbands.ix['2015-03-20', 'middleband'],
+              bbands.ix['2015-03-20', 'lowerband'])
     result = [round(x, 0) for x in result]
     eq_(expected, result)
     return bbands

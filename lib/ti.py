@@ -49,9 +49,9 @@ class TechnicalIndicators():
         return self.analysis
 
     def get_bbands(self):
-        boll_upper, boll_middle, boll_lower = ta.BBANDS(
+        upperband, middleband, lowerband = ta.BBANDS(
             self.prices, timeperiod=21, nbdevup=2, nbdevdn=2, matype=0)
-        self.analysis['boll_upper'] = boll_upper
-        self.analysis['boll_middle'] = boll_middle
-        self.analysis['boll_lower'] = boll_lower
+        self.analysis['upperband'] = upperband
+        self.analysis['middleband'] = middleband
+        self.analysis['lowerband'] = lowerband
         return self.analysis
