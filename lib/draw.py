@@ -31,9 +31,9 @@ class Draw():
         ewma['ewma5'].plot(label="EWMA5")
         ewma['ewma25'].plot(label="EWMA25")
         ewma['ewma75'].plot(label="EWMA75")
-        bbands['boll_upper'].plot(label="UPPER")
-        bbands['boll_middle'].plot(label="MIDDLE")
-        bbands['boll_lower'].plot(label="LOWER")
+        bbands['upperband'].plot(label="UPPER")
+        bbands['middleband'].plot(label="MIDDLE")
+        bbands['lowerband'].plot(label="LOWER")
         plt.subplots_adjust(bottom=0.20)
         closed = stock_d.ix[-1:, 'Adj Close'][0]
         plt.xlabel("".join(
