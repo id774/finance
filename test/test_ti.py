@@ -120,7 +120,7 @@ def test_get_momentum():
     mom = ti.get_momentum(timeperiod=10)
 
     expected = 589.22
-    result = mom.ix['2015-03-20', 'momentum']
+    result = mom.ix['2015-03-20', 'mom10']
     result = round(result, 2)
     eq_(expected, result)
     return mom

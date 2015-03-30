@@ -50,7 +50,8 @@ class TechnicalIndicators():
         return self.analysis
 
     def get_momentum(self, timeperiod=10):
-        self.analysis['momentum'] = ta.MOM(
+        column = 'mom' + str(timeperiod)
+        self.analysis[column] = ta.MOM(
             self.prices, timeperiod=timeperiod)
         return self.analysis
 

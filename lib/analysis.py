@@ -64,7 +64,9 @@ class Analysis():
             rsi = ti.get_rsi(timeperiod=9)
             rsi = ti.get_rsi(timeperiod=14)
             macd = ti.get_macd()
-            draw.plot_osci(rsi, macd)
+            mom = ti.get_momentum(timeperiod=10)
+            mom = ti.get_momentum(timeperiod=25)
+            draw.plot_osci(rsi, macd, mom)
 
             io.save_data(io.merge_df(stock_d, ti.get_data()),
                          self.stock, 'ti_')

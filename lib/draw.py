@@ -45,13 +45,15 @@ class Draw():
         plt.savefig("".join(["ohlc_", self.stock, ".png"]))
         plt.close()
 
-    def plot_osci(self, rsi, macd):
+    def plot_osci(self, rsi, macd, mom):
         plt.figure()
         rsi['rsi9'].plot(label="RSI9")
         rsi['rsi14'].plot(label="RSI14")
         macd['macd'].plot(label="MACD")
         macd['macdsignal'].plot(label="MACD-SIGNAL")
         macd['macdhist'].plot(label="MACD-HIST")
+        mom['mom10'].plot(label="MOM10")
+        mom['mom25'].plot(label="MOM25")
         plt.subplots_adjust(bottom=0.20)
         closed = round(rsi.ix[-1:, 'rsi14'][0], 2)
         plt.xlabel("".join(
