@@ -50,7 +50,7 @@ class TechnicalIndicators():
 
     def get_bbands(self):
         boll_upper, boll_middle, boll_lower = ta.BBANDS(
-            self.prices, timeperiod=200, nbdevup=2, nbdevdn=2, matype=0)
+            self.prices, timeperiod=21, nbdevup=2, nbdevdn=2, matype=0)
         self.analysis['boll_upper'] = boll_upper
         self.analysis['boll_middle'] = boll_middle
         self.analysis['boll_lower'] = boll_lower
