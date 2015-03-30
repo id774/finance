@@ -119,9 +119,9 @@ def test_get_bbands():
     ti = TechnicalIndicators(stock)
     bbands = ti.get_bbands()
 
-    expected = [19626.0,
-                18920.0,
-                18215.0]
+    expected = [19661.0,
+                19436.0,
+                19210.0]
     result = (bbands.ix['2015-03-20', 'upperband'],
               bbands.ix['2015-03-20', 'middleband'],
               bbands.ix['2015-03-20', 'lowerband'])

@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import talib as ta
+from talib import MA_Type
 from pandas.stats.moments import ewma
 
 class TechnicalIndicators():
@@ -50,7 +51,7 @@ class TechnicalIndicators():
 
     def get_bbands(self):
         upperband, middleband, lowerband = ta.BBANDS(
-            self.prices, timeperiod=21, nbdevup=2, nbdevdn=2, matype=0)
+            self.prices, matype=MA_Type.T3)
         self.analysis['upperband'] = upperband
         self.analysis['middleband'] = middleband
         self.analysis['lowerband'] = lowerband
