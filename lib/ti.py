@@ -49,6 +49,11 @@ class TechnicalIndicators():
         self.analysis['macdhist'] = macdhist
         return self.analysis
 
+    def get_momentum(self, timeperiod=10):
+        self.analysis['momentum'] = ta.MOM(
+            self.prices, timeperiod=timeperiod)
+        return self.analysis
+
     def get_bbands(self):
         upperband, middleband, lowerband = ta.BBANDS(
             self.prices, matype=MA_Type.T3)

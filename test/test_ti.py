@@ -91,7 +91,7 @@ def test_get_ewma():
 def test_get_rsi():
     stock = testdata()
     ti = TechnicalIndicators(stock)
-    rsi = ti.get_rsi()
+    rsi = ti.get_rsi(timeperiod=14)
 
     expected = 74.98
     result = rsi.ix['2015-03-20', 'rsi14']
@@ -113,6 +113,17 @@ def test_get_macd():
     result = [round(x, 0) for x in result]
     eq_(expected, result)
     return macd
+
+def test_get_momentum():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    mom = ti.get_momentum(timeperiod=10)
+
+    expected = 589.22
+    result = mom.ix['2015-03-20', 'momentum']
+    result = round(result, 2)
+    eq_(expected, result)
+    return mom
 
 def test_get_bbands():
     stock = testdata()
@@ -136,6 +147,7 @@ if __name__ == '__main__':
     ewma = test_get_ewma()
     rsi = test_get_rsi()
     macd = test_get_macd()
+    momentum = test_get_momentum()
     bbands = test_get_bbands()
     stock = pd.merge(stock, prices,
                      left_index=True, right_index=True)
@@ -146,6 +158,8 @@ if __name__ == '__main__':
     stock = pd.merge(stock, rsi,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, macd,
+                     left_index=True, right_index=True)
+    stock = pd.merge(stock, momentum,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, bbands,
                      left_index=True, right_index=True)
