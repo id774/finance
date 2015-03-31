@@ -1,6 +1,7 @@
 import sys
 import os
 import datetime
+from logging import getLogger, StreamHandler, INFO
 p = os.path.dirname(os.path.abspath(__file__))
 if p in sys.path:
     pass
@@ -14,6 +15,11 @@ class Analysis():
 
     def __init__(self, stock="", name="", start='2014-09-01',
                  days=90, csvfile=None, update=False):
+        self.logger = getLogger(__name__)
+        handler = StreamHandler()
+        handler.setLevel(INFO)
+        self.logger.setLevel(INFO)
+        self.logger.addHandler(handler)
         self.stock = stock
         self.name = name
         self.start = start
@@ -26,7 +32,8 @@ class Analysis():
         io = FileIO()
 
         if self.csvfile:
-            stock_tse = io.read_from_csv(self.csvfile)
+            stock_tse = io.read_from_csv(self.stock,
+                                         self.csvfile)
             if self.update:
                 t = stock_tse.index[-1].strftime('%Y-%m-%d')
                 newdata = io.read_data(self.stock,
@@ -40,7 +47,8 @@ class Analysis():
                                      end=self.end)
 
         if stock_tse.empty:
-            print("Data empty", self.stock)
+            msg = "".join(["Data empty: ", self.stock])
+            self.logger.error(msg)
             return None
 
         if not self.csvfile:
@@ -72,4 +80,5 @@ class Analysis():
                          self.stock, 'ti_')
 
         except (ValueError, KeyError):
-            print("Error occured in", self.stock)
+            msg = "".join(["Error occured in ", self.stock])
+            self.logger.error(msg)

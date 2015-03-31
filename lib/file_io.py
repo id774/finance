@@ -18,12 +18,13 @@ class FileIO():
         else:
             df.to_csv("".join([prefix, stock, ".csv"]))
 
-    def read_from_csv(self, filename):
+    def read_from_csv(self, stock, filename):
         if os.path.exists(filename):
             return pd.read_csv(filename,
                                index_col=0, parse_dates=True)
         else:
-            return pd.DataFrame([])
+            return self._read_with_jpstock(stock,
+                                           start='2014-01-01')
 
     def _read_from_web(self, start, end):
         start = datetime.datetime.strptime(start, '%Y-%m-%d')
