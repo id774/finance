@@ -34,17 +34,31 @@ class Analysis():
         if self.csvfile:
             stock_tse = io.read_from_csv(self.stock,
                                          self.csvfile)
+
+            msg = "".join(["Read data from csv: ", self.stock,
+                           " Records: ", str(len(stock_tse))])
+            self.logger.info(msg)
+
             if self.update:
                 t = stock_tse.index[-1].strftime('%Y-%m-%d')
                 newdata = io.read_data(self.stock,
                                        start=t,
                                        end=self.end)
+
+                msg = "".join(["Read data from web: ", self.stock,
+                               " New records: ", str(len(newdata))])
+                self.logger.info(msg)
+
                 stock_tse = stock_tse.combine_first(newdata)
                 io.save_data(stock_tse, self.stock, 'stock_')
         else:
             stock_tse = io.read_data(self.stock,
                                      start=self.start,
                                      end=self.end)
+
+            msg = "".join(["Read data from web: ", self.stock,
+                           " Records: ", str(len(stock_tse))])
+            self.logger.info(msg)
 
         if stock_tse.empty:
             msg = "".join(["Data empty: ", self.stock])
