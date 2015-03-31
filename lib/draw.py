@@ -8,7 +8,7 @@ if p in sys.path:
     pass
 else:
     sys.path.append(p)
-from ochl_plot import OchlPlot
+from ohlc_plot import OhlcPlot
 
 class Draw():
 
@@ -18,13 +18,13 @@ class Draw():
         self.fontprop = font_manager.FontProperties(
             fname="/usr/share/fonts/truetype/fonts-japanese-gothic.ttf")
 
-    def plot_ochl(self, stock_d, ewma, bbands):
-        plotting._all_kinds.append('ochl')
-        plotting._common_kinds.append('ochl')
-        plotting._plot_klass['ochl'] = OchlPlot
+    def plot_ohlc(self, stock_d, ewma, bbands):
+        plotting._all_kinds.append('ohlc')
+        plotting._common_kinds.append('ohlc')
+        plotting._plot_klass['ohlc'] = OhlcPlot
 
         plt.figure()
-        stock_d.plot(kind='ochl')
+        stock_d.plot(kind='ohlc')
         # sma['sma5'].plot(label="SMA5")
         # sma['sma25'].plot(label="SMA25")
         # sma['sma75'].plot(label="SMA75")
@@ -42,7 +42,7 @@ class Draw():
                    fontdict={"fontproperties": self.fontprop})
         plt.legend(loc="best")
         plt.show()
-        plt.savefig("".join(["ochl_", self.stock, ".png"]))
+        plt.savefig("".join(["ohlc_", self.stock, ".png"]))
         plt.close()
 
     def plot_osci(self, rsi, macd, mom):
