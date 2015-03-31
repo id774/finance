@@ -38,7 +38,7 @@ def main():
     parser.add_option("-d", "--date", dest="startdate",
                       help="specify start date as '2014-09-01'")
     parser.add_option("-y", "--days", dest="days",
-                      help="plot days as '-90', specify 0 for all days")
+                      help="plot days as '90', specify 0 for all days")
     (options, args) = parser.parse_args()
 
     if len(args) != 0:
