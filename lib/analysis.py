@@ -1,7 +1,6 @@
 import sys
 import os
 import datetime
-from logging import getLogger, StreamHandler, INFO
 p = os.path.dirname(os.path.abspath(__file__))
 if p in sys.path:
     pass
@@ -15,11 +14,6 @@ class Analysis():
 
     def __init__(self, stock="", name="", start='2014-09-01',
                  days=90, csvfile=None, update=False):
-        self.logger = getLogger(__name__)
-        handler = StreamHandler()
-        handler.setLevel(INFO)
-        self.logger.setLevel(INFO)
-        self.logger.addHandler(handler)
         self.stock = stock
         self.name = name
         self.start = start
@@ -37,7 +31,7 @@ class Analysis():
 
             msg = "".join(["Read data from csv: ", self.stock,
                            " Records: ", str(len(stock_tse))])
-            self.logger.info(msg)
+            print(msg)
 
             if self.update:
                 t = stock_tse.index[-1].strftime('%Y-%m-%d')
@@ -47,7 +41,7 @@ class Analysis():
 
                 msg = "".join(["Read data from web: ", self.stock,
                                " New records: ", str(len(newdata))])
-                self.logger.info(msg)
+                print(msg)
 
                 stock_tse = stock_tse.combine_first(newdata)
                 io.save_data(stock_tse, self.stock, 'stock_')
@@ -58,11 +52,11 @@ class Analysis():
 
             msg = "".join(["Read data from web: ", self.stock,
                            " Records: ", str(len(stock_tse))])
-            self.logger.info(msg)
+            print(msg)
 
         if stock_tse.empty:
             msg = "".join(["Data empty: ", self.stock])
-            self.logger.error(msg)
+            print(msg)
             return None
 
         if not self.csvfile:
@@ -95,4 +89,4 @@ class Analysis():
 
         except (ValueError, KeyError):
             msg = "".join(["Error occured in ", self.stock])
-            self.logger.error(msg)
+            print(msg)
