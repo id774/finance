@@ -4,8 +4,8 @@ from matplotlib.dates import AutoDateFormatter
 from matplotlib.dates import AutoDateLocator
 from matplotlib.dates import date2num
 
-class OhlcPlot(plotting.LinePlot):
-    ohlc_cols = pd.Index(['open', 'high', 'low', 'close'])
+class OchlPlot(plotting.LinePlot):
+    ochl_cols = pd.Index(['open', 'high', 'low', 'close'])
     reader_cols = pd.Index(
         ['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close'])
 
@@ -14,15 +14,15 @@ class OhlcPlot(plotting.LinePlot):
         self.freq = kwargs.pop('freq', 'B')
 
         if isinstance(data, pd.Series):
-            data = data.resample(self.freq, how='ohlc')
+            data = data.resample(self.freq, how='ochl')
         assert isinstance(data, pd.DataFrame)
         assert isinstance(data.index, pd.DatetimeIndex)
-        if data.columns.equals(self.ohlc_cols):
+        if data.columns.equals(self.ochl_cols):
             data.columns = [c.title() for c in data.columns]
         elif data.columns.equals(self.reader_cols):
             pass
         else:
-            raise ValueError('data is not ohlc-like')
+            raise ValueError('data is not ochl-like')
         data = data[['Open', 'Close', 'High', 'Low']]
         plotting.LinePlot.__init__(self, data, **kwargs)
 
