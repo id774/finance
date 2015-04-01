@@ -57,7 +57,7 @@ class Analysis():
         if stock_tse.empty:
             msg = "".join(["Data empty: ", self.stock])
             print(msg)
-            return None
+            return stock_tse
 
         if not self.csvfile:
             io.save_data(stock_tse, self.stock, 'stock_')
@@ -87,6 +87,9 @@ class Analysis():
             io.save_data(io.merge_df(stock_d, ti.get_data()),
                          self.stock, 'ti_')
 
+            return stock_d
+
         except (ValueError, KeyError):
             msg = "".join(["Error occured in ", self.stock])
             print(msg)
+            return stock_tse

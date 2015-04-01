@@ -18,7 +18,7 @@ def read_csv(filename, start, days, update):
                             days=days,
                             csvfile="".join(['stock_', str(s[0]), '.csv']),
                             update=True)
-        analysis.run()
+        return analysis.run()
 
 def main():
     from optparse import OptionParser
@@ -56,14 +56,32 @@ def main():
                             days=options.days,
                             csvfile=options.csvfile,
                             update=options.update)
-        analysis.run()
+        return analysis.run()
+
+def demo(stock='N225',
+         name='TESTDATA',
+         start='2014-01-01',
+         days=120,
+         csvfile=os.path.join('test', 'stock_N225.csv'),
+         update=False):
+        analysis = Analysis(stock=stock,
+                            name=name,
+                            start=start,
+                            days=days,
+                            csvfile=csvfile,
+                            update=True)
+        return analysis.run()
 
 if __name__ == '__main__':
     argsmin = 0
     version = (3, 0)
     if sys.version_info > (version):
         if len(sys.argv) > argsmin:
-            main()
+            result = main()
+            if result.empty:
+                sys.exit(1)
+            else:
+                sys.exit(0)
         else:
             print("This program needs at least %(argsmin)s arguments" %
                   locals())
