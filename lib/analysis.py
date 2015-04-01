@@ -87,7 +87,7 @@ class Analysis():
             io.save_data(io.merge_df(stock_d, ti.get_data()),
                          self.stock, 'ti_')
 
-            return stock_d
+            return io.merge_df(stock_tse, ti.analysis)
 
         except (ValueError, KeyError):
             msg = "".join(["Error occured in ", self.stock])
