@@ -33,7 +33,11 @@ class FileIO():
     def _read_with_jpstock(self, stock, start):
         try:
             jpstock = JpStock()
-            return jpstock.get(int(stock), start=start)
+            df = jpstock.get(int(stock), start=start)
+            if df:
+                return df
+            else:
+                return pd.DataFrame([])
         except:
             return pd.DataFrame([])
 

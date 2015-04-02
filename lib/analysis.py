@@ -33,7 +33,7 @@ class Analysis():
                            " Records: ", str(len(stock_tse))])
             print(msg)
 
-            if self.update:
+            if self.update and len(stock_tse) > 0:
                 t = stock_tse.index[-1].strftime('%Y-%m-%d')
                 newdata = io.read_data(self.stock,
                                        start=t,

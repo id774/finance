@@ -18,7 +18,8 @@ def read_csv(filename, start, days, update):
                             days=days,
                             csvfile="".join(['stock_', str(s[0]), '.csv']),
                             update=True)
-        return analysis.run()
+        result = analysis.run()
+    return result
 
 def main():
     from optparse import OptionParser
@@ -45,10 +46,10 @@ def main():
         parser.error("incorrect number of arguments")
 
     if options.stocktxt:
-        read_csv(filename=options.stocktxt,
-                 start=options.startdate,
-                 days=options.days,
-                 update=options.update)
+        return read_csv(filename=options.stocktxt,
+                        start=options.startdate,
+                        days=options.days,
+                        update=options.update)
     else:
         analysis = Analysis(stock=options.stockcode,
                             name=options.stockname,
