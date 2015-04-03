@@ -34,7 +34,7 @@ class FileIO():
         try:
             jpstock = JpStock()
             df = jpstock.get(int(stock), start=start)
-            if df:
+            if len(df) > 0:
                 return df
             else:
                 return pd.DataFrame([])
