@@ -57,3 +57,10 @@ class TechnicalIndicators():
         self.stock['middleband'] = middleband
         self.stock['lowerband'] = lowerband
         return self.stock
+
+    def get_ret_index(self):
+        returns = pd.Series(self.close).pct_change()
+        ret_index = (1 + returns).cumprod()
+        ret_index[0] = 1
+        self.stock['ret_index'] = ret_index.values
+        return self.stock

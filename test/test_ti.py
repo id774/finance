@@ -107,6 +107,17 @@ def test_get_bbands():
     eq_(expected, result)
     return bbands
 
+def test_get_ret_index():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    ret_index = ti.get_ret_index()
+
+    expected = 1.36
+    result = ret_index.ix['2015-03-20', 'ret_index']
+    result = round(result, 2)
+    eq_(expected, result)
+    return ret_index
+
 if __name__ == '__main__':
     stock = testdata()
     sma = test_get_sma()
@@ -115,6 +126,7 @@ if __name__ == '__main__':
     macd = test_get_macd()
     momentum = test_get_momentum()
     bbands = test_get_bbands()
+    ret_index = test_get_ret_index()
     stock = pd.merge(stock, sma,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, ewma,
@@ -126,5 +138,7 @@ if __name__ == '__main__':
     stock = pd.merge(stock, momentum,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, bbands,
+                     left_index=True, right_index=True)
+    stock = pd.merge(stock, ret_index,
                      left_index=True, right_index=True)
     print(stock.tail(10))
