@@ -24,9 +24,7 @@ def test_save_data():
     stock = testdata()
     io = FileIO()
 
-    filename = os.path.join(os.path.dirname(
-                            os.path.abspath(__file__)),
-                            'test_N225.csv')
+    filename = 'test_N225.csv'
 
     io.save_data(stock, "N225", "test_")
 

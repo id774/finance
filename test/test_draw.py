@@ -32,9 +32,26 @@ def test_plot_ohlc():
     bbands = ti.get_bbands()
     draw.plot_ohlc(stock, ewma, bbands)
 
-    filename = os.path.join(os.path.dirname(
-                            os.path.abspath(__file__)),
-                            'ohlc_N225.png')
+    filename = 'ohlc_N225.png'
+    expected = True
+    eq_(expected, os.path.exists(filename))
+
+    if os.path.exists(filename):
+        os.remove(filename)
+
+def test_plot_osci():
+    stock = testdata()
+    draw = Draw("N225", "日経平均株価")
+
+    ti = TechnicalIndicators(stock)
+    rsi = ti.get_rsi(timeperiod=9)
+    rsi = ti.get_rsi(timeperiod=14)
+    macd = ti.get_macd()
+    mom = ti.get_momentum(timeperiod=10)
+    mom = ti.get_momentum(timeperiod=25)
+    draw.plot_osci(rsi, macd, mom)
+
+    filename = 'osci_N225.png'
     expected = True
     eq_(expected, os.path.exists(filename))
 
