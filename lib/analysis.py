@@ -79,10 +79,12 @@ class Analysis():
 
             rsi = ti.get_rsi(timeperiod=9)
             rsi = ti.get_rsi(timeperiod=14)
-            macd = ti.get_macd()
-            mom = ti.get_momentum(timeperiod=10)
-            mom = ti.get_momentum(timeperiod=25)
-            draw.plot_osci(rsi, macd, mom)
+            ti.get_macd()
+            ti.get_momentum(timeperiod=10)
+            ti.get_momentum(timeperiod=25)
+            ret = ti.get_ret_index()
+            ret['ret_index'] = ret['ret_index'] * 100
+            draw.plot_osci(rsi, ret)
 
             io.save_data(io.merge_df(stock_d, ti.stock),
                          self.stock, 'ti_')
