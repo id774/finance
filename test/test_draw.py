@@ -46,10 +46,8 @@ def test_plot_osci():
     ti = TechnicalIndicators(stock)
     rsi = ti.get_rsi(timeperiod=9)
     rsi = ti.get_rsi(timeperiod=14)
-    macd = ti.get_macd()
-    mom = ti.get_momentum(timeperiod=10)
-    mom = ti.get_momentum(timeperiod=25)
-    draw.plot_osci(rsi, macd, mom)
+    ret = ti.get_ret_index()
+    draw.plot_osci(rsi, ret)
 
     filename = 'osci_N225.png'
     expected = True
