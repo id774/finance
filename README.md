@@ -19,6 +19,6 @@ Get Started
 See help for using.
 
 ``` html
-$ python main.py -h
+$ python charts.py -h
 ```
 
