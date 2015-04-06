@@ -35,6 +35,10 @@ class TechnicalIndicators():
                                     timeperiod=timeperiod)
         return self.stock
 
+    def get_roc(self):
+        self.stock['roc'] = ta.ROC(self.close)
+        return self.stock
+
     def get_macd(self):
         macd, macdsignal, macdhist = ta.MACD(
             self.close,

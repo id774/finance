@@ -66,6 +66,17 @@ def test_get_rsi():
     eq_(expected, result)
     return rsi
 
+def test_get_roc():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    roc = ti.get_roc()
+
+    expected = 3.11
+    result = roc.ix['2015-03-20', 'roc']
+    result = round(result, 2)
+    eq_(expected, result)
+    return roc
+
 def test_get_macd():
     stock = testdata()
     ti = TechnicalIndicators(stock)
