@@ -51,10 +51,10 @@ class Draw():
         rsi['rsi14'].plot(label="RSI14")
         ret['ret_index'].plot(label="RET_INDEX")
         plt.subplots_adjust(bottom=0.20)
-        closed = round(rsi.ix[-1:, 'rsi14'][0], 2)
+        ret_index = round(ret.ix[-1:, 'ret_index'][0], 2)
         plt.xlabel("".join(
                    [self.name, '(', self.stock, '):',
-                    str(closed)]),
+                    str(ret_index)]),
                    fontdict={"fontproperties": self.fontprop})
         # plt.ylim = (np.arange(0, 110, step=10))
         plt.ylim = ([0, 100])
