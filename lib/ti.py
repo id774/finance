@@ -39,6 +39,22 @@ class TechnicalIndicators():
         self.stock['roc'] = ta.ROC(self.close)
         return self.stock
 
+    def get_stoch(self,
+                  fastk_period=5, slowk_period=3,
+                  slowk_matype=0, slowd_period=3,
+                  slowd_matype=0):
+        stoch = ta.STOCH(self.high,
+                         self.low,
+                         self.close,
+                         fastk_period=fastk_period,
+                         slowk_period=slowk_period,
+                         slowk_matype=slowk_matype,
+                         slowd_period=slowd_period,
+                         slowd_matype=slowd_matype)
+        self.stock['slowk'] = stoch[0]
+        self.stock['slowd'] = stoch[1]
+        return self.stock
+
     def get_macd(self):
         macd, macdsignal, macdhist = ta.MACD(
             self.close,

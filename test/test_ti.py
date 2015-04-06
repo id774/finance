@@ -77,6 +77,23 @@ def test_get_roc():
     eq_(expected, result)
     return roc
 
+def test_get_stoch():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    stoch = ti.get_stoch()
+
+    expected = 93.79
+    result = stoch.ix['2015-03-20', 'slowk']
+    result = round(result, 2)
+    eq_(expected, result)
+
+    expected = 93.32
+    result = stoch.ix['2015-03-20', 'slowd']
+    result = round(result, 2)
+    eq_(expected, result)
+
+    return stoch
+
 def test_get_macd():
     stock = testdata()
     ti = TechnicalIndicators(stock)
@@ -134,6 +151,8 @@ if __name__ == '__main__':
     sma = test_get_sma()
     ewma = test_get_ewma()
     rsi = test_get_rsi()
+    roc = test_get_roc()
+    stoch = test_get_stoch()
     macd = test_get_macd()
     momentum = test_get_momentum()
     bbands = test_get_bbands()
@@ -143,6 +162,10 @@ if __name__ == '__main__':
     stock = pd.merge(stock, ewma,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, rsi,
+                     left_index=True, right_index=True)
+    stock = pd.merge(stock, roc,
+                     left_index=True, right_index=True)
+    stock = pd.merge(stock, stoch,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, macd,
                      left_index=True, right_index=True)
