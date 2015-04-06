@@ -45,11 +45,15 @@ class Draw():
         plt.savefig("".join(["ohlc_", self.stock, ".png"]))
         plt.close()
 
-    def plot_osci(self, rsi, ret):
+    def plot_osci(self, ret, rsi, stoch, stochf):
         plt.figure()
+        ret['ret_index'].plot(label="RET_INDEX")
         rsi['rsi9'].plot(label="RSI9")
         rsi['rsi14'].plot(label="RSI14")
-        ret['ret_index'].plot(label="RET_INDEX")
+        stoch['slowk'].plot(label="SLOWK")
+        stoch['slowd'].plot(label="SLOWD")
+        stochf['fastk'].plot(label="FASTK")
+        stochf['fastd'].plot(label="FASTD")
         plt.subplots_adjust(bottom=0.20)
         ret_index = round(ret.ix[-1:, 'ret_index'][0], 2)
         plt.xlabel("".join(

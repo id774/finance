@@ -77,14 +77,16 @@ class Analysis():
             draw = Draw(self.stock, self.name)
             draw.plot_ohlc(stock_d, ewma, bbands)
 
+            ret = ti.get_ret_index()
+            ret['ret_index'] = ret['ret_index'] * 100
             rsi = ti.get_rsi(timeperiod=9)
             rsi = ti.get_rsi(timeperiod=14)
+            stoch = ti.get_stoch()
+            stochf = ti.get_stochf()
             ti.get_macd()
             ti.get_momentum(timeperiod=10)
             ti.get_momentum(timeperiod=25)
-            ret = ti.get_ret_index()
-            ret['ret_index'] = ret['ret_index'] * 100
-            draw.plot_osci(rsi, ret)
+            draw.plot_osci(ret, rsi, stoch, stochf)
 
             io.save_data(io.merge_df(stock_d, ti.stock),
                          self.stock, 'ti_')
