@@ -44,10 +44,12 @@ def test_plot_osci():
     draw = Draw("N225", "日経平均株価")
 
     ti = TechnicalIndicators(stock)
+    ret = ti.get_ret_index()
     rsi = ti.get_rsi(timeperiod=9)
     rsi = ti.get_rsi(timeperiod=14)
-    ret = ti.get_ret_index()
-    draw.plot_osci(rsi, ret)
+    stoch = ti.get_stoch()
+    stochf = ti.get_stochf()
+    draw.plot_osci(ret, rsi, stoch, stochf)
 
     filename = 'osci_N225.png'
     expected = True
