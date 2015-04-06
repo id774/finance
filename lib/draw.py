@@ -52,8 +52,8 @@ class Draw():
         rsi['rsi14'].plot(label="RSI14")
         stoch['slowk'].plot(label="SLOWK")
         stoch['slowd'].plot(label="SLOWD")
-        stochf['fastk'].plot(label="FASTK")
-        stochf['fastd'].plot(label="FASTD")
+        # stochf['fastk'].plot(label="FASTK")
+        # stochf['fastd'].plot(label="FASTD")
         plt.subplots_adjust(bottom=0.20)
         ret_index = round(ret.ix[-1:, 'ret_index'][0], 2)
         plt.xlabel("".join(
