@@ -55,6 +55,19 @@ class TechnicalIndicators():
         self.stock['slowd'] = stoch[1]
         return self.stock
 
+    def get_stochf(self,
+                   fastk_period=5, fastd_period=3,
+                   fastd_matype=0):
+        stochf = ta.STOCHF(self.high,
+                           self.low,
+                           self.close,
+                           fastk_period=fastk_period,
+                           fastd_period=fastd_period,
+                           fastd_matype=fastd_matype)
+        self.stock['fastk'] = stochf[0]
+        self.stock['fastd'] = stochf[1]
+        return self.stock
+
     def get_macd(self):
         macd, macdsignal, macdhist = ta.MACD(
             self.close,

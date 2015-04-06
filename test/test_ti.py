@@ -94,6 +94,23 @@ def test_get_stoch():
 
     return stoch
 
+def test_get_stochf():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    stochf = ti.get_stochf()
+
+    expected = 98.46
+    result = stochf.ix['2015-03-20', 'fastk']
+    result = round(result, 2)
+    eq_(expected, result)
+
+    expected = 93.79
+    result = stochf.ix['2015-03-20', 'fastd']
+    result = round(result, 2)
+    eq_(expected, result)
+
+    return stochf
+
 def test_get_macd():
     stock = testdata()
     ti = TechnicalIndicators(stock)
@@ -153,6 +170,7 @@ if __name__ == '__main__':
     rsi = test_get_rsi()
     roc = test_get_roc()
     stoch = test_get_stoch()
+    stochf = test_get_stochf()
     macd = test_get_macd()
     momentum = test_get_momentum()
     bbands = test_get_bbands()
@@ -166,6 +184,8 @@ if __name__ == '__main__':
     stock = pd.merge(stock, roc,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, stoch,
+                     left_index=True, right_index=True)
+    stock = pd.merge(stock, stochf,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, macd,
                      left_index=True, right_index=True)
