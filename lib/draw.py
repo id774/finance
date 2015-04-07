@@ -28,12 +28,12 @@ class Draw():
         # sma['sma5'].plot(label="SMA5")
         # sma['sma25'].plot(label="SMA25")
         # sma['sma75'].plot(label="SMA75")
-        ewma['ewma5'].plot(label="EWMA5")
-        ewma['ewma25'].plot(label="EWMA25")
-        ewma['ewma75'].plot(label="EWMA75")
-        bbands['upperband'].plot(label="UPPER")
-        bbands['middleband'].plot(label="MIDDLE")
-        bbands['lowerband'].plot(label="LOWER")
+        ewma['ewma5'].plot(label="EWMA5", color="b")
+        ewma['ewma25'].plot(label="EWMA25", color="g")
+        ewma['ewma75'].plot(label="EWMA75", color="r")
+        bbands['upperband'].plot(label="UPPER", color="c")
+        bbands['middleband'].plot(label="MIDDLE", color="m")
+        bbands['lowerband'].plot(label="LOWER", color="y")
         plt.subplots_adjust(bottom=0.20)
         closed = stock_d.ix[-1:, 'Adj Close'][0]
         plt.xlabel("".join(
