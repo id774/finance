@@ -201,7 +201,7 @@ def test_calc_volume_ratio():
     ti = TechnicalIndicators(stock)
     vr = ti.calc_volume_ratio()
 
-    expected = 99.57
+    expected = 43.68
     result = vr.ix['2015-03-19', 'v_ratio']
     result = round(result, 2)
     eq_(expected, result)

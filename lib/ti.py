@@ -118,7 +118,7 @@ class TechnicalIndicators():
         return self.stock
 
     def calc_volume_ratio(self):
-        self.stock['v_ratio'] = (self.close /
-                                 self.close.max()
+        self.stock['v_ratio'] = (self.volume /
+                                 self.volume.max()
                                  * 100)
         return self.stock
