@@ -24,11 +24,11 @@ class Draw():
         plotting._plot_klass['ohlc'] = OhlcPlot
 
         plt.figure()
-        stock_d.plot(kind='ohlc', colorup='r', colordown='k')
+        stock_d.plot(kind='ohlc', colorup='r', colordown='b')
         # sma['sma5'].plot(label="SMA5")
         # sma['sma25'].plot(label="SMA25")
         # sma['sma75'].plot(label="SMA75")
-        ewma['ewma5'].plot(label="EWMA5", color="b")
+        ewma['ewma5'].plot(label="EWMA5", color="k")
         ewma['ewma25'].plot(label="EWMA25", color="g")
         ewma['ewma75'].plot(label="EWMA75", color="r")
         bbands['upperband'].plot(label="UPPER", color="c")
