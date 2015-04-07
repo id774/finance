@@ -26,11 +26,13 @@ class OhlcPlot(plotting.LinePlot):
         data = data[['Open', 'Close', 'High', 'Low']]
         plotting.LinePlot.__init__(self, data, **kwargs)
 
-    def _get_plot_function(self):
-        from matplotlib.finance import candlestick
+    def _get_plot_function(self, **kwargs):
+        from matplotlib.finance import candlestick_ochl
 
         def _plot(data, ax, **kwds):
-            candles = candlestick(ax, data.values, **kwds)
+            print(**kwds)
+            candles = candlestick_ochl(ax, data.values,
+                                       **kwds)
             return candles
         return _plot
 
