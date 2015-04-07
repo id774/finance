@@ -20,12 +20,12 @@ def testdata():
                             index_col=0, parse_dates=True)
     return stock_tse.asfreq('B')[days:]
 
-def test_get_sma():
+def test_calc_sma():
     stock = testdata()
     ti = TechnicalIndicators(stock)
-    sma = ti.get_sma()
-    sma = ti.get_sma(timeperiod=25)
-    sma = ti.get_sma(timeperiod=75)
+    sma = ti.calc_sma()
+    sma = ti.calc_sma(timeperiod=25)
+    sma = ti.calc_sma(timeperiod=75)
 
     expected = [19453.,
                 18791.,
@@ -37,12 +37,12 @@ def test_get_sma():
     eq_(expected, result)
     return sma
 
-def test_get_ewma():
+def test_calc_ewma():
     stock = testdata()
     ti = TechnicalIndicators(stock)
-    ewma = ti.get_ewma()
-    ewma = ti.get_ewma(span=25)
-    ewma = ti.get_ewma(span=75)
+    ewma = ti.calc_ewma()
+    ewma = ti.calc_ewma(span=25)
+    ewma = ti.calc_ewma(span=75)
 
     expected = [19429.,
                 18821.,
@@ -55,10 +55,10 @@ def test_get_ewma():
     result = [round(x, 0) for x in result]
     return ewma
 
-def test_get_rsi():
+def test_calc_rsi():
     stock = testdata()
     ti = TechnicalIndicators(stock)
-    rsi = ti.get_rsi(timeperiod=14)
+    rsi = ti.calc_rsi(timeperiod=14)
 
     expected = 74.98
     result = rsi.ix['2015-03-20', 'rsi14']
@@ -66,10 +66,10 @@ def test_get_rsi():
     eq_(expected, result)
     return rsi
 
-def test_get_mfi():
+def test_calc_mfi():
     stock = testdata()
     ti = TechnicalIndicators(stock)
-    mfi = ti.get_mfi()
+    mfi = ti.calc_mfi()
 
     expected = 62.47
     result = mfi.ix['2015-03-20', 'mfi']
@@ -77,10 +77,10 @@ def test_get_mfi():
     eq_(expected, result)
     return mfi
 
-def test_get_roc():
+def test_calc_roc():
     stock = testdata()
     ti = TechnicalIndicators(stock)
-    roc = ti.get_roc()
+    roc = ti.calc_roc()
 
     expected = 3.11
     result = roc.ix['2015-03-20', 'roc']
@@ -88,10 +88,10 @@ def test_get_roc():
     eq_(expected, result)
     return roc
 
-def test_get_cci():
+def test_calc_cci():
     stock = testdata()
     ti = TechnicalIndicators(stock)
-    cci = ti.get_cci()
+    cci = ti.calc_cci()
 
     expected = 104.27
     result = cci.ix['2015-03-20', 'cci']
@@ -99,10 +99,10 @@ def test_get_cci():
     eq_(expected, result)
     return cci
 
-def test_get_ultosc():
+def test_calc_ultosc():
     stock = testdata()
     ti = TechnicalIndicators(stock)
-    ultosc = ti.get_ultosc()
+    ultosc = ti.calc_ultosc()
 
     expected = 72.56
     result = ultosc.ix['2015-03-20', 'ultosc']
@@ -110,10 +110,10 @@ def test_get_ultosc():
     eq_(expected, result)
     return ultosc
 
-def test_get_stoch():
+def test_calc_stoch():
     stock = testdata()
     ti = TechnicalIndicators(stock)
-    stoch = ti.get_stoch()
+    stoch = ti.calc_stoch()
 
     expected = 93.79
     result = stoch.ix['2015-03-20', 'slowk']
@@ -127,10 +127,10 @@ def test_get_stoch():
 
     return stoch
 
-def test_get_stochf():
+def test_calc_stochf():
     stock = testdata()
     ti = TechnicalIndicators(stock)
-    stochf = ti.get_stochf()
+    stochf = ti.calc_stochf()
 
     expected = 98.46
     result = stochf.ix['2015-03-20', 'fastk']
@@ -144,10 +144,10 @@ def test_get_stochf():
 
     return stochf
 
-def test_get_macd():
+def test_calc_macd():
     stock = testdata()
     ti = TechnicalIndicators(stock)
-    macd = ti.get_macd()
+    macd = ti.calc_macd()
 
     expected = [383.,
                 346.,
@@ -159,10 +159,10 @@ def test_get_macd():
     eq_(expected, result)
     return macd
 
-def test_get_momentum():
+def test_calc_momentum():
     stock = testdata()
     ti = TechnicalIndicators(stock)
-    mom = ti.get_momentum(timeperiod=10)
+    mom = ti.calc_momentum(timeperiod=10)
 
     expected = 589.22
     result = mom.ix['2015-03-20', 'mom10']
@@ -170,10 +170,10 @@ def test_get_momentum():
     eq_(expected, result)
     return mom
 
-def test_get_bbands():
+def test_calc_bbands():
     stock = testdata()
     ti = TechnicalIndicators(stock)
-    bbands = ti.get_bbands()
+    bbands = ti.calc_bbands()
 
     expected = [19661.0,
                 19436.0,
@@ -185,10 +185,10 @@ def test_get_bbands():
     eq_(expected, result)
     return bbands
 
-def test_get_ret_index():
+def test_calc_ret_index():
     stock = testdata()
     ti = TechnicalIndicators(stock)
-    ret_index = ti.get_ret_index()
+    ret_index = ti.calc_ret_index()
 
     expected = 1.36
     result = ret_index.ix['2015-03-20', 'ret_index']
@@ -198,19 +198,19 @@ def test_get_ret_index():
 
 if __name__ == '__main__':
     stock = testdata()
-    sma = test_get_sma()
-    ewma = test_get_ewma()
-    rsi = test_get_rsi()
-    mfi = test_get_mfi()
-    roc = test_get_roc()
-    cci = test_get_cci()
-    ultosc = test_get_ultosc()
-    stoch = test_get_stoch()
-    stochf = test_get_stochf()
-    macd = test_get_macd()
-    momentum = test_get_momentum()
-    bbands = test_get_bbands()
-    ret_index = test_get_ret_index()
+    sma = test_calc_sma()
+    ewma = test_calc_ewma()
+    rsi = test_calc_rsi()
+    mfi = test_calc_mfi()
+    roc = test_calc_roc()
+    cci = test_calc_cci()
+    ultosc = test_calc_ultosc()
+    stoch = test_calc_stoch()
+    stochf = test_calc_stochf()
+    macd = test_calc_macd()
+    momentum = test_calc_momentum()
+    bbands = test_calc_bbands()
+    ret_index = test_calc_ret_index()
     stock = pd.merge(stock, sma,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, ewma,

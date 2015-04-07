@@ -26,10 +26,10 @@ def test_plot_ohlc():
     draw = Draw("N225", "日経平均株価")
 
     ti = TechnicalIndicators(stock)
-    ewma = ti.get_ewma(span=5)
-    ewma = ti.get_ewma(span=25)
-    ewma = ti.get_ewma(span=75)
-    bbands = ti.get_bbands()
+    ewma = ti.calc_ewma(span=5)
+    ewma = ti.calc_ewma(span=25)
+    ewma = ti.calc_ewma(span=75)
+    bbands = ti.calc_bbands()
     draw.plot_ohlc(stock, ewma, bbands)
 
     filename = 'ohlc_N225.png'
@@ -44,13 +44,13 @@ def test_plot_osci():
     draw = Draw("N225", "日経平均株価")
 
     ti = TechnicalIndicators(stock)
-    ret = ti.get_ret_index()
-    rsi = ti.get_rsi(timeperiod=9)
-    rsi = ti.get_rsi(timeperiod=14)
-    mfi = ti.get_mfi()
-    ultosc = ti.get_ultosc()
-    stoch = ti.get_stoch()
-    stochf = ti.get_stochf()
+    ret = ti.calc_ret_index()
+    rsi = ti.calc_rsi(timeperiod=9)
+    rsi = ti.calc_rsi(timeperiod=14)
+    mfi = ti.calc_mfi()
+    ultosc = ti.calc_ultosc()
+    stoch = ti.calc_stoch()
+    stochf = ti.calc_stochf()
     draw.plot_osci(ret, rsi, mfi, ultosc,
                    stoch, stochf)
 

@@ -18,50 +18,50 @@ class TechnicalIndicators():
     def _to_nparray(self, s):
         return np.array(s.dropna(), dtype='f8')
 
-    def get_sma(self, timeperiod=5):
+    def calc_sma(self, timeperiod=5):
         column = 'sma' + str(timeperiod)
         self.stock[column] = ta.SMA(self.close,
                                     timeperiod=timeperiod)
         return self.stock
 
-    def get_ewma(self, span=5):
+    def calc_ewma(self, span=5):
         column = 'ewma' + str(span)
         self.stock[column] = ewma(self.close, span=span)
         return self.stock
 
-    def get_rsi(self, timeperiod=14):
+    def calc_rsi(self, timeperiod=14):
         column = 'rsi' + str(timeperiod)
         self.stock[column] = ta.RSI(self.close,
                                     timeperiod=timeperiod)
         return self.stock
 
-    def get_mfi(self):
+    def calc_mfi(self):
         self.stock['mfi'] = ta.MFI(self.high,
                                    self.low,
                                    self.close,
                                    self.volume)
         return self.stock
 
-    def get_roc(self):
+    def calc_roc(self):
         self.stock['roc'] = ta.ROC(self.close)
         return self.stock
 
-    def get_cci(self):
+    def calc_cci(self):
         self.stock['cci'] = ta.CCI(self.high,
                                    self.low,
                                    self.close)
         return self.stock
 
-    def get_ultosc(self):
+    def calc_ultosc(self):
         self.stock['ultosc'] = ta.ULTOSC(self.high,
                                          self.low,
                                          self.close)
         return self.stock
 
-    def get_stoch(self,
-                  fastk_period=5, slowk_period=3,
-                  slowk_matype=0, slowd_period=3,
-                  slowd_matype=0):
+    def calc_stoch(self,
+                   fastk_period=5, slowk_period=3,
+                   slowk_matype=0, slowd_period=3,
+                   slowd_matype=0):
         stoch = ta.STOCH(self.high,
                          self.low,
                          self.close,
@@ -74,9 +74,9 @@ class TechnicalIndicators():
         self.stock['slowd'] = stoch[1]
         return self.stock
 
-    def get_stochf(self,
-                   fastk_period=5, fastd_period=3,
-                   fastd_matype=0):
+    def calc_stochf(self,
+                    fastk_period=5, fastd_period=3,
+                    fastd_matype=0):
         stochf = ta.STOCHF(self.high,
                            self.low,
                            self.close,
@@ -87,7 +87,7 @@ class TechnicalIndicators():
         self.stock['fastd'] = stochf[1]
         return self.stock
 
-    def get_macd(self):
+    def calc_macd(self):
         macd, macdsignal, macdhist = ta.MACD(
             self.close,
             fastperiod=12, slowperiod=26, signalperiod=9)
@@ -96,13 +96,13 @@ class TechnicalIndicators():
         self.stock['macdhist'] = macdhist
         return self.stock
 
-    def get_momentum(self, timeperiod=10):
+    def calc_momentum(self, timeperiod=10):
         column = 'mom' + str(timeperiod)
         self.stock[column] = ta.MOM(
             self.close, timeperiod=timeperiod)
         return self.stock
 
-    def get_bbands(self):
+    def calc_bbands(self):
         upperband, middleband, lowerband = ta.BBANDS(
             self.close, matype=MA_Type.T3)
         self.stock['upperband'] = upperband
@@ -110,7 +110,7 @@ class TechnicalIndicators():
         self.stock['lowerband'] = lowerband
         return self.stock
 
-    def get_ret_index(self):
+    def calc_ret_index(self):
         returns = pd.Series(self.close).pct_change()
         ret_index = (1 + returns).cumprod()
         ret_index[0] = 1
