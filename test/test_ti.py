@@ -88,6 +88,17 @@ def test_get_cci():
     eq_(expected, result)
     return cci
 
+def test_get_ultosc():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    ultosc = ti.get_ultosc()
+
+    expected = 72.56
+    result = ultosc.ix['2015-03-20', 'ultosc']
+    result = round(result, 2)
+    eq_(expected, result)
+    return ultosc
+
 def test_get_stoch():
     stock = testdata()
     ti = TechnicalIndicators(stock)

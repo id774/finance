@@ -39,6 +39,18 @@ class TechnicalIndicators():
         self.stock['roc'] = ta.ROC(self.close)
         return self.stock
 
+    def get_cci(self):
+        self.stock['cci'] = ta.CCI(self.high,
+                                   self.low,
+                                   self.close)
+        return self.stock
+
+    def get_ultosc(self):
+        self.stock['ultosc'] = ta.ULTOSC(self.high,
+                                         self.low,
+                                         self.close)
+        return self.stock
+
     def get_stoch(self,
                   fastk_period=5, slowk_period=3,
                   slowk_matype=0, slowd_period=3,
@@ -66,12 +78,6 @@ class TechnicalIndicators():
                            fastd_matype=fastd_matype)
         self.stock['fastk'] = stochf[0]
         self.stock['fastd'] = stochf[1]
-        return self.stock
-
-    def get_cci(self):
-        self.stock['cci'] = ta.CCI(self.high,
-                                   self.low,
-                                   self.close)
         return self.stock
 
     def get_macd(self):
