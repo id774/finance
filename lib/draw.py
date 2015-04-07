@@ -24,7 +24,7 @@ class Draw():
         plotting._plot_klass['ohlc'] = OhlcPlot
 
         plt.figure()
-        stock_d.plot(kind='ohlc')
+        stock_d.plot(kind='ohlc', colorup='r', colordown='k')
         # sma['sma5'].plot(label="SMA5")
         # sma['sma25'].plot(label="SMA25")
         # sma['sma75'].plot(label="SMA75")
