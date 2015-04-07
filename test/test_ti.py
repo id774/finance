@@ -201,7 +201,10 @@ if __name__ == '__main__':
     sma = test_get_sma()
     ewma = test_get_ewma()
     rsi = test_get_rsi()
+    mfi = test_get_mfi()
     roc = test_get_roc()
+    cci = test_get_cci()
+    ultosc = test_get_ultosc()
     stoch = test_get_stoch()
     stochf = test_get_stochf()
     macd = test_get_macd()
@@ -214,7 +217,13 @@ if __name__ == '__main__':
                      left_index=True, right_index=True)
     stock = pd.merge(stock, rsi,
                      left_index=True, right_index=True)
+    stock = pd.merge(stock, mfi,
+                     left_index=True, right_index=True)
     stock = pd.merge(stock, roc,
+                     left_index=True, right_index=True)
+    stock = pd.merge(stock, cci,
+                     left_index=True, right_index=True)
+    stock = pd.merge(stock, ultosc,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, stoch,
                      left_index=True, right_index=True)

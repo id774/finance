@@ -47,9 +47,12 @@ def test_plot_osci():
     ret = ti.get_ret_index()
     rsi = ti.get_rsi(timeperiod=9)
     rsi = ti.get_rsi(timeperiod=14)
+    mfi = ti.get_mfi()
+    ultosc = ti.get_ultosc()
     stoch = ti.get_stoch()
     stochf = ti.get_stochf()
-    draw.plot_osci(ret, rsi, stoch, stochf)
+    draw.plot_osci(ret, rsi, mfi, ultosc,
+                   stoch, stochf)
 
     filename = 'osci_N225.png'
     expected = True
