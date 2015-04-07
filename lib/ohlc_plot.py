@@ -30,7 +30,6 @@ class OhlcPlot(plotting.LinePlot):
         from matplotlib.finance import candlestick_ochl
 
         def _plot(data, ax, **kwds):
-            print(**kwds)
             candles = candlestick_ochl(ax, data.values,
                                        **kwds)
             return candles
