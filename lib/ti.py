@@ -68,6 +68,12 @@ class TechnicalIndicators():
         self.stock['fastd'] = stochf[1]
         return self.stock
 
+    def get_cci(self):
+        self.stock['cci'] = ta.CCI(self.high,
+                                   self.low,
+                                   self.close)
+        return self.stock
+
     def get_macd(self):
         macd, macdsignal, macdhist = ta.MACD(
             self.close,

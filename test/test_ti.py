@@ -77,6 +77,17 @@ def test_get_roc():
     eq_(expected, result)
     return roc
 
+def test_get_cci():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    cci = ti.get_cci()
+
+    expected = 104.27
+    result = cci.ix['2015-03-20', 'cci']
+    result = round(result, 2)
+    eq_(expected, result)
+    return cci
+
 def test_get_stoch():
     stock = testdata()
     ti = TechnicalIndicators(stock)
