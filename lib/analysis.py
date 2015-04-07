@@ -90,8 +90,9 @@ class Analysis():
             ti.calc_macd()
             ti.calc_momentum(timeperiod=10)
             ti.calc_momentum(timeperiod=25)
+            vr = ti.calc_volume_ratio()
             draw.plot_osci(ret, rsi, mfi, ultosc,
-                           stoch, stochf)
+                           stoch, stochf, vr)
 
             io.save_data(io.merge_df(stock_d, ti.stock),
                          self.stock, 'ti_')

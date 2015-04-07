@@ -196,6 +196,17 @@ def test_calc_ret_index():
     eq_(expected, result)
     return ret_index
 
+def test_calc_volume_ratio():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    vr = ti.calc_volume_ratio()
+
+    expected = 99.57
+    result = vr.ix['2015-03-19', 'v_ratio']
+    result = round(result, 2)
+    eq_(expected, result)
+    return vr
+
 if __name__ == '__main__':
     stock = testdata()
     sma = test_calc_sma()
@@ -211,6 +222,7 @@ if __name__ == '__main__':
     momentum = test_calc_momentum()
     bbands = test_calc_bbands()
     ret_index = test_calc_ret_index()
+    vr = test_calc_volume_ratio()
     stock = pd.merge(stock, sma,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, ewma,
@@ -236,5 +248,7 @@ if __name__ == '__main__':
     stock = pd.merge(stock, bbands,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, ret_index,
+                     left_index=True, right_index=True)
+    stock = pd.merge(stock, vr,
                      left_index=True, right_index=True)
     print(stock.tail(10))

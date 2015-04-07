@@ -51,8 +51,9 @@ def test_plot_osci():
     ultosc = ti.calc_ultosc()
     stoch = ti.calc_stoch()
     stochf = ti.calc_stochf()
+    vr = ti.calc_volume_ratio()
     draw.plot_osci(ret, rsi, mfi, ultosc,
-                   stoch, stochf)
+                   stoch, stochf, vr)
 
     filename = 'osci_N225.png'
     expected = True

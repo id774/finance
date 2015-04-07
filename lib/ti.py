@@ -116,3 +116,9 @@ class TechnicalIndicators():
         ret_index[0] = 1
         self.stock['ret_index'] = ret_index.values
         return self.stock
+
+    def calc_volume_ratio(self):
+        self.stock['v_ratio'] = (self.close /
+                                 self.close.max()
+                                 * 100)
+        return self.stock

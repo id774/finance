@@ -46,15 +46,16 @@ class Draw():
         plt.close()
 
     def plot_osci(self, ret, rsi, mfi, ultosc,
-                  stoch, stochf):
+                  stoch, stochf, vr):
         plt.figure()
-        ret['ret_index'].plot(label="RET_INDEX")
-        rsi['rsi9'].plot(label="RSI9")
-        rsi['rsi14'].plot(label="RSI14")
-        rsi['mfi'].plot(label="MFI")
-        rsi['ultosc'].plot(label="UTLOSC")
-        stoch['slowk'].plot(label="SLOWK")
-        stoch['slowd'].plot(label="SLOWD")
+        ret['ret_index'].plot(label="RET_INDEX", color="b")
+        rsi['rsi9'].plot(label="RSI9", color="g")
+        rsi['rsi14'].plot(label="RSI14", color="r")
+        rsi['mfi'].plot(label="MFI", color="c")
+        rsi['ultosc'].plot(label="UTLOSC", color="m")
+        stoch['slowk'].plot(label="SLOWK", color="y")
+        stoch['slowd'].plot(label="SLOWD", color="k")
+        vr['v_ratio'].plot(label="VOLUME", color="#00DDFF")
         # stochf['fastk'].plot(label="FASTK")
         # stochf['fastd'].plot(label="FASTD")
         plt.subplots_adjust(bottom=0.20)
