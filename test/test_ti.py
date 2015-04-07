@@ -66,6 +66,17 @@ def test_get_rsi():
     eq_(expected, result)
     return rsi
 
+def test_get_mfi():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    mfi = ti.get_mfi()
+
+    expected = 62.47
+    result = mfi.ix['2015-03-20', 'mfi']
+    result = round(result, 2)
+    eq_(expected, result)
+    return mfi
+
 def test_get_roc():
     stock = testdata()
     ti = TechnicalIndicators(stock)

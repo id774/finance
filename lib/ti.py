@@ -35,6 +35,13 @@ class TechnicalIndicators():
                                     timeperiod=timeperiod)
         return self.stock
 
+    def get_mfi(self):
+        self.stock['mfi'] = ta.MFI(self.high,
+                                   self.low,
+                                   self.close,
+                                   self.volume)
+        return self.stock
+
     def get_roc(self):
         self.stock['roc'] = ta.ROC(self.close)
         return self.stock
