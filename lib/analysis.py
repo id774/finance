@@ -75,7 +75,6 @@ class Analysis():
             ewma = ti.calc_ewma(span=75)
             bbands = ti.calc_bbands()
             draw = Draw(self.stock, self.name)
-            draw.plot_ohlc(stock_d, ewma, bbands)
 
             ret = ti.calc_ret_index()
             ret['ret_index'] = ret['ret_index'] * 100
@@ -91,8 +90,10 @@ class Analysis():
             ti.calc_momentum(timeperiod=10)
             ti.calc_momentum(timeperiod=25)
             vr = ti.calc_volume_ratio()
-            draw.plot_osci(ret, rsi, mfi, ultosc,
-                           stoch, stochf, vr)
+
+            draw.plot(stock_d, ewma, bbands,
+                      ret, rsi, mfi, ultosc,
+                      stoch, stochf, vr)
 
             io.save_data(io.merge_df(stock_d, ti.stock),
                          self.stock, 'ti_')
