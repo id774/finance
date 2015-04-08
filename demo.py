@@ -7,6 +7,7 @@ if p in sys.path:
 else:
     sys.path.append(p)
 from analysis import Analysis
+from ti import TechnicalIndicators
 
 def demo(stock='N225',
          name='TESTDATA',
@@ -14,10 +15,15 @@ def demo(stock='N225',
          days=120,
          csvfile=os.path.join('test', 'stock_N225.csv'),
          update=False):
+
+        """ Demo function. Returns df, ti """
+
         analysis = Analysis(stock=stock,
                             name=name,
                             start=start,
                             days=days,
                             csvfile=csvfile,
                             update=True)
-        return analysis.run()
+        df = analysis.run()
+        ti = TechnicalIndicators(df)
+        return df, ti
