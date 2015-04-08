@@ -59,20 +59,6 @@ def main():
                             update=options.update)
         return analysis.run()
 
-def demo(stock='N225',
-         name='TESTDATA',
-         start='2014-01-01',
-         days=120,
-         csvfile=os.path.join('test', 'stock_N225.csv'),
-         update=False):
-        analysis = Analysis(stock=stock,
-                            name=name,
-                            start=start,
-                            days=days,
-                            csvfile=csvfile,
-                            update=True)
-        return analysis.run()
-
 if __name__ == '__main__':
     argsmin = 0
     version = (3, 0)
