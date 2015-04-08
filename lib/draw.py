@@ -26,7 +26,7 @@ class Draw():
         plotting._common_kinds.append('ohlc')
         plotting._plot_klass['ohlc'] = OhlcPlot
 
-        fig = plt.figure(figsize=(12.80, 10.24))
+        fig = plt.figure(figsize=(10.24, 7.68))
 
         ax1 = fig.add_subplot(2, 1, 1)
         ret['ret_index'].plot(label="RET_INDEX",
