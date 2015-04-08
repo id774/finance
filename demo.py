@@ -13,17 +13,19 @@ def demo(stock='N225',
          name='TESTDATA',
          start='2014-01-01',
          days=120,
-         csvfile=os.path.join('test', 'stock_N225.csv'),
+         csvfile=os.path.join(os.path.dirname(
+             os.path.abspath(__file__)),
+             'test',
+             'stock_N225.csv'),
          update=False):
+    """ Demo function. Returns df, ti """
 
-        """ Demo function. Returns df, ti """
-
-        analysis = Analysis(stock=stock,
-                            name=name,
-                            start=start,
-                            days=days,
-                            csvfile=csvfile,
-                            update=True)
-        df = analysis.run()
-        ti = TechnicalIndicators(df)
-        return df, ti
+    analysis = Analysis(stock=stock,
+                        name=name,
+                        start=start,
+                        days=days,
+                        csvfile=csvfile,
+                        update=True)
+    df = analysis.run()
+    ti = TechnicalIndicators(df)
+    return df, ti
