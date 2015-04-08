@@ -65,10 +65,10 @@ if __name__ == '__main__':
     if sys.version_info > (version):
         if len(sys.argv) > argsmin:
             result = main()
-            if result.empty:
-                sys.exit(1)
-            else:
+            if result:
                 sys.exit(0)
+            else:
+                sys.exit(1)
         else:
             print("This program needs at least %(argsmin)s arguments" %
                   locals())

@@ -7,6 +7,7 @@ from pandas.stats.moments import ewma
 class TechnicalIndicators():
 
     def __init__(self, stock, **kwargs):
+        self.stock_raw = stock
         ts = stock.asfreq('B')['Adj Close'].dropna()
         self.stock = pd.DataFrame(index=ts.index.values)
         self.open = self._to_nparray(stock.asfreq('B')['Open'])
