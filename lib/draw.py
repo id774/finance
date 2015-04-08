@@ -70,30 +70,36 @@ class Draw():
                                  color="y", ax=ax2)
         plt.legend(loc="best")
 
-        ret_index = round(ret.ix[-1, 'ret_index'])
-        closed = int(stock_d.ix[-1, 'Adj Close'])
-        open = int(stock_d.ix[-1, 'Open'])
-        high = int(stock_d.ix[-1, 'High'])
-        low = int(stock_d.ix[-1, 'Low'])
-        stock_max = int(stock_d.ix[:, 'High'].max())
-        stock_min = int(stock_d.ix[:, 'Low'].min())
+        _ret_index = round(ret.ix[-1, 'ret_index'], 2)
+        _volume = int(stock_d.ix[-1, 'Volume'])
+        _open = int(stock_d.ix[-1, 'Open'])
+        _high = int(stock_d.ix[-1, 'High'])
+        _low = int(stock_d.ix[-1, 'Low'])
+        _close = int(stock_d.ix[-1, 'Adj Close'])
+        _last_close = int(stock_d.ix[-2, 'Adj Close'])
+        _stock_max = int(stock_d.ix[:, 'High'].max())
+        _stock_min = int(stock_d.ix[:, 'Low'].min())
 
         plt.xlabel("".join(
                    [self.name, '(', self.stock, ') ',
-                    ' 始:',
-                    str(open),
+                    "\nリターン:",
+                    str(_ret_index),
+                    ' 出来高:',
+                    str(_volume),
+                    "\n始:",
+                    str(_open),
                     ' 高:',
-                    str(high),
+                    str(_high),
                     ' 安:',
-                    str(low),
+                    str(_low),
                     ' 終:',
-                    str(closed),
-                    ' 最高:',
-                    str(stock_max),
+                    str(_close),
+                    "\n最高:",
+                    str(_stock_max),
                     ' 最安:',
-                    str(stock_min),
-                    ' リターン:',
-                    str(ret_index)
+                    str(_stock_min),
+                    ' 前終:',
+                    str(_last_close)
                     ]),
                    fontdict={"fontproperties": self.fontprop})
         plt.legend(loc="best")
