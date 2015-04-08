@@ -85,7 +85,7 @@ class Analysis():
             ti.calc_cci()
             ultosc = ti.calc_ultosc()
             stoch = ti.calc_stoch()
-            stochf = ti.calc_stochf()
+            ti.calc_stochf()
             ti.calc_macd()
             ti.calc_momentum(timeperiod=10)
             ti.calc_momentum(timeperiod=25)
@@ -93,7 +93,7 @@ class Analysis():
 
             draw.plot(stock_d, ewma, bbands,
                       ret, rsi, mfi, ultosc,
-                      stoch, stochf, vr)
+                      stoch, vr)
 
             io.save_data(io.merge_df(stock_d, ti.stock),
                          self.stock, 'ti_')

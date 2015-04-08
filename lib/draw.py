@@ -20,7 +20,7 @@ class Draw():
 
     def plot(self, stock_d, ewma, bbands,
              ret, rsi, mfi, ultosc,
-             stoch, stochf, vr):
+             stoch, vr):
 
         plotting._all_kinds.append('ohlc')
         plotting._common_kinds.append('ohlc')

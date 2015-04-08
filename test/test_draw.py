@@ -33,7 +33,6 @@ def plot_ohlc():
     mfi = ti.calc_mfi()
     ultosc = ti.calc_ultosc()
     stoch = ti.calc_stoch()
-    stochf = ti.calc_stochf()
     vr = ti.calc_volume_ratio()
 
     ewma = ti.calc_ewma(span=5)
@@ -43,7 +42,7 @@ def plot_ohlc():
 
     draw.plot(stock, ewma, bbands,
               ret, rsi, mfi, ultosc,
-              stoch, stochf, vr)
+              stoch, vr)
 
     filename = 'chart_N225.png'
     expected = True
