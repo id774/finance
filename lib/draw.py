@@ -55,7 +55,8 @@ class Draw():
         rsi['ultosc'].plot(label="UTLOSC", color="m")
         stoch['slowk'].plot(label="SLOWK", color="y")
         stoch['slowd'].plot(label="SLOWD", color="k")
-        vr['v_ratio'].plot(label="VOLUME", color="#00DDFF")
+        vr['v_ratio'].plot(label="VOLUME",
+                           color="#BBFFFF", kind='area')
         # stochf['fastk'].plot(label="FASTK")
         # stochf['fastd'].plot(label="FASTD")
         plt.subplots_adjust(bottom=0.20)
