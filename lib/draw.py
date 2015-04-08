@@ -70,13 +70,28 @@ class Draw():
                                  color="y", ax=ax2)
         plt.legend(loc="best")
 
-        ret_index = round(ret.ix[-1:, 'ret_index'][0], 2)
-        closed = stock_d.ix[-1:, 'Adj Close'][0]
+        ret_index = round(ret.ix[-1, 'ret_index'])
+        closed = int(stock_d.ix[-1, 'Adj Close'])
+        open = int(stock_d.ix[-1, 'Open'])
+        high = int(stock_d.ix[-1, 'High'])
+        low = int(stock_d.ix[-1, 'Low'])
+        stock_max = int(stock_d.ix[:, 'High'].max())
+        stock_min = int(stock_d.ix[:, 'Low'].min())
 
         plt.xlabel("".join(
                    [self.name, '(', self.stock, ') ',
-                    '終値:',
+                    ' 初:',
+                    str(open),
+                    ' 高:',
+                    str(high),
+                    ' 安:',
+                    str(low),
+                    ' 終:',
                     str(closed),
+                    ' 最高:',
+                    str(stock_max),
+                    ' 最低:',
+                    str(stock_min),
                     ' リターン:',
                     str(ret_index)
                     ]),
