@@ -22,3 +22,15 @@ See help for using.
 $ python charts.py -h
 ```
 
+Try Demo with ipython
+---------------------
+
+Startup ipython.
+
+``` html
+from demo import demo
+ti = demo()
+ti.stock_raw # Stock Raw Data
+ti.stock # Technical Indicators
+```
+
