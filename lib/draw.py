@@ -80,7 +80,7 @@ class Draw():
 
         plt.xlabel("".join(
                    [self.name, '(', self.stock, ') ',
-                    ' 初:',
+                    ' 始:',
                     str(open),
                     ' 高:',
                     str(high),
@@ -90,7 +90,7 @@ class Draw():
                     str(closed),
                     ' 最高:',
                     str(stock_max),
-                    ' 最低:',
+                    ' 最安:',
                     str(stock_min),
                     ' リターン:',
                     str(ret_index)
