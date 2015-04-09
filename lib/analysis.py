@@ -12,8 +12,8 @@ from draw import Draw
 
 class Analysis():
 
-    def __init__(self, stock="", name="", start='2014-09-01',
-                 days=90, csvfile=None, update=False):
+    def __init__(self, stock="", name="", start='2014-10-01',
+                 days=120, csvfile=None, update=False):
         self.stock = stock
         self.name = name
         self.start = start

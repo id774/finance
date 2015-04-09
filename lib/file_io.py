@@ -24,7 +24,7 @@ class FileIO():
                                index_col=0, parse_dates=True)
         else:
             return self._read_with_jpstock(stock,
-                                           start='2014-01-01')
+                                           start='2014-10-01')
 
     def _read_from_web(self, start, end):
         start = datetime.datetime.strptime(start, '%Y-%m-%d')
