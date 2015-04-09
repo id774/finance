@@ -21,7 +21,7 @@ def testdata():
                             index_col=0, parse_dates=True)
     return stock_tse.asfreq('B')[days:]
 
-def plot_ohlc():
+def test_plot():
     stock = testdata()
     draw = Draw("N225", "日経平均株価")
 
@@ -50,3 +50,6 @@ def plot_ohlc():
 
     if os.path.exists(filename):
         os.remove(filename)
+
+if __name__ == '__main__':
+    test_plot()

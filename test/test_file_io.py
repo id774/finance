@@ -45,4 +45,5 @@ def test_read_csv():
     eq_(expected, result)
 
 if __name__ == '__main__':
-    stock = testdata()
+    test_save_data()
+    test_read_csv()
