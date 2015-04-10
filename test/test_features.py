@@ -27,7 +27,7 @@ def test_create_features():
 
     ret_index = ti.stock['ret_index']
     f = Features()
-    train_X, train_y = f.create_features(ret_index)
+    train_X, train_y = f.create_features(ret_index, range=90)
 
     expected = [1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1,
                 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1,
@@ -36,11 +36,38 @@ def test_create_features():
                 1, 1, 0]
     for r, e in zip(train_y, expected):
         eq_(r, e)
+
     r = round(train_X[-1][-1], 5)
     expected = 1.35486
     eq_(r, expected)
+
     r = round(train_X[0][0], 5)
     expected = 1.19213
+    eq_(r, expected)
+
+    expected = 14
+    r = len(train_X[0])
+    eq_(r, expected)
+
+    expected = 75
+    r = len(train_X)
+    eq_(r, expected)
+
+    train_X, train_y = f.create_features(ret_index)
+
+    expected = 0
+    eq_(train_y[0], expected)
+
+    r = round(train_X[0][0], 5)
+    expected = 1.30311
+    eq_(r, expected)
+
+    expected = 14
+    r = len(train_X[0])
+    eq_(r, expected)
+
+    expected = 1
+    r = len(train_X)
     eq_(r, expected)
 
 if __name__ == '__main__':

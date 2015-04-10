@@ -9,10 +9,11 @@ else:
 
 class Features():
 
-    def create_features(self, arr):
+    def create_features(self, arr, range=16):
+        range = range * -1
         train_X = []
         train_y = []
-        for i in np.arange(-90, -15):
+        for i in np.arange(range, -15):
             s = i + 14
             feature = arr.ix[i:s]
             if feature[-1] < arr[s]:
