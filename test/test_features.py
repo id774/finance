@@ -58,6 +58,9 @@ def test_create_features():
     expected = 0
     eq_(train_y[0], expected)
 
+    expected = 1
+    eq_(len(train_y), expected)
+
     r = round(train_X[0][0], 5)
     expected = 1.30311
     eq_(r, expected)
