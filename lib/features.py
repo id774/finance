@@ -9,7 +9,7 @@ else:
 
 class Features():
 
-    def up_down_index(self, arr):
+    def create_features(self, arr):
         train_X = []
         train_y = []
         for i in np.arange(-90, -15):
