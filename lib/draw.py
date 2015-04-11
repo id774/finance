@@ -79,6 +79,11 @@ class Draw():
         _last_close = int(stock_d.ix[-2, 'Adj Close'])
         _stock_max = int(stock_d.ix[:, 'High'].max())
         _stock_min = int(stock_d.ix[:, 'Low'].min())
+        _close_diff = _close - _last_close
+        if _close_diff >= 0:
+            _close_diff = "".join(['+', str(_close_diff)])
+        else:
+            _close_diff = str(_close_diff)
 
         plt.xlabel("".join(
                    [self.name, '(', self.stock, ') ',
@@ -90,7 +95,9 @@ class Draw():
                     '{:,d}'.format(_low),
                     ' 終:',
                     '{:,d}'.format(_close),
-                    "\nリターン:",
+                    ' (',
+                    _close_diff,
+                    ")\nリターン:",
                     str(_ret_index),
                     ' 出来高:',
                     '{:,d}'.format(_volume),
