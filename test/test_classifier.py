@@ -24,7 +24,7 @@ def test_classify():
     stock_d = testdata()
     ti = TechnicalIndicators(stock_d)
 
-    filename = 'clf_N225.pickle'
+    filename = 'test_N225.pickle'
     clffile = os.path.join(os.path.dirname(
                            os.path.abspath(__file__)),
                            '..', 'clf',
