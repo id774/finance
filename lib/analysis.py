@@ -95,7 +95,7 @@ class Analysis():
 
             clf = Classifier(self.clffile)
             ret_index = ti.stock['ret_index']
-            train_X, train_y = clf.train(ret_index)
+            train_X, train_y = clf.train(ret_index, self.update)
             clf_result = clf.classify(ret_index.values[-14:])
             msg = "".join(["Classified: ", str(clf_result[0])])
             print(msg)

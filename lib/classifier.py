@@ -32,7 +32,7 @@ class Classifier():
             clf = pickle.load(f)
         return clf
 
-    def train(self, arr):
+    def train(self, arr, remember=True):
         f = Features()
 
         if os.path.exists(self.filename):
@@ -43,7 +43,8 @@ class Classifier():
             train_X, train_y = f.create_features(arr, len(arr))
 
         self.clf.fit(train_X, train_y)
-        self._save_clf()
+        if remember:
+            self._save_clf()
 
         return train_X, train_y
 
