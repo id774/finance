@@ -40,7 +40,7 @@ class Classifier():
             train_X, train_y = f.create_features(arr)
         else:
             self.clf = self._new_clf()
-            train_X, train_y = f.create_features(arr, 90)
+            train_X, train_y = f.create_features(arr, len(arr))
 
         self.clf.fit(train_X, train_y)
         self._save_clf()
