@@ -42,7 +42,8 @@ def test_plot():
 
     draw.plot(stock, ewma, bbands,
               ret, rsi, mfi, ultosc,
-              stoch, vr)
+              stoch, vr,
+              clf_result=0)
 
     filename = 'chart_N225.png'
     expected = True

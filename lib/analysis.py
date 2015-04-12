@@ -8,6 +8,7 @@ else:
     sys.path.append(p)
 from file_io import FileIO
 from ti import TechnicalIndicators
+from classifier import Classifier
 from draw import Draw
 
 class Analysis():
@@ -21,6 +22,7 @@ class Analysis():
         self.days = int(days) * -1
         self.csvfile = csvfile
         self.update = update
+        self.clffile = "".join(['clf_', stock, '.pickle'])
 
     def run(self):
         io = FileIO()
@@ -91,9 +93,17 @@ class Analysis():
             ti.calc_momentum(timeperiod=25)
             vr = ti.calc_volume_ratio()
 
+            clf = Classifier(self.clffile)
+            ret_index = ti.stock['ret_index']
+            train_X, train_y = clf.train(ret_index)
+            clf_result = clf.classify(ret_index.values[-14:])
+            msg = "".join(["Classified: ", str(clf_result[0])])
+            print(msg)
+
             draw.plot(stock_d, ewma, bbands,
                       ret, rsi, mfi, ultosc,
-                      stoch, vr)
+                      stoch, vr,
+                      clf_result[0])
 
             io.save_data(io.merge_df(stock_d, ti.stock),
                          self.stock, 'ti_')

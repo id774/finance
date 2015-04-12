@@ -20,7 +20,8 @@ class Draw():
 
     def plot(self, stock_d, ewma, bbands,
              ret, rsi, mfi, ultosc,
-             stoch, vr):
+             stoch, vr,
+             clf_result):
 
         plotting._all_kinds.append('ohlc')
         plotting._common_kinds.append('ohlc')
@@ -84,6 +85,10 @@ class Draw():
             _close_diff = "".join(['+', str(_close_diff)])
         else:
             _close_diff = str(_close_diff)
+        if clf_result == 0:
+            _clf_result = "↓"
+        else:
+            _clf_result = "↑"
 
         plt.xlabel("".join(
                    [self.name, '(', self.stock, ') ',
@@ -97,7 +102,9 @@ class Draw():
                     '{:,d}'.format(_close),
                     ' (',
                     _close_diff,
-                    ")\nリターン:",
+                    ') 明日予測:',
+                    _clf_result,
+                    "\nリターン:",
                     str(_ret_index),
                     ' 出来高:',
                     '{:,d}'.format(_volume),
