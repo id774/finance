@@ -49,4 +49,4 @@ class Classifier():
         return train_X, train_y
 
     def classify(self, test_X):
-        return self.clf.predict(test_X)
+        return self.clf.predict(test_X.values[-14:])

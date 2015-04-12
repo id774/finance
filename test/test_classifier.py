@@ -64,7 +64,7 @@ def test_classify():
     eq_(r, expected)
 
     expected = 1
-    test_y = clf.classify(ret.values[-14:])
+    test_y = clf.classify(ret)
     eq_(test_y[0], expected)
 
     train_X, train_y = clf.train(ret)
@@ -89,7 +89,7 @@ def test_classify():
     eq_(r, expected)
 
     expected = 0
-    test_y = clf.classify(ret.values[-14:])
+    test_y = clf.classify(ret)
     eq_(test_y[0], expected)
 
     if os.path.exists(clffile):
