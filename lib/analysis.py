@@ -96,6 +96,8 @@ class Analysis():
             clf = Classifier(self.clffile)
             ret_index = ti.stock['ret_index']
             train_X, train_y = clf.train(ret_index, self.update)
+            msg = "".join(["Train Records: ", str(len(train_y))])
+            print(msg)
             clf_result = clf.classify(ret_index)
             msg = "".join(["Classified: ", str(clf_result[0])])
             print(msg)

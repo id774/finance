@@ -10,8 +10,8 @@ else:
 class Features():
 
     def create_features(self, arr, range=16):
-        if range > 90:
-            range = 90
+        if range > 105:
+            range = 105
         range = range * -1
         train_X = []
         train_y = []
