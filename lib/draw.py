@@ -81,6 +81,7 @@ class Draw():
         _stock_max = int(stock_d.ix[:, 'High'].max())
         _stock_min = int(stock_d.ix[:, 'Low'].min())
         _close_diff = _close - _last_close
+        _close_ratio = round((1 + _close_diff) / _close * 100, 2)
         if _close_diff >= 0:
             _close_diff = "".join(['+', str(_close_diff)])
         else:
@@ -102,7 +103,9 @@ class Draw():
                     '{:,d}'.format(_close),
                     ' (',
                     _close_diff,
-                    ') 明日予測:',
+                    ', ',
+                    str(_close_ratio),
+                    '%) 明日予測:',
                     _clf_result,
                     "\nリターン:",
                     str(_ret_index),
