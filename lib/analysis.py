@@ -26,6 +26,7 @@ class Analysis():
 
     def run(self):
         io = FileIO()
+        will_update = self.update
 
         if self.csvfile:
             stock_tse = io.read_from_csv(self.stock,
@@ -44,6 +45,8 @@ class Analysis():
                 msg = "".join(["Read data from web: ", self.stock,
                                " New records: ", str(len(newdata))])
                 print(msg)
+                if len(newdata) < 2:
+                    will_update = False
 
                 stock_tse = stock_tse.combine_first(newdata)
                 io.save_data(stock_tse, self.stock, 'stock_')
@@ -95,7 +98,7 @@ class Analysis():
 
             clf = Classifier(self.clffile)
             ret_index = ti.stock['ret_index']
-            train_X, train_y = clf.train(ret_index, self.update)
+            train_X, train_y = clf.train(ret_index, will_update)
             msg = "".join(["Train Records: ", str(len(train_y))])
             print(msg)
             clf_result = clf.classify(ret_index)
