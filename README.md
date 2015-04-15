@@ -9,6 +9,8 @@ Functions
 * JpStock - Scraping stocks data.
 * OhlcPlot - Plotting OHLC Chart.
 * TechnicalIndicators - Compute Technical Analysis.
+* Classifier - Machine Learning Classifier.
+* Features - Train Data Generator.
 * FileIO - Handling File I/O.
 * Draw - Draw Charting.
 * Analysis - Analysis codes.
