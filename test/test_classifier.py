@@ -37,7 +37,7 @@ def test_classify():
     ti.calc_ret_index()
     ret = ti.stock['ret_index']
 
-    train_X, train_y = clf.train(ret)
+    train_X, train_y = clf.train(ret, classifier="Decision Tree")
 
     r = round(train_X[-1][-1], 5)
     expected = 1.35486

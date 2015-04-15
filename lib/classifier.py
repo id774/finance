@@ -1,6 +1,9 @@
 import sys
 import os
-from sklearn import tree
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
+from sklearn.lda import LDA
 try:
     import cPickle as pickle
 except:
@@ -20,8 +23,22 @@ class Classifier():
                                      '..', 'clf',
                                      filename)
 
-    def _new_clf(self):
-        return tree.DecisionTreeClassifier()
+    def new_clf(self, classifier="Decision Tree"):
+        names = ["Decision Tree",
+                 "Random Forest", "AdaBoost",
+                 "Gaussian Naive Bayes",
+                 "Multinomial Naive Bayes",
+                 "Bernoulli Naive Bayes",
+                 "LDA"]
+        classifiers = [
+            DecisionTreeClassifier(max_depth=5),
+            RandomForestClassifier(
+                max_depth=5, n_estimators=10, max_features=1),
+            AdaBoostClassifier(),
+            GaussianNB(), MultinomialNB(), BernoulliNB(),
+            LDA()]
+        dic = dict(zip(names, classifiers))
+        return dic[classifier]
 
     def _save_clf(self):
         with open(self.filename, 'wb') as f:
@@ -32,14 +49,15 @@ class Classifier():
             clf = pickle.load(f)
         return clf
 
-    def train(self, arr, remember=True):
+    def train(self, arr, remember=True,
+              classifier="Decision Tree"):
         f = Features()
 
         if os.path.exists(self.filename):
             self.clf = self._load_clf()
             train_X, train_y = f.create_features(arr)
         else:
-            self.clf = self._new_clf()
+            self.clf = self.new_clf(classifier=classifier)
             train_X, train_y = f.create_features(arr, len(arr))
 
         self.clf.fit(train_X, train_y)
