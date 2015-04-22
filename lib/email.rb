@@ -1,6 +1,9 @@
 require 'mail'
 
 def sendmail
+  hostname = `hostname`.chop
+  return unless hostname.include?("id774.net")
+
   options = {
     :address  => "localhost",
     :port   => 25,
@@ -19,7 +22,7 @@ def sendmail
   mail = Mail.new do
     from     "finance@harpuia.id774.net"
     to       "finance@id774.net"
-    subject  "Summary Report of Financial Data"
+    subject  "[cron][#{hostname}] Summary Report of Financial Data"
     body     File.read(path)
   end
 
@@ -29,9 +32,5 @@ def sendmail
 end
 
 if __FILE__ == $0
-  hostname = `hostname`.chop
-  if hostname.include?("id774.net")
-    puts "Sending Summary Report from id774.net"
-    sendmail
-  end
+  sendmail
 end
