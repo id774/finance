@@ -11,7 +11,10 @@ from aggregate import Aggregator
 def main():
     aggregator = Aggregator()
     result = aggregator.summarize()
-    result.to_csv('result.csv', sep="\t")
+    p = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'data',
+        'summary.csv')
+    result.to_csv(p, sep="\t")
 
 if __name__ == '__main__':
     argsmin = 0

@@ -28,11 +28,11 @@ class Aggregator():
             _last_close = int(_stock.ix[-2, 'Adj Close'])
             _close_diff = _close - _last_close
             _close_ratio = round((1 + _close_diff) / _close * 100, 2)
-            df[_code] = pd.Series([_name, _open, _high,
-                                   _low, _close,
-                                   _close_diff, _close_ratio])
-        df.index = ['Name', 'Open', 'High',
-                    'Low', 'Adj Close', 'Diff', 'Ratio']
+            df[_code] = pd.Series([_open, _high, _low, _close,
+                                   _close_diff, _close_ratio,
+                                   _name])
+        df.index = ['Open', 'High', 'Low', 'Close',
+                    'Diff', 'Ratio', 'Name']
         return df.T.sort('Ratio', ascending=False)
 
 if __name__ == '__main__':
