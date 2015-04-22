@@ -17,8 +17,8 @@ def sendmail
   path = File.join(dir, "..", "data", filename)
 
   mail = Mail.new do
-    from     "finance@id774.net"
-    to       "774@id774.net"
+    from     "finance@harpuia.id774.net"
+    to       "finance@id774.net"
     subject  "Summary Report of Financial Data"
     body     File.read(path)
   end
