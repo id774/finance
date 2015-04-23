@@ -6,7 +6,7 @@ finance
 Functions
 ---------
 
-* JpStock - Scraping stocks data.
+* JpStock - Scraping stock data.
 * OhlcPlot - Plotting OHLC Chart.
 * TechnicalIndicators - Compute Technical Analysis.
 * Classifier - Machine Learning Classifier.
@@ -14,6 +14,7 @@ Functions
 * FileIO - Handling File I/O.
 * Draw - Draw Charting.
 * Analysis - Analysis codes.
+* Aggregator - Summary stock data.
 
 Get Started
 -----------
