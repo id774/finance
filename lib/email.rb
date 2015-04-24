@@ -20,7 +20,7 @@ def sendmail
   path = File.join(dir, "..", "data", filename)
 
   mail = Mail.new do
-    from     "finance@harpuia.id774.net"
+    from     "finance@#{hostname}"
     to       "finance@id774.net"
     subject  "[cron][#{hostname}] Summary Report of Financial Data"
     body     File.read(path)
