@@ -12,3 +12,4 @@ sudo chmod 750 $TARGET_DIR/run.sh
 sudo chown -R root:adm $TARGET_DIR
 sudo chown -R $USER:adm $TARGET_DIR/stocks.txt
 sudo chown -R $USER:adm $TARGET_DIR/data
+sudo chown -R $USER:adm $TARGET_DIR/clf
