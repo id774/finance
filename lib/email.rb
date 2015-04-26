@@ -19,10 +19,12 @@ def sendmail
   dir = File.expand_path(File.dirname(__FILE__))
   path = File.join(dir, "..", "data", filename)
 
+  today = Time.now.strftime("%Y/%m/%d %a")
+
   mail = Mail.new do
     from     "finance@#{hostname}"
     to       "finance@id774.net"
-    subject  "[cron][#{hostname}] Summary Report of Financial Data"
+    subject  "[cron][#{hostname}] Summary Report of Financial Data on #{today}"
     body     File.read(path)
   end
 
