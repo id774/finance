@@ -111,6 +111,12 @@ class TechnicalIndicators():
         self.stock['lowerband'] = lowerband
         return self.stock
 
+    def calc_natr(self):
+        self.stock['natr'] = ta.NATR(self.high,
+                                     self.low,
+                                     self.close)
+        return self.stock
+
     def calc_ret_index(self):
         returns = pd.Series(self.close).pct_change()
         ret_index = (1 + returns).cumprod()

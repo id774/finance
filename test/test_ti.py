@@ -185,6 +185,18 @@ def test_calc_bbands():
     eq_(expected, result)
     return bbands
 
+def test_calc_natr():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    natr = ti.calc_natr()
+
+    print(natr)
+    expected = 1.07
+    result = natr.ix['2015-03-20', 'natr']
+    result = round(result, 2)
+    eq_(expected, result)
+    return natr
+
 def test_calc_ret_index():
     stock = testdata()
     ti = TechnicalIndicators(stock)
@@ -221,6 +233,7 @@ if __name__ == '__main__':
     macd = test_calc_macd()
     momentum = test_calc_momentum()
     bbands = test_calc_bbands()
+    natr = test_calc_natr()
     ret_index = test_calc_ret_index()
     vr = test_calc_volume_ratio()
     stock = pd.merge(stock, sma,
@@ -246,6 +259,8 @@ if __name__ == '__main__':
     stock = pd.merge(stock, momentum,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, bbands,
+                     left_index=True, right_index=True)
+    stock = pd.merge(stock, natr,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, ret_index,
                      left_index=True, right_index=True)
