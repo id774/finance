@@ -21,16 +21,17 @@ class Aggregator():
                                     "".join(['stock_', _code, ".csv"]))
             _stock = pd.read_csv(_csvfile,
                                  index_col=0, parse_dates=True)
-            _open = int(_stock.ix[-1, 'Open'])
-            _high = int(_stock.ix[-1, 'High'])
-            _low = int(_stock.ix[-1, 'Low'])
-            _close = int(_stock.ix[-1, 'Adj Close'])
-            _last_close = int(_stock.ix[-2, 'Adj Close'])
-            _close_diff = _close - _last_close
-            _close_ratio = round((1 + _close_diff) / _close * 100, 2)
-            df[_code] = pd.Series([_open, _high, _low, _close,
-                                   _close_diff, _close_ratio,
-                                   _name])
+            if len(_stock) > 0:
+                _open = int(_stock.ix[-1, 'Open'])
+                _high = int(_stock.ix[-1, 'High'])
+                _low = int(_stock.ix[-1, 'Low'])
+                _close = int(_stock.ix[-1, 'Adj Close'])
+                _last_close = int(_stock.ix[-2, 'Adj Close'])
+                _close_diff = _close - _last_close
+                _close_ratio = round((1 + _close_diff) / _close * 100, 2)
+                df[_code] = pd.Series([_open, _high, _low, _close,
+                                       _close_diff, _close_ratio,
+                                       _name])
         df.index = ['Open', 'High', 'Low', 'Close',
                     'Diff', 'Ratio', 'Name']
         return df.T.sort('Ratio', ascending=False)
