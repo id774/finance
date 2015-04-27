@@ -1,7 +1,7 @@
 import sys
 import datetime
 import pandas as pd
-import pandas.io.data as web
+from pandas_datareader import data
 
 class JpStock:
 
@@ -12,12 +12,12 @@ class JpStock:
     def get(self, code, start=None, end=None, interval='d'):
         if code == 'N225':
             start = datetime.datetime.strptime(start, '%Y-%m-%d')
-            result = web.DataReader('^N225', 'yahoo', start, end)
+            result = data.DataReader('^N225', 'yahoo', start, end)
 
             return result.asfreq('B')
 
         base = self._base_url()
-        start, end = web._sanitize_dates(start, end)
+        start, end = data._sanitize_dates(start, end)
         start = 'sy={0}&sm={1}&sd={2}'.format(
             start.year, start.month, start.day)
         end = 'ey={0}&em={1}&ed={2}'.format(end.year, end.month, end.day)

@@ -2,7 +2,7 @@ import sys
 import os
 import datetime
 import pandas as pd
-import pandas.io.data as web
+from pandas_datareader import data
 p = os.path.dirname(os.path.abspath(__file__))
 if p in sys.path:
     pass
@@ -28,7 +28,7 @@ class FileIO():
 
     def _read_from_web(self, start, end):
         start = datetime.datetime.strptime(start, '%Y-%m-%d')
-        return web.DataReader('^N225', 'yahoo', start, end)
+        return data.DataReader('^N225', 'yahoo', start, end)
 
     def _read_with_jpstock(self, stock, start):
         try:
