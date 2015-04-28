@@ -16,6 +16,7 @@ def demo(stock='N225',
          days=120,
          csvfile=os.path.join(os.path.dirname(
              os.path.abspath(__file__)),
+             '..',
              'test',
              'stock_N225.csv'),
          update=False):
