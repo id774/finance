@@ -13,7 +13,7 @@ from ti import TechnicalIndicators
 def demo(stock='N225',
          name='日経平均株価',
          start='2014-01-01',
-         days=120,
+         days=180,
          csvfile=os.path.join(os.path.dirname(
              os.path.abspath(__file__)),
              '..',
