@@ -12,7 +12,7 @@ from analysis import Analysis
 def read_csv(filename, start, days, update):
     stocks = pd.read_csv(filename, header=None)
     for s in stocks.values:
-        analysis = Analysis(stock=str(s[0]),
+        analysis = Analysis(code=str(s[0]),
                             name=s[1],
                             start=start,
                             days=days,
@@ -51,7 +51,7 @@ def main():
                         days=options.days,
                         update=options.update)
     else:
-        analysis = Analysis(stock=options.stockcode,
+        analysis = Analysis(code=options.stockcode,
                             name=options.stockname,
                             start=options.startdate,
                             days=options.days,

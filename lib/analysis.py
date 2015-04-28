@@ -13,59 +13,59 @@ from draw import Draw
 
 class Analysis():
 
-    def __init__(self, stock="", name="", start='2014-10-01',
+    def __init__(self, code="", name="", start='2014-10-01',
                  days=120, csvfile=None, update=False):
-        self.stock = stock
+        self.code = code
         self.name = name
         self.start = start
         self.end = datetime.datetime.now()
         self.days = int(days) * -1
         self.csvfile = csvfile
         self.update = update
-        self.clffile = "".join(['clf_', stock, '.pickle'])
+        self.clffile = "".join(['clf_', code, '.pickle'])
 
     def run(self):
         io = FileIO()
         will_update = self.update
 
         if self.csvfile:
-            stock_tse = io.read_from_csv(self.stock,
+            stock_tse = io.read_from_csv(self.code,
                                          self.csvfile)
 
-            msg = "".join(["Read data from csv: ", self.stock,
+            msg = "".join(["Read data from csv: ", self.code,
                            " Records: ", str(len(stock_tse))])
             print(msg)
 
             if self.update and len(stock_tse) > 0:
                 t = stock_tse.index[-1].strftime('%Y-%m-%d')
-                newdata = io.read_data(self.stock,
+                newdata = io.read_data(self.code,
                                        start=t,
                                        end=self.end)
 
-                msg = "".join(["Read data from web: ", self.stock,
+                msg = "".join(["Read data from web: ", self.code,
                                " New records: ", str(len(newdata))])
                 print(msg)
                 if len(newdata) < 2:
                     will_update = False
 
                 stock_tse = stock_tse.combine_first(newdata)
-                io.save_data(stock_tse, self.stock, 'stock_')
+                io.save_data(stock_tse, self.code, 'stock_')
         else:
-            stock_tse = io.read_data(self.stock,
+            stock_tse = io.read_data(self.code,
                                      start=self.start,
                                      end=self.end)
 
-            msg = "".join(["Read data from web: ", self.stock,
+            msg = "".join(["Read data from web: ", self.code,
                            " Records: ", str(len(stock_tse))])
             print(msg)
 
         if stock_tse.empty:
-            msg = "".join(["Data empty: ", self.stock])
+            msg = "".join(["Data empty: ", self.code])
             print(msg)
             return None
 
         if not self.csvfile:
-            io.save_data(stock_tse, self.stock, 'stock_')
+            io.save_data(stock_tse, self.code, 'stock_')
 
         try:
             stock_d = stock_tse.asfreq('B')[self.days:]
@@ -79,7 +79,7 @@ class Analysis():
             ewma = ti.calc_ewma(span=25)
             ewma = ti.calc_ewma(span=75)
             bbands = ti.calc_bbands()
-            draw = Draw(self.stock, self.name)
+            draw = Draw(self.code, self.name)
 
             ret = ti.calc_ret_index()
             ret['ret_index'] = ret['ret_index'] * 100
@@ -112,11 +112,11 @@ class Analysis():
                       clf_result[0])
 
             io.save_data(io.merge_df(stock_d, ti.stock),
-                         self.stock, 'ti_')
+                         self.code, 'ti_')
 
             return ti
 
         except (ValueError, KeyError):
-            msg = "".join(["Error occured in ", self.stock])
+            msg = "".join(["Error occured in ", self.code])
             print(msg)
             return None
