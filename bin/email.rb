@@ -19,7 +19,7 @@ def sendmail
   dir = File.expand_path(File.dirname(__FILE__))
   path = File.join(dir, "..", "data", filename)
 
-  today = Time.now.strftime("%Y/%m/%d %a")
+  today = Time.now.strftime("%a %d %b %Y")
 
   mail = Mail.new do
     from     "finance@#{hostname}"
