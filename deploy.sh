@@ -15,4 +15,4 @@ sudo chown -R root:adm $TARGET_DIR
 sudo chown root:www-data $TARGET_DIR
 sudo chown -R $USER:adm $TARGET_DIR/stocks.txt
 sudo chown -R $USER:adm $TARGET_DIR/clf
-sudo chown -R www-data:www-data $TARGET_DIR/data
+sudo chown -R $USER:www-data $TARGET_DIR/data
