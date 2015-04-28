@@ -1,7 +1,7 @@
 import sys
 import os
 p = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), '..', '..', 'lib')
+    os.path.dirname(os.path.abspath(__file__)), '..', 'lib')
 if p in sys.path:
     pass
 else:
@@ -12,7 +12,7 @@ def main():
     aggregator = Aggregator()
     result = aggregator.summarize()
     p = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'data',
+        os.path.dirname(os.path.abspath(__file__)), '..', 'data',
         'summary.csv')
     result.to_csv(p, sep="\t")
 
