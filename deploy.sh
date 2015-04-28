@@ -9,6 +9,7 @@ test -d $TARGET_DIR/data || sudo mkdir -p $TARGET_DIR/data
 sudo cp -av run.sh $TARGET_DIR/
 sudo chmod 750 $TARGET_DIR
 sudo chmod 750 $TARGET_DIR/run.sh
+sudo chmod 770 $TARGET_DIR/data
 sudo chmod -R g+r,o-rwx $TARGET_DIR
 sudo chown -R root:adm $TARGET_DIR
 sudo chown root:www-data $TARGET_DIR
