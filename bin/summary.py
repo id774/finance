@@ -1,7 +1,7 @@
 import sys
 import os
 p = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), 'lib')
+    os.path.dirname(os.path.abspath(__file__)), '..', 'lib')
 if p in sys.path:
     pass
 else:
