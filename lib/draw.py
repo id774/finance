@@ -1,5 +1,6 @@
 import sys
 import os
+import datetime
 import pandas.tools.plotting as plotting
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
@@ -91,8 +92,10 @@ class Draw():
         else:
             _clf_result = "↑"
 
+        today = datetime.datetime.today().strftime("%a %d %b %Y")
         plt.xlabel("".join(
                    [self.name, '(', self.stock, ') ',
+                    today,
                     "\n始:",
                     '{:,d}'.format(_open),
                     ' 高:',
