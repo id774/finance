@@ -4,12 +4,9 @@ import pandas as pd
 
 class Aggregator():
 
-    def __init__(self):
-        c_dir = os.path.dirname(os.path.abspath(__file__))
-        self.base_dir = os.path.join(c_dir, '..')
-        self.data_dir = os.path.join(self.base_dir, 'data')
-        self.stock_list = os.path.join(self.base_dir,
-                                       'stocks.txt')
+    def __init__(self, stock_list, data_dir):
+        self.stock_list = stock_list
+        self.data_dir = data_dir
 
     def summarize(self):
         stocks = pd.read_csv(self.stock_list, header=None)
@@ -41,7 +38,12 @@ if __name__ == '__main__':
     version = (3, 0)
     if sys.version_info > (version):
         if len(sys.argv) > argsmin:
-            aggregator = Aggregator()
+            c_dir = os.path.dirname(os.path.abspath(__file__))
+            base_dir = os.path.join(c_dir, '..')
+            data_dir = os.path.join(base_dir, 'data')
+            stock_list = os.path.join(base_dir,
+                                      'stocks.txt')
+            aggregator = Aggregator(stock_list, data_dir)
             result = aggregator.summarize()
             print(result)
         else:
