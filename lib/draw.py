@@ -20,7 +20,7 @@ class Draw():
             fname="/usr/share/fonts/truetype/fonts-japanese-gothic.ttf")
 
     def plot(self, stock_d, ewma, bbands,
-             ret, rsi, mfi, ultosc,
+             ret, rsi, roc, mfi, ultosc,
              stoch, vr,
              clf_result):
 
@@ -37,6 +37,8 @@ class Draw():
                          color="g", ax=ax1)
         rsi['rsi14'].plot(label="RSI14",
                           color="r", ax=ax1)
+        roc['roc'].plot(label="ROC",
+                        color="b", ax=ax1)
         rsi['mfi'].plot(label="MFI",
                         color="c", ax=ax1)
         rsi['ultosc'].plot(label="UTLOSC",

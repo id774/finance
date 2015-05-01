@@ -86,7 +86,8 @@ class Analysis():
             rsi = ti.calc_rsi(timeperiod=9)
             rsi = ti.calc_rsi(timeperiod=14)
             mfi = ti.calc_mfi()
-            ti.calc_roc()
+            roc = ti.calc_roc()
+            roc['roc'] = roc['roc'] + 50
             ti.calc_cci()
             ultosc = ti.calc_ultosc()
             stoch = ti.calc_stoch()
@@ -107,10 +108,12 @@ class Analysis():
             print(msg)
 
             draw.plot(stock_d, ewma, bbands,
-                      ret, rsi, mfi, ultosc,
+                      ret, rsi, roc, mfi, ultosc,
                       stoch, vr,
                       clf_result[0])
 
+            ret['ret_index'] = ret['ret_index'] / 100
+            roc['roc'] = roc['roc'] - 50
             io.save_data(io.merge_df(stock_d, ti.stock),
                          self.code, 'ti_')
 
