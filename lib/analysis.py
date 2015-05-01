@@ -68,7 +68,7 @@ class Analysis():
             io.save_data(stock_tse, self.code, 'stock_')
 
         try:
-            stock_d = stock_tse.asfreq('B')[self.days:].dropna()
+            stock_d = stock_tse.asfreq('B').dropna()[self.days:]
 
             ti = TechnicalIndicators(stock_d)
 
