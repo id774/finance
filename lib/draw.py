@@ -31,8 +31,8 @@ class Draw():
         fig = plt.figure(figsize=(10.24, 7.68))
 
         ax1 = fig.add_subplot(2, 1, 1)
-        ret['ret_index'].plot(label="RET_INDEX",
-                              color="b", ax=ax1)
+        ret['ret_index'].plot(label="RET",
+                              color="#888888", ax=ax1)
         rsi['rsi9'].plot(label="RSI9",
                          color="g", ax=ax1)
         rsi['rsi14'].plot(label="RSI14",
@@ -51,6 +51,7 @@ class Draw():
                            color="#DDFFFF", ax=ax1)
         # stochf['fastk'].plot(label="FASTK")
         # stochf['fastd'].plot(label="FASTD")
+        ax1.set_yticks([0, 25, 50, 75, 100, 125])
         plt.legend(loc="best")
 
         ax2 = fig.add_subplot(2, 1, 2)

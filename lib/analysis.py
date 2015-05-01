@@ -82,6 +82,7 @@ class Analysis():
             draw = Draw(self.code, self.name)
 
             ret = ti.calc_ret_index()
+            ti.calc_vol()
             ret['ret_index'] = ret['ret_index'] * 100
             rsi = ti.calc_rsi(timeperiod=9)
             rsi = ti.calc_rsi(timeperiod=14)

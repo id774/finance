@@ -132,6 +132,10 @@ class TechnicalIndicators():
             min_periods=min_periods) * np.sqrt(timeperiod)
         return self.stock
 
+    def calc_shape_ratio(self, ann=250):
+        rets = self.stock['ret_index']
+        return rets.mean() / rets.std() * np.sqrt(ann)
+
     def calc_volume_ratio(self):
         self.stock['v_ratio'] = (self.volume /
                                  self.volume.max()
