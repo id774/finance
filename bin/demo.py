@@ -10,7 +10,7 @@ from analysis import Analysis
 from file_io import FileIO
 from ti import TechnicalIndicators
 
-def demo(stock='N225',
+def demo(code='N225',
          name='日経平均株価',
          start='2014-01-01',
          days=180,
@@ -23,17 +23,17 @@ def demo(stock='N225',
 
     # Handling ti object example.
     io = FileIO()
-    stock_d = io.read_from_csv(stock,
+    stock_d = io.read_from_csv(code,
                                csvfile)
     ti = TechnicalIndicators(stock_d)
     ti.calc_ret_index()
 
     print(ti.stock['ret_index'].tail(10))
     io.save_data(io.merge_df(stock_d, ti.stock),
-                 stock, 'demo_')
+                 code, 'demo_')
 
     # Run analysis code example.
-    analysis = Analysis(stock=stock,
+    analysis = Analysis(code=code,
                         name=name,
                         start=start,
                         days=days,
