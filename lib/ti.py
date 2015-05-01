@@ -125,16 +125,12 @@ class TechnicalIndicators():
         self.stock['ret_index'] = ret_index.values
         return self.stock
 
-    def calc_vol(self, timeperiod=250, min_periods=50):
+    def calc_vol(self, rets, timeperiod=250, min_periods=50):
         self.stock['vol'] = pd.rolling_std(
-            self.stock['ret_index'],
+            rets,
             timeperiod,
             min_periods=min_periods) * np.sqrt(timeperiod)
         return self.stock
-
-    def calc_shape_ratio(self, ann=250):
-        rets = self.stock['ret_index']
-        return rets.mean() / rets.std() * np.sqrt(ann)
 
     def calc_volume_ratio(self):
         self.stock['v_ratio'] = (self.volume /
