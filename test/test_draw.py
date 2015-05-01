@@ -30,6 +30,7 @@ def test_plot():
     ret = ti.calc_ret_index()
     rsi = ti.calc_rsi(timeperiod=9)
     rsi = ti.calc_rsi(timeperiod=14)
+    roc = ti.calc_roc()
     mfi = ti.calc_mfi()
     ultosc = ti.calc_ultosc()
     stoch = ti.calc_stoch()
@@ -41,7 +42,7 @@ def test_plot():
     bbands = ti.calc_bbands()
 
     draw.plot(stock, ewma, bbands,
-              ret, rsi, mfi, ultosc,
+              ret, rsi, roc, mfi, ultosc,
               stoch, vr,
               clf_result=0)
 
