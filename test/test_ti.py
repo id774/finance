@@ -80,7 +80,7 @@ def test_calc_mfi():
 def test_calc_roc():
     stock = testdata()
     ti = TechnicalIndicators(stock)
-    roc = ti.calc_roc()
+    roc = ti.calc_roc(timeperiod=10)
 
     expected = 3.11
     result = roc.ix['2015-03-20', 'roc']

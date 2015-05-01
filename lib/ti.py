@@ -43,8 +43,9 @@ class TechnicalIndicators():
                                    self.volume)
         return self.stock
 
-    def calc_roc(self):
-        self.stock['roc'] = ta.ROC(self.close)
+    def calc_roc(self, timeperiod=10):
+        self.stock['roc'] = ta.ROC(self.close,
+                                   timeperiod=timeperiod)
         return self.stock
 
     def calc_cci(self):
