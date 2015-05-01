@@ -15,7 +15,7 @@ class Aggregator():
             _code = str(s[0])
             _name = str(s[1])
             _csvfile = os.path.join(self.data_dir,
-                                    "".join(['ti_', _code, ".csv"]))
+                                    "".join(['stock_', _code, ".csv"]))
             _stock = pd.read_csv(_csvfile,
                                  index_col=0, parse_dates=True)
             if len(_stock) > 0:
