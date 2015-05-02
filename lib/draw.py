@@ -126,6 +126,5 @@ class Draw():
                     ]),
                    fontdict={"fontproperties": self.fontprop})
         plt.legend(loc="best")
-        plt.show()
         plt.savefig("".join(["chart_", self.stock, ".png"]))
         plt.close()
