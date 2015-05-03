@@ -1,5 +1,6 @@
 import sys
 import os
+import pandas as pd
 from nose.tools import eq_
 p = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), '..', 'lib')
@@ -8,8 +9,6 @@ if p in sys.path:
 else:
     sys.path.append(p)
 from ti import TechnicalIndicators
-import os
-import pandas as pd
 
 def testdata():
     days = 30
