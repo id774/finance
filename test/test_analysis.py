@@ -21,16 +21,16 @@ def testdata():
     return stock_tse.asfreq('B')[days:]
 
 def test_run():
-    code='N225'
-    name='日経平均株価'
-    start='2014-01-01'
-    days=180
-    csvfile=os.path.join(os.path.dirname(
+    code = 'N225'
+    name = '日経平均株価'
+    start = '2014-01-01'
+    days = 180
+    csvfile = os.path.join(os.path.dirname(
         os.path.abspath(__file__)),
         '..',
         'test',
         'stock_N225.csv')
-    update=False
+    update = False
 
     analysis = Analysis(code=code,
                         name=name,
