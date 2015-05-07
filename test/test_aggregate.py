@@ -1,6 +1,5 @@
 import sys
 import os
-import pandas as pd
 from nose.tools import eq_
 p = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), '..', 'lib')
@@ -18,12 +17,14 @@ def test_summarize():
     data_dir = os.path.join(base_dir, 'test')
     aggregator = Aggregator(stock_list, data_dir)
     result = aggregator.summarize()
+
     expected = 19560
     eq_(expected, result.ix[-1, 'Close'])
     expected = 84
     eq_(expected, result.ix[-1, 'Diff'])
     expected = 0.43
     eq_(expected, result.ix[-1, 'Ratio'])
+
     return result
 
 if __name__ == '__main__':

@@ -8,7 +8,6 @@ if p in sys.path:
     pass
 else:
     sys.path.append(p)
-from ti import TechnicalIndicators
 from analysis import Analysis
 
 def testdata():
@@ -39,6 +38,7 @@ def test_run():
                         csvfile=csvfile,
                         update=update)
     ti = analysis.run()
+
     expected = 18791.39
     result = round(ti.stock.ix['2015-03-20', 'sma25'], 2)
     eq_(expected, result)
@@ -54,6 +54,10 @@ def test_run():
     eq_(expected, os.path.exists(filename))
     if os.path.exists(filename):
         os.remove(filename)
+
+    stock_length = len(ti.stock)
+    expected = 180
+    eq_(expected, stock_length)
 
     return result
 
