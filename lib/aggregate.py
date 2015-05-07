@@ -19,11 +19,12 @@ class Aggregator():
             _stock = pd.read_csv(_csvfile,
                                  index_col=0, parse_dates=True)
             if len(_stock) > 0:
-                _open = int(_stock.ix[-1, 'Open'])
-                _high = int(_stock.ix[-1, 'High'])
-                _low = int(_stock.ix[-1, 'Low'])
-                _close = int(_stock.ix[-1, 'Adj Close'])
-                _last_close = int(_stock.ix[-2, 'Adj Close'])
+                _stock_d = _stock.asfreq('B').dropna()
+                _open = int(_stock_d.ix[-1, 'Open'])
+                _high = int(_stock_d.ix[-1, 'High'])
+                _low = int(_stock_d.ix[-1, 'Low'])
+                _close = int(_stock_d.ix[-1, 'Adj Close'])
+                _last_close = int(_stock_d.ix[-2, 'Adj Close'])
                 _close_diff = _close - _last_close
                 _close_ratio = round((1 + _close_diff) / _close * 100, 2)
                 df[_code] = pd.Series([_open, _high, _low, _close,
