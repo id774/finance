@@ -45,6 +45,9 @@ def test_plot():
               stoch, vr,
               clf_result=0)
 
+    eq_(draw.code, 'N225')
+    eq_(draw.name, '日経平均株価')
+
     filename = 'chart_N225.png'
     expected = True
     eq_(expected, os.path.exists(filename))

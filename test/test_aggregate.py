@@ -18,6 +18,9 @@ def test_summarize():
     aggregator = Aggregator(stock_list, data_dir)
     result = aggregator.summarize()
 
+    eq_('stocks.txt', os.path.basename(aggregator.stock_list))
+    eq_('test', os.path.basename(aggregator.data_dir))
+
     expected = 19560
     eq_(expected, result.ix[-1, 'Close'])
     expected = 84

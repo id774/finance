@@ -39,6 +39,8 @@ def test_classify():
 
     train_X, train_y = clf.train(ret, classifier="Decision Tree")
 
+    eq_('test_N225.pickle', os.path.basename(clf.filename))
+
     r = round(train_X[-1][-1], 5)
     expected = 1.35486
     eq_(r, expected)

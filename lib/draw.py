@@ -13,8 +13,8 @@ from ohlc_plot import OhlcPlot
 
 class Draw():
 
-    def __init__(self, stock, name, **kwargs):
-        self.stock = stock
+    def __init__(self, code, name, **kwargs):
+        self.code = code
         self.name = name
         self.fontprop = font_manager.FontProperties(
             fname="/usr/share/fonts/truetype/fonts-japanese-gothic.ttf")
@@ -97,7 +97,7 @@ class Draw():
 
         today = datetime.datetime.today().strftime("%a %d %b %Y")
         plt.xlabel("".join(
-                   [self.name, '(', self.stock, ') ',
+                   [self.name, '(', self.code, ') ',
                     today,
                     "\n始:",
                     '{:,d}'.format(_open),
@@ -126,5 +126,5 @@ class Draw():
                     ]),
                    fontdict={"fontproperties": self.fontprop})
         plt.legend(loc="best")
-        plt.savefig("".join(["chart_", self.stock, ".png"]))
+        plt.savefig("".join(["chart_", self.code, ".png"]))
         plt.close()

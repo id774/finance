@@ -39,6 +39,14 @@ def test_run():
                         update=update)
     ti = analysis.run()
 
+    eq_('N225', analysis.code)
+    eq_('日経平均株価', analysis.name)
+    eq_('2014-01-01', analysis.start)
+    eq_(-180, analysis.days)
+    eq_('stock_N225.csv', os.path.basename(analysis.csvfile))
+    eq_(False, analysis.update)
+    eq_('clf_N225.pickle', analysis.clffile)
+
     expected = 18791.39
     result = round(ti.stock.ix['2015-03-20', 'sma25'], 2)
     eq_(expected, result)
