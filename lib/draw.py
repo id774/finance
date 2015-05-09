@@ -16,8 +16,12 @@ class Draw():
     def __init__(self, code, name, **kwargs):
         self.code = code
         self.name = name
+        if sys.platform == "darwin":
+            font_path = "/Library/Fonts/Osaka.ttf"
+        else:
+            font_path = "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf"
         self.fontprop = font_manager.FontProperties(
-            fname="/usr/share/fonts/truetype/fonts-japanese-gothic.ttf")
+            fname=font_path)
 
     def plot(self, stock_d, ewma, bbands,
              ret, rsi, roc, mfi, ultosc,
