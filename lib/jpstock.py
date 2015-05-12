@@ -57,7 +57,8 @@ if __name__ == '__main__':
 
                 jpstock = JpStock()
                 stock_tse = jpstock.get(stock, start=start)
-                stock_tse.to_csv("".join(["stock_", stock, ".csv"]))
+                stock_tse.to_csv("".join(["stock_", stock, ".csv"]),
+                                 sep=",", index_label="Date")
             except ValueError:
                 print("Value Error occured in", stock)
         else:

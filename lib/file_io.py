@@ -16,7 +16,8 @@ class FileIO():
         if df.empty:
             pass
         else:
-            df.to_csv("".join([prefix, stock, ".csv"]))
+            df.to_csv("".join([prefix, stock, ".csv"]),
+                      sep=",", index_label="Date")
 
     def read_from_csv(self, stock, filename):
         if os.path.exists(filename):

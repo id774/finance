@@ -20,7 +20,7 @@ def main():
     p = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), '..', 'data',
         'summary.csv')
-    result.to_csv(p, sep="\t")
+    result.to_csv(p, sep="\t", index_label="Code")
 
 if __name__ == '__main__':
     argsmin = 0
