@@ -4,7 +4,7 @@ JOBLOG=/var/log/sysadmin/stock.log
 WORK_DIR=/var/stock
 RUBY=/opt/ruby/current/bin/ruby
 PYTHON=/opt/python/current/bin/python
-STOCKTXT=$WORK_DIR/stocks.txt
+STOCKTXT=$WORK_DIR/data/stocks.txt
 STARTDATE=2014-09-01
 DAYS=180
 

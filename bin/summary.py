@@ -12,7 +12,7 @@ def main():
     c_dir = os.path.dirname(os.path.abspath(__file__))
     base_dir = os.path.join(c_dir, '..')
     data_dir = os.path.join(base_dir, 'data')
-    stock_list = os.path.join(base_dir,
+    stock_list = os.path.join(data_dir,
                               'stocks.txt')
 
     aggregator = Aggregator(stock_list, data_dir)
