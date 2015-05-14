@@ -45,13 +45,13 @@ class Draw():
                         color="b", ax=ax1)
         rsi['mfi'].plot(label="MFI",
                         color="c", ax=ax1)
-        rsi['ultosc'].plot(label="UTLOSC",
+        rsi['ultosc'].plot(label="UTL",
                            color="m", ax=ax1)
-        stoch['slowk'].plot(label="SLOWK",
+        stoch['slowk'].plot(label="SL_K",
                             color="y", ax=ax1)
-        stoch['slowd'].plot(label="SLOWD",
+        stoch['slowd'].plot(label="SL_D",
                             color="k", ax=ax1)
-        vr['v_ratio'].plot(label="VOLUME", kind='area',
+        vr['v_ratio'].plot(label="VOL", kind='area',
                            color="#DDFFFF", ax=ax1)
         # stochf['fastk'].plot(label="FASTK")
         # stochf['fastd'].plot(label="FASTD")
@@ -65,17 +65,17 @@ class Draw():
         # sma['sma5'].plot(label="SMA5")
         # sma['sma25'].plot(label="SMA25")
         # sma['sma75'].plot(label="SMA75")
-        ewma['ewma5'].plot(label="EWMA5",
+        ewma['ewma5'].plot(label="MA5",
                            color="k", ax=ax2)
-        ewma['ewma25'].plot(label="EWMA25",
+        ewma['ewma25'].plot(label="MA25",
                             color="g", ax=ax2)
-        ewma['ewma75'].plot(label="EWMA75",
+        ewma['ewma75'].plot(label="MA75",
                             color="r", ax=ax2)
-        bbands['upperband'].plot(label="UPPER",
+        bbands['upperband'].plot(label="UP",
                                  color="c", ax=ax2)
-        bbands['middleband'].plot(label="MIDDLE",
+        bbands['middleband'].plot(label="MID",
                                   color="m", ax=ax2)
-        bbands['lowerband'].plot(label="LOWER",
+        bbands['lowerband'].plot(label="LOW",
                                  color="y", ax=ax2)
         plt.legend(loc="best")
 
