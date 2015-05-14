@@ -111,7 +111,8 @@ class Analysis():
             draw.plot(stock_d, ewma, bbands,
                       ret, rsi, roc, mfi, ultosc,
                       stoch, vr,
-                      clf_result[0])
+                      clf_result[0],
+                      axis=2)
 
             ret['ret_index'] = ret['ret_index'] / 100
             roc['roc'] = roc['roc'] - 50

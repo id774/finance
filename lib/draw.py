@@ -26,7 +26,7 @@ class Draw():
     def plot(self, stock_d, ewma, bbands,
              ret, rsi, roc, mfi, ultosc,
              stoch, vr,
-             clf_result):
+             clf_result, axis=2):
 
         plotting._all_kinds.append('ohlc')
         plotting._common_kinds.append('ohlc')
@@ -34,31 +34,34 @@ class Draw():
 
         fig = plt.figure(figsize=(10.24, 7.68))
 
-        ax1 = fig.add_subplot(2, 1, 1)
-        ret['ret_index'].plot(label="RET",
-                              color="#888888", ax=ax1)
-        rsi['rsi9'].plot(label="RSI9",
-                         color="g", ax=ax1)
-        rsi['rsi14'].plot(label="RSI14",
-                          color="r", ax=ax1)
-        roc['roc'].plot(label="ROC",
-                        color="b", ax=ax1)
-        rsi['mfi'].plot(label="MFI",
-                        color="c", ax=ax1)
-        rsi['ultosc'].plot(label="UTL",
-                           color="m", ax=ax1)
-        stoch['slowk'].plot(label="SL_K",
-                            color="y", ax=ax1)
-        stoch['slowd'].plot(label="SL_D",
-                            color="k", ax=ax1)
-        vr['v_ratio'].plot(label="VOL", kind='area',
-                           color="#DDFFFF", ax=ax1)
-        # stochf['fastk'].plot(label="FASTK")
-        # stochf['fastd'].plot(label="FASTD")
-        ax1.set_yticks([0, 25, 50, 75, 100, 125])
-        plt.legend(loc="best")
+        if axis >= 2:
+            ax1 = fig.add_subplot(2, 1, 1)
+            ret['ret_index'].plot(label="RET",
+                                  color="#888888", ax=ax1)
+            rsi['rsi9'].plot(label="RSI9",
+                             color="g", ax=ax1)
+            rsi['rsi14'].plot(label="RSI14",
+                              color="r", ax=ax1)
+            roc['roc'].plot(label="ROC",
+                            color="b", ax=ax1)
+            rsi['mfi'].plot(label="MFI",
+                            color="c", ax=ax1)
+            rsi['ultosc'].plot(label="UTL",
+                               color="m", ax=ax1)
+            stoch['slowk'].plot(label="SL_K",
+                                color="y", ax=ax1)
+            stoch['slowd'].plot(label="SL_D",
+                                color="k", ax=ax1)
+            vr['v_ratio'].plot(label="VOL", kind='area',
+                               color="#DDFFFF", ax=ax1)
+            # stochf['fastk'].plot(label="FASTK")
+            # stochf['fastd'].plot(label="FASTD")
+            ax1.set_yticks([0, 25, 50, 75, 100, 125])
+            plt.legend(loc="best")
 
-        ax2 = fig.add_subplot(2, 1, 2)
+            ax2 = fig.add_subplot(2, 1, 2)
+        else:
+            ax2 = fig.add_subplot(1, 1, 1)
         stock_d.plot(kind='ohlc',
                      colorup='r', colordown='b',
                      ax=ax2)
