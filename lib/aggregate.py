@@ -15,11 +15,10 @@ class Aggregator():
             _code = str(s[0])
             _name = str(s[1])
             _csvfile = os.path.join(self.data_dir,
-                                    "".join(['stock_', _code, ".csv"]))
+                                    "".join(['ti_', _code, ".csv"]))
             if os.path.exists(_csvfile):
-                _stock = pd.read_csv(_csvfile,
-                                     index_col=0, parse_dates=True)
-                _stock_d = _stock.asfreq('B').dropna()
+                _stock_d = pd.read_csv(_csvfile,
+                                       index_col=0, parse_dates=True)
                 _open = int(_stock_d.ix[-1, 'Open'])
                 _high = int(_stock_d.ix[-1, 'High'])
                 _low = int(_stock_d.ix[-1, 'Low'])
