@@ -23,6 +23,17 @@ class Aggregator():
                 ti_dic[(_code, _name)] = _stock_d
         return ti_dic
 
+    def top_and_bottom(self, range=15):
+        s = pd.Series([])
+        range = range * -1
+        for k, _stock_d in self.ti_dic.items():
+            _code = str(k[0])
+            _start = int(_stock_d.ix[range, 'Adj Close'])
+            _end = int(_stock_d.ix[-1, 'Adj Close'])
+            _ratio = _end / _start
+            s[_code] = _ratio
+        return s.order(ascending=False)
+
     def summarize(self):
         df = pd.DataFrame([])
         for k, _stock_d in self.ti_dic.items():
@@ -54,6 +65,8 @@ if __name__ == '__main__':
                                       'stocks.txt')
             aggregator = Aggregator(stock_list, data_dir)
             result = aggregator.summarize()
+            print(result)
+            result = aggregator.top_and_bottom(range=15)
             print(result)
         else:
             print("This program needs at least %(argsmin)s arguments" %
