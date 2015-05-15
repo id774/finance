@@ -7,7 +7,10 @@ class Aggregator():
     def __init__(self, stock_list, data_dir):
         self.stock_list = stock_list
         self.data_dir = data_dir
-        self.ti_dic = {}
+        self.ti_dic = self._aggregate()
+
+    def _aggregate(self):
+        ti_dic = {}
         stocks = pd.read_csv(self.stock_list, header=None)
         for s in stocks.values:
             _code = str(s[0])
@@ -17,7 +20,8 @@ class Aggregator():
             if os.path.exists(_csvfile):
                 _stock_d = pd.read_csv(_csvfile,
                                        index_col=0, parse_dates=True)
-                self.ti_dic[(_code, _name)] = _stock_d
+                ti_dic[(_code, _name)] = _stock_d
+        return ti_dic
 
     def summarize(self):
         df = pd.DataFrame([])
