@@ -7,10 +7,8 @@ class Aggregator():
     def __init__(self, stock_list, data_dir):
         self.stock_list = stock_list
         self.data_dir = data_dir
-
-    def summarize(self):
+        self.ti_dic = {}
         stocks = pd.read_csv(self.stock_list, header=None)
-        df = pd.DataFrame([])
         for s in stocks.values:
             _code = str(s[0])
             _name = str(s[1])
@@ -19,16 +17,23 @@ class Aggregator():
             if os.path.exists(_csvfile):
                 _stock_d = pd.read_csv(_csvfile,
                                        index_col=0, parse_dates=True)
-                _open = int(_stock_d.ix[-1, 'Open'])
-                _high = int(_stock_d.ix[-1, 'High'])
-                _low = int(_stock_d.ix[-1, 'Low'])
-                _close = int(_stock_d.ix[-1, 'Adj Close'])
-                _last_close = int(_stock_d.ix[-2, 'Adj Close'])
-                _close_diff = _close - _last_close
-                _close_ratio = round((1 + _close_diff) / _close * 100, 2)
-                df[_code] = pd.Series([_open, _high, _low, _close,
-                                       _close_diff, _close_ratio,
-                                       _name])
+                self.ti_dic[(_code, _name)] = _stock_d
+
+    def summarize(self):
+        df = pd.DataFrame([])
+        for k, _stock_d in self.ti_dic.items():
+            _code = str(k[0])
+            _name = str(k[1])
+            _open = int(_stock_d.ix[-1, 'Open'])
+            _high = int(_stock_d.ix[-1, 'High'])
+            _low = int(_stock_d.ix[-1, 'Low'])
+            _close = int(_stock_d.ix[-1, 'Adj Close'])
+            _last_close = int(_stock_d.ix[-2, 'Adj Close'])
+            _close_diff = _close - _last_close
+            _close_ratio = round((1 + _close_diff) / _close * 100, 2)
+            df[_code] = pd.Series([_open, _high, _low, _close,
+                                   _close_diff, _close_ratio,
+                                   _name])
         df.index = ['Open', 'High', 'Low', 'Close',
                     'Diff', 'Ratio', 'Name']
         return df.T.sort('Ratio', ascending=False)
