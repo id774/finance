@@ -48,16 +48,17 @@ class Draw():
                             color="c", ax=ax1)
             rsi['ultosc'].plot(label="UTL",
                                color="m", ax=ax1)
-            stoch['slowk'].plot(label="SL_K",
+            stoch['slowk'].plot(label="SLOWK",
                                 color="y", ax=ax1)
-            stoch['slowd'].plot(label="SL_D",
+            stoch['slowd'].plot(label="SLOWD",
                                 color="k", ax=ax1)
             vr['v_ratio'].plot(label="VOL", kind='area',
                                color="#DDFFFF", ax=ax1)
             # stochf['fastk'].plot(label="FASTK")
             # stochf['fastd'].plot(label="FASTD")
             ax1.set_yticks([0, 25, 50, 75, 100, 125])
-            plt.legend(loc="best")
+            plt.legend(loc='upper center', bbox_to_anchor=(0.3, 1.2),
+                       ncol=3, fancybox=False, shadow=False)
 
             ax2 = fig.add_subplot(2, 1, 2)
         else:
@@ -74,13 +75,12 @@ class Draw():
                             color="g", ax=ax2)
         ewma['ewma75'].plot(label="MA75",
                             color="r", ax=ax2)
-        bbands['upperband'].plot(label="UP",
+        bbands['upperband'].plot(label="UPPER",
                                  color="c", ax=ax2)
-        bbands['middleband'].plot(label="MID",
+        bbands['middleband'].plot(label="MIDDLE",
                                   color="m", ax=ax2)
-        bbands['lowerband'].plot(label="LOW",
+        bbands['lowerband'].plot(label="LOWER",
                                  color="y", ax=ax2)
-        plt.legend(loc="best")
 
         _ret_index = round(ret.ix[-1, 'ret_index'], 2)
         _volume = int(stock_d.ix[-1, 'Volume'])
@@ -132,6 +132,7 @@ class Draw():
                     '{:,d}'.format(_last_close),
                     ]),
                    fontdict={"fontproperties": self.fontprop})
-        plt.legend(loc="best")
+        plt.legend(loc='upper center', bbox_to_anchor=(0.3, 1.2),
+                   ncol=3, fancybox=False, shadow=False)
         plt.savefig("".join(["chart_", self.code, ".png"]))
         plt.close()
