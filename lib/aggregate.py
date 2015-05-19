@@ -24,15 +24,24 @@ class Aggregator():
         return ti_dic
 
     def returns_rank(self, range=15):
-        s = pd.Series([])
         range = range * -1
+        df = pd.DataFrame([])
         for k, _stock_d in self.ti_dic.items():
             _code = str(k[0])
+            _name = str(k[1])
             _start = int(_stock_d.ix[range, 'Adj Close'])
             _end = int(_stock_d.ix[-1, 'Adj Close'])
             _ratio = _end / _start
-            s[_code] = _ratio
-        return s.order(ascending=False)
+            _open = int(_stock_d.ix[-1, 'Open'])
+            _high = int(_stock_d.ix[-1, 'High'])
+            _low = int(_stock_d.ix[-1, 'Low'])
+            _close = int(_stock_d.ix[-1, 'Adj Close'])
+            df[_code] = pd.Series([_open, _high, _low, _close,
+                                   _ratio,
+                                   _name])
+        df.index = ['Open', 'High', 'Low', 'Close',
+                    'Ratio', 'Name']
+        return df.T.sort('Ratio', ascending=False)
 
     def summarize(self):
         df = pd.DataFrame([])
