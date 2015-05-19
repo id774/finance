@@ -31,11 +31,11 @@ class Aggregator():
             _name = str(k[1])
             _start = int(_stock_d.ix[range, 'Adj Close'])
             _end = int(_stock_d.ix[-1, 'Adj Close'])
-            _ratio = _end / _start
             _open = int(_stock_d.ix[-1, 'Open'])
             _high = int(_stock_d.ix[-1, 'High'])
             _low = int(_stock_d.ix[-1, 'Low'])
             _close = int(_stock_d.ix[-1, 'Adj Close'])
+            _ratio = round((_end / _start), 2)
             df[_code] = pd.Series([_open, _high, _low, _close,
                                    _ratio,
                                    _name])
