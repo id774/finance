@@ -23,7 +23,7 @@ class Aggregator():
                 ti_dic[(_code, _name)] = _stock_d
         return ti_dic
 
-    def returns_rank(self, range=15):
+    def summarize(self, range=2):
         range = range * -1
         df = pd.DataFrame([])
         for k, _stock_d in self.ti_dic.items():
@@ -35,28 +35,10 @@ class Aggregator():
             _high = int(_stock_d.ix[-1, 'High'])
             _low = int(_stock_d.ix[-1, 'Low'])
             _close = int(_stock_d.ix[-1, 'Adj Close'])
-            _ratio = round((_end / _start), 2)
+            _diff = _end - _start
+            _ratio = round((1 + _diff) / _close * 100, 2)
             df[_code] = pd.Series([_open, _high, _low, _close,
-                                   _ratio,
-                                   _name])
-        df.index = ['Open', 'High', 'Low', 'Close',
-                    'Ratio', 'Name']
-        return df.T.sort('Ratio', ascending=False)
-
-    def summarize(self):
-        df = pd.DataFrame([])
-        for k, _stock_d in self.ti_dic.items():
-            _code = str(k[0])
-            _name = str(k[1])
-            _open = int(_stock_d.ix[-1, 'Open'])
-            _high = int(_stock_d.ix[-1, 'High'])
-            _low = int(_stock_d.ix[-1, 'Low'])
-            _close = int(_stock_d.ix[-1, 'Adj Close'])
-            _last_close = int(_stock_d.ix[-2, 'Adj Close'])
-            _close_diff = _close - _last_close
-            _close_ratio = round((1 + _close_diff) / _close * 100, 2)
-            df[_code] = pd.Series([_open, _high, _low, _close,
-                                   _close_diff, _close_ratio,
+                                   _diff, _ratio,
                                    _name])
         df.index = ['Open', 'High', 'Low', 'Close',
                     'Diff', 'Ratio', 'Name']
@@ -73,9 +55,7 @@ if __name__ == '__main__':
             stock_list = os.path.join(base_dir, 'data',
                                       'stocks.txt')
             aggregator = Aggregator(stock_list, data_dir)
-            result = aggregator.summarize()
-            print(result)
-            result = aggregator.returns_rank(range=15)
+            result = aggregator.summarize(range=2)
             print(result)
         else:
             print("This program needs at least %(argsmin)s arguments" %
