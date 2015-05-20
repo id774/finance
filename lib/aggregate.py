@@ -23,8 +23,8 @@ class Aggregator():
                 ti_dic[(_code, _name)] = _stock_d
         return ti_dic
 
-    def summarize(self, range=2):
-        range = range * -1
+    def summarize(self, range=1):
+        range = range * -1 - 1
         df = pd.DataFrame([])
         for k, _stock_d in self.ti_dic.items():
             _code = str(k[0])

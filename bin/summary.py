@@ -23,9 +23,9 @@ def main():
                               'stocks.txt')
 
     aggregator = Aggregator(stock_list, data_dir)
-    aggregate(aggregator, 'summary.csv', range=2)
-    aggregate(aggregator, 'summary_15.csv', range=15)
-    aggregate(aggregator, 'summary_30.csv', range=30)
+    aggregate(aggregator, 'summary.csv', range=1)
+    aggregate(aggregator, 'summary_10.csv', range=10)
+    aggregate(aggregator, 'summary_25.csv', range=25)
 
 if __name__ == '__main__':
     argsmin = 0
