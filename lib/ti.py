@@ -117,6 +117,12 @@ class TechnicalIndicators():
         self.stock['lowerband'] = lowerband
         return self.stock
 
+    def calc_tr(self):
+        self.stock['tr'] = ta.TRANGE(self.high,
+                                     self.low,
+                                     self.close)
+        return self.stock
+
     def calc_atr(self, timeperiod=14):
         self.stock['atr'] = ta.ATR(self.high,
                                    self.low,
