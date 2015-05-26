@@ -35,6 +35,10 @@ class Draw():
         fig = plt.figure(figsize=(10.24, 7.68))
 
         if axis >= 2:
+            ret['ret_index'] = ret['ret_index'] * 100
+            roc['roc'] = roc['roc'] + 50
+            tr['vl'] = tr['vl'] * 10
+
             ax1 = fig.add_subplot(2, 1, 1)
             ret['ret_index'].plot(label="RET",
                                   color="#888888", ax=ax1)

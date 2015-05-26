@@ -83,12 +83,10 @@ class Analysis():
 
             ret = ti.calc_ret_index()
             ti.calc_vol(ret['ret_index'])
-            ret['ret_index'] = ret['ret_index'] * 100
             rsi = ti.calc_rsi(timeperiod=9)
             rsi = ti.calc_rsi(timeperiod=14)
             mfi = ti.calc_mfi()
             roc = ti.calc_roc()
-            roc['roc'] = roc['roc'] + 50
             ti.calc_cci()
             ultosc = ti.calc_ultosc()
             stoch = ti.calc_stoch()
@@ -97,7 +95,6 @@ class Analysis():
             ti.calc_momentum(timeperiod=10)
             ti.calc_momentum(timeperiod=25)
             tr = ti.calc_tr()
-            tr['vl'] = tr['vl'] * 20
             ti.calc_atr()
             ti.calc_natr()
             vr = ti.calc_volume_rate()
@@ -111,17 +108,14 @@ class Analysis():
             msg = "".join(["Classified: ", str(clf_result[0])])
             print(msg)
 
+            io.save_data(io.merge_df(stock_d, ti.stock),
+                         self.code, 'ti_')
+
             draw.plot(stock_d, ewma, bbands,
                       ret, rsi, roc, mfi, ultosc,
                       stoch, tr, vr,
                       clf_result[0],
                       axis=2)
-
-            ret['ret_index'] = ret['ret_index'] / 100
-            roc['roc'] = roc['roc'] - 50
-            tr['vl'] = tr['vl'] / 20
-            io.save_data(io.merge_df(stock_d, ti.stock),
-                         self.code, 'ti_')
 
             return ti
 
