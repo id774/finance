@@ -25,7 +25,7 @@ class Draw():
 
     def plot(self, stock_d, ewma, bbands,
              ret, rsi, roc, mfi, ultosc,
-             stoch, vr,
+             stoch, tr, vr,
              clf_result, axis=2):
 
         plotting._all_kinds.append('ohlc')
@@ -52,13 +52,15 @@ class Draw():
                                 color="y", ax=ax1)
             stoch['slowd'].plot(label="SLOWD",
                                 color="k", ax=ax1)
+            tr['vl'].plot(label="VL",
+                          color="#66DDDD", ax=ax1)
             vr['v_rate'].plot(label="VOL", kind='area',
-                               color="#DDFFFF", ax=ax1)
+                              color="#DDFFFF", ax=ax1)
             # stochf['fastk'].plot(label="FASTK")
             # stochf['fastd'].plot(label="FASTD")
             ax1.set_yticks([0, 25, 50, 75, 100, 125])
-            plt.legend(loc='upper center', bbox_to_anchor=(0.3, 1.2),
-                       ncol=3, fancybox=False, shadow=False)
+            plt.legend(loc='upper center', bbox_to_anchor=(0.45, 1.3),
+                       ncol=5, fancybox=False, shadow=False)
 
             ax2 = fig.add_subplot(2, 1, 2)
         else:
@@ -132,7 +134,7 @@ class Draw():
                     '{:,d}'.format(_last_close),
                     ]),
                    fontdict={"fontproperties": self.fontprop})
-        plt.legend(loc='upper center', bbox_to_anchor=(0.3, 1.2),
+        plt.legend(loc='upper center', bbox_to_anchor=(0.3, 1.22),
                    ncol=3, fancybox=False, shadow=False)
         plt.savefig("".join(["chart_", self.code, ".png"]))
         plt.close()

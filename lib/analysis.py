@@ -96,7 +96,8 @@ class Analysis():
             ti.calc_macd()
             ti.calc_momentum(timeperiod=10)
             ti.calc_momentum(timeperiod=25)
-            ti.calc_tr()
+            tr = ti.calc_tr()
+            tr['vl'] = tr['vl'] * 20
             ti.calc_atr()
             ti.calc_natr()
             vr = ti.calc_volume_rate()
@@ -112,12 +113,13 @@ class Analysis():
 
             draw.plot(stock_d, ewma, bbands,
                       ret, rsi, roc, mfi, ultosc,
-                      stoch, vr,
+                      stoch, tr, vr,
                       clf_result[0],
                       axis=2)
 
             ret['ret_index'] = ret['ret_index'] / 100
             roc['roc'] = roc['roc'] - 50
+            tr['vl'] = tr['vl'] / 20
             io.save_data(io.merge_df(stock_d, ti.stock),
                          self.code, 'ti_')
 

@@ -33,6 +33,7 @@ def test_plot():
     mfi = ti.calc_mfi()
     ultosc = ti.calc_ultosc()
     stoch = ti.calc_stoch()
+    tr = ti.calc_tr()
     vr = ti.calc_volume_rate()
 
     ewma = ti.calc_ewma(span=5)
@@ -42,7 +43,7 @@ def test_plot():
 
     draw.plot(stock, ewma, bbands,
               ret, rsi, roc, mfi, ultosc,
-              stoch, vr,
+              stoch, tr, vr,
               clf_result=0)
 
     eq_(draw.code, 'N225')
