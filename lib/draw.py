@@ -50,7 +50,7 @@ class Draw():
                             color="b", ax=ax1)
             rsi['mfi'].plot(label="MFI",
                             color="#DD88DD", ax=ax1)
-            rsi['ultosc'].plot(label="UTL",
+            rsi['ultosc'].plot(label="UO",
                                color="m", ax=ax1)
             stoch['slowk'].plot(label="SLOWK",
                                 color="y", ax=ax1)
