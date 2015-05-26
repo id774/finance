@@ -45,7 +45,7 @@ class Draw():
             roc['roc'].plot(label="ROC",
                             color="b", ax=ax1)
             rsi['mfi'].plot(label="MFI",
-                            color="c", ax=ax1)
+                            color="#DD88DD", ax=ax1)
             rsi['ultosc'].plot(label="UTL",
                                color="m", ax=ax1)
             stoch['slowk'].plot(label="SLOWK",
@@ -53,7 +53,7 @@ class Draw():
             stoch['slowd'].plot(label="SLOWD",
                                 color="k", ax=ax1)
             tr['vl'].plot(label="VL",
-                          color="#66DDDD", ax=ax1)
+                          color="c", ax=ax1)
             vr['v_rate'].plot(label="VOL", kind='area',
                               color="#DDFFFF", ax=ax1)
             # stochf['fastk'].plot(label="FASTK")
