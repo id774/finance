@@ -138,8 +138,8 @@ class TechnicalIndicators():
             min_periods=min_periods) * np.sqrt(timeperiod)
         return self.stock
 
-    def calc_volume_ratio(self):
-        self.stock['v_ratio'] = (self.volume /
+    def calc_volume_rate(self):
+        self.stock['v_rate'] = (self.volume /
                                  self.volume.max()
                                  * 100)
         return self.stock

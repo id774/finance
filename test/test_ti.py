@@ -218,13 +218,13 @@ def test_calc_vol():
     eq_(expected, result)
     return vol
 
-def test_calc_volume_ratio():
+def test_calc_volume_rate():
     stock = testdata()
     ti = TechnicalIndicators(stock)
-    vr = ti.calc_volume_ratio()
+    vr = ti.calc_volume_rate()
 
     expected = 43.68
-    result = vr.ix['2015-03-19', 'v_ratio']
+    result = vr.ix['2015-03-19', 'v_rate']
     result = round(result, 2)
     eq_(expected, result)
     return vr
@@ -246,7 +246,7 @@ if __name__ == '__main__':
     natr = test_calc_natr()
     rets = test_calc_ret_index()
     vol = test_calc_vol()
-    vr = test_calc_volume_ratio()
+    vr = test_calc_volume_rate()
     stock = pd.merge(stock, sma,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, ewma,

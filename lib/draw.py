@@ -52,7 +52,7 @@ class Draw():
                                 color="y", ax=ax1)
             stoch['slowd'].plot(label="SLOWD",
                                 color="k", ax=ax1)
-            vr['v_ratio'].plot(label="VOL", kind='area',
+            vr['v_rate'].plot(label="VOL", kind='area',
                                color="#DDFFFF", ax=ax1)
             # stochf['fastk'].plot(label="FASTK")
             # stochf['fastd'].plot(label="FASTD")

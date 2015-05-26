@@ -33,7 +33,7 @@ def test_plot():
     mfi = ti.calc_mfi()
     ultosc = ti.calc_ultosc()
     stoch = ti.calc_stoch()
-    vr = ti.calc_volume_ratio()
+    vr = ti.calc_volume_rate()
 
     ewma = ti.calc_ewma(span=5)
     ewma = ti.calc_ewma(span=25)

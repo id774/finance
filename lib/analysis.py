@@ -97,7 +97,7 @@ class Analysis():
             ti.calc_momentum(timeperiod=10)
             ti.calc_momentum(timeperiod=25)
             ti.calc_natr()
-            vr = ti.calc_volume_ratio()
+            vr = ti.calc_volume_rate()
 
             clf = Classifier(self.clffile)
             ret_index = ti.stock['ret_index']
