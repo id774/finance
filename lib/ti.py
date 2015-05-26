@@ -36,11 +36,12 @@ class TechnicalIndicators():
                                     timeperiod=timeperiod)
         return self.stock
 
-    def calc_mfi(self):
+    def calc_mfi(self, timeperiod=14):
         self.stock['mfi'] = ta.MFI(self.high,
                                    self.low,
                                    self.close,
-                                   self.volume)
+                                   self.volume,
+                                   timeperiod=timeperiod)
         return self.stock
 
     def calc_roc(self, timeperiod=10):
@@ -48,10 +49,11 @@ class TechnicalIndicators():
                                    timeperiod=timeperiod)
         return self.stock
 
-    def calc_cci(self):
+    def calc_cci(self, timeperiod=14):
         self.stock['cci'] = ta.CCI(self.high,
                                    self.low,
-                                   self.close)
+                                   self.close,
+                                   timeperiod=timeperiod)
         return self.stock
 
     def calc_ultosc(self):
@@ -89,10 +91,13 @@ class TechnicalIndicators():
         self.stock['fastd'] = stochf[1]
         return self.stock
 
-    def calc_macd(self):
+    def calc_macd(self,
+                  fastperiod=12, slowperiod=26, signalperiod=9):
         macd, macdsignal, macdhist = ta.MACD(
             self.close,
-            fastperiod=12, slowperiod=26, signalperiod=9)
+            fastperiod=fastperiod,
+            slowperiod=slowperiod,
+            signalperiod=signalperiod)
         self.stock['macd'] = macd
         self.stock['macdsignal'] = macdsignal
         self.stock['macdhist'] = macdhist
@@ -112,10 +117,11 @@ class TechnicalIndicators():
         self.stock['lowerband'] = lowerband
         return self.stock
 
-    def calc_natr(self):
+    def calc_natr(self, timeperiod=14):
         self.stock['natr'] = ta.NATR(self.high,
                                      self.low,
-                                     self.close)
+                                     self.close,
+                                     timeperiod=timeperiod)
         return self.stock
 
     def calc_ret_index(self):
