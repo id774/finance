@@ -193,6 +193,11 @@ def test_calc_tr():
     result = tr.ix['2015-03-20', 'tr']
     result = round(result, 2)
     eq_(expected, result)
+
+    expected = 0.76
+    result = tr.ix['2015-03-20', 'vr']
+    result = round(result, 2)
+    eq_(expected, result)
     return tr
 
 def test_calc_atr():

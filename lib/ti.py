@@ -121,6 +121,9 @@ class TechnicalIndicators():
         self.stock['tr'] = ta.TRANGE(self.high,
                                      self.low,
                                      self.close)
+        self.stock['vr'] = self.stock['tr'] / ((self.high +
+                                                self.low +
+                                                self.close) / 3) * 100
         return self.stock
 
     def calc_atr(self, timeperiod=14):
