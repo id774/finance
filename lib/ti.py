@@ -117,6 +117,13 @@ class TechnicalIndicators():
         self.stock['lowerband'] = lowerband
         return self.stock
 
+    def calc_atr(self, timeperiod=14):
+        self.stock['atr'] = ta.ATR(self.high,
+                                   self.low,
+                                   self.close,
+                                   timeperiod=timeperiod)
+        return self.stock
+
     def calc_natr(self, timeperiod=14):
         self.stock['natr'] = ta.NATR(self.high,
                                      self.low,
@@ -140,6 +147,6 @@ class TechnicalIndicators():
 
     def calc_volume_rate(self):
         self.stock['v_rate'] = (self.volume /
-                                 self.volume.max()
-                                 * 100)
+                                self.volume.max()
+                                * 100)
         return self.stock

@@ -184,6 +184,17 @@ def test_calc_bbands():
     eq_(expected, result)
     return bbands
 
+def test_calc_atr():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    atr = ti.calc_atr()
+
+    expected = 208.40
+    result = atr.ix['2015-03-20', 'atr']
+    result = round(result, 2)
+    eq_(expected, result)
+    return atr
+
 def test_calc_natr():
     stock = testdata()
     ti = TechnicalIndicators(stock)
@@ -243,6 +254,7 @@ if __name__ == '__main__':
     macd = test_calc_macd()
     momentum = test_calc_momentum()
     bbands = test_calc_bbands()
+    atr = test_calc_atr()
     natr = test_calc_natr()
     rets = test_calc_ret_index()
     vol = test_calc_vol()
