@@ -96,6 +96,7 @@ class Analysis():
             ti.calc_macd()
             ti.calc_momentum(timeperiod=10)
             ti.calc_momentum(timeperiod=25)
+            ti.calc_atr()
             ti.calc_natr()
             vr = ti.calc_volume_rate()
 
