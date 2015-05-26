@@ -195,7 +195,7 @@ def test_calc_tr():
     eq_(expected, result)
 
     expected = 0.76
-    result = tr.ix['2015-03-20', 'vr']
+    result = tr.ix['2015-03-20', 'vl']
     result = round(result, 2)
     eq_(expected, result)
     return tr

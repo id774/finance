@@ -1,4 +1,4 @@
-Date,Open,High,Low,Close,Volume,Adj Close,sma5,sma25,sma75,ewma5,ewma25,ewma75,upperband,middleband,lowerband,ret_index,vol,rsi9,rsi14,mfi,roc,cci,ultosc,slowk,slowd,fastk,fastd,macd,macdsignal,macdhist,mom10,mom25,tr,vr,atr,natr,v_rate
+Date,Open,High,Low,Close,Volume,Adj Close,sma5,sma25,sma75,ewma5,ewma25,ewma75,upperband,middleband,lowerband,ret_index,vol,rsi9,rsi14,mfi,roc,cci,ultosc,slowk,slowd,fastk,fastd,macd,macdsignal,macdhist,mom10,mom25,tr,vl,atr,natr,v_rate
 2014-07-07,15433.49,15477.77,15379.44,15379.44,84000.0,15379.44,,,,15379.44,15379.44,15379.44,,,,1.0,,,,,,,,,,,,,,,,,,,,,25.029797377830754
 2014-07-08,15304.27,15389.89,15225.11,15314.41,117700.0,15314.41,,,,15340.422,15345.6244,15346.491466666666,,,,0.9957716275755163,,,,,,,,,,,,,,,,,164.77999999999884,1.0763038323374858,,,35.0715137067938
 2014-07-09,15194.32,15302.65,15185.32,15302.65,118300.0,15302.65,,,,15322.53,15330.138955223882,15331.486233704669,,,,0.995006970344824,,,,,,,,,,,,,,,,,129.09000000000015,0.845740896279632,,,35.2502979737783
