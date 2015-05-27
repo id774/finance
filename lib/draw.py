@@ -69,9 +69,7 @@ class Draw():
             ax2 = fig.add_subplot(2, 1, 2)
         else:
             ax2 = fig.add_subplot(1, 1, 1)
-        stock_d.plot(kind='ohlc',
-                     colorup='r', colordown='b',
-                     ax=ax2)
+
         # sma['sma5'].plot(label="SMA5")
         # sma['sma25'].plot(label="SMA25")
         # sma['sma75'].plot(label="SMA75")
@@ -87,6 +85,10 @@ class Draw():
                                   color="m", ax=ax2)
         bbands['lowerband'].plot(label="LOWER",
                                  color="y", ax=ax2)
+
+        stock_d.plot(kind='ohlc',
+                     colorup='r', colordown='b',
+                     ax=ax2)
 
         _ret_index = round(ret.ix[-1, 'ret_index'], 2)
         _volume = int(stock_d.ix[-1, 'Volume'])
