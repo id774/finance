@@ -32,7 +32,7 @@ class Draw():
         plotting._common_kinds.append('ohlc')
         plotting._plot_klass['ohlc'] = OhlcPlot
 
-        fig = plt.figure(figsize=(10.24, 7.68))
+        fig = plt.figure(figsize=(12.80, 10.24))
 
         if axis >= 2:
             ret['ret_index'] = ret['ret_index'] * 100
@@ -63,7 +63,7 @@ class Draw():
             # stochf['fastk'].plot(label="FASTK")
             # stochf['fastd'].plot(label="FASTD")
             ax1.set_yticks([0, 25, 50, 75, 100, 125])
-            plt.legend(loc='upper center', bbox_to_anchor=(0.45, 1.3),
+            plt.legend(loc='upper center', bbox_to_anchor=(0.42, 1.23),
                        ncol=5, fancybox=False, shadow=False)
 
             ax2 = fig.add_subplot(2, 1, 2)
@@ -140,7 +140,7 @@ class Draw():
                     '{:,d}'.format(_last_close),
                     ]),
                    fontdict={"fontproperties": self.fontprop})
-        plt.legend(loc='upper center', bbox_to_anchor=(0.3, 1.22),
+        plt.legend(loc='upper center', bbox_to_anchor=(0.3, 1.228),
                    ncol=3, fancybox=False, shadow=False)
         plt.savefig("".join(["chart_", self.code, ".png"]))
         plt.close()
