@@ -71,7 +71,7 @@ def test_calc_mfi():
     mfi = ti.calc_mfi()
 
     expected = 62.47
-    result = mfi.ix['2015-03-20', 'mfi']
+    result = mfi.ix['2015-03-20', 'mfi14']
     result = round(result, 2)
     eq_(expected, result)
     return mfi
@@ -82,7 +82,7 @@ def test_calc_roc():
     roc = ti.calc_roc(timeperiod=10)
 
     expected = 3.11
-    result = roc.ix['2015-03-20', 'roc']
+    result = roc.ix['2015-03-20', 'roc10']
     result = round(result, 2)
     eq_(expected, result)
     return roc
@@ -93,7 +93,7 @@ def test_calc_cci():
     cci = ti.calc_cci()
 
     expected = 104.27
-    result = cci.ix['2015-03-20', 'cci']
+    result = cci.ix['2015-03-20', 'cci14']
     result = round(result, 2)
     eq_(expected, result)
     return cci

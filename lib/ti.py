@@ -37,23 +37,26 @@ class TechnicalIndicators():
         return self.stock
 
     def calc_mfi(self, timeperiod=14):
-        self.stock['mfi'] = ta.MFI(self.high,
-                                   self.low,
-                                   self.close,
-                                   self.volume,
-                                   timeperiod=timeperiod)
+        column = 'mfi' + str(timeperiod)
+        self.stock[column] = ta.MFI(self.high,
+                                    self.low,
+                                    self.close,
+                                    self.volume,
+                                    timeperiod=timeperiod)
         return self.stock
 
     def calc_roc(self, timeperiod=10):
-        self.stock['roc'] = ta.ROC(self.close,
-                                   timeperiod=timeperiod)
+        column = 'roc' + str(timeperiod)
+        self.stock[column] = ta.ROC(self.close,
+                                    timeperiod=timeperiod)
         return self.stock
 
     def calc_cci(self, timeperiod=14):
-        self.stock['cci'] = ta.CCI(self.high,
-                                   self.low,
-                                   self.close,
-                                   timeperiod=timeperiod)
+        column = 'cci' + str(timeperiod)
+        self.stock[column] = ta.CCI(self.high,
+                                    self.low,
+                                    self.close,
+                                    timeperiod=timeperiod)
         return self.stock
 
     def calc_ultosc(self):

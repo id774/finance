@@ -36,7 +36,7 @@ class Draw():
 
         if axis >= 2:
             ret['ret_index'] = ret['ret_index'] * 100
-            roc['roc'] = roc['roc'] + 50
+            roc['roc10'] = roc['roc10'] + 50
             tr['vl'] = tr['vl'] * 10
 
             ax1 = fig.add_subplot(2, 1, 1)
@@ -46,10 +46,10 @@ class Draw():
                              color="g", ax=ax1)
             rsi['rsi14'].plot(label="RSI14",
                               color="r", ax=ax1)
-            roc['roc'].plot(label="ROC",
-                            color="b", ax=ax1)
-            rsi['mfi'].plot(label="MFI",
-                            color="#DD88DD", ax=ax1)
+            roc['roc10'].plot(label="ROC",
+                              color="b", ax=ax1)
+            rsi['mfi14'].plot(label="MFI",
+                              color="#DD88DD", ax=ax1)
             rsi['ultosc'].plot(label="UO",
                                color="m", ax=ax1)
             stoch['slowk'].plot(label="SLOWK",
