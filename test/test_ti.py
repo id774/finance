@@ -143,6 +143,17 @@ def test_calc_stochf():
 
     return stochf
 
+def test_calc_willr():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    willr = ti.calc_willr(timeperiod=14)
+
+    expected = -0.53
+    result = willr.ix['2015-03-20', 'willr14']
+    result = round(result, 2)
+    eq_(expected, result)
+    return willr
+
 def test_calc_macd():
     stock = testdata()
     ti = TechnicalIndicators(stock)
@@ -261,6 +272,7 @@ if __name__ == '__main__':
     sma = test_calc_sma()
     ewma = test_calc_ewma()
     rsi = test_calc_rsi()
+    willr = test_calc_willr()
     mfi = test_calc_mfi()
     roc = test_calc_roc()
     cci = test_calc_cci()
