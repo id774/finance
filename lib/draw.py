@@ -24,7 +24,7 @@ class Draw():
             fname=font_path)
 
     def plot(self, stock_d, ewma, bbands, sar,
-             ret, rsi, roc, mfi, ultosc,
+             ret, rsi, roc, mfi, ultosc, willr,
              stoch, tr, vr,
              clf_result, axis=2):
 
@@ -37,6 +37,7 @@ class Draw():
         if axis >= 2:
             ret['ret_index'] = ret['ret_index'] * 100
             roc['roc10'] = roc['roc10'] + 50
+            willr['willr14'] = willr['willr14'] + 100
             tr['vl'] = tr['vl'] * 10
 
             ax1 = fig.add_subplot(2, 1, 1)
@@ -48,14 +49,16 @@ class Draw():
                               color="r", ax=ax1)
             roc['roc10'].plot(label="ROC",
                               color="b", ax=ax1)
-            rsi['mfi14'].plot(label="MFI",
+            mfi['mfi14'].plot(label="MFI",
                               color="#DD88DD", ax=ax1)
-            rsi['ultosc'].plot(label="UO",
-                               color="m", ax=ax1)
+            ultosc['ultosc'].plot(label="UO",
+                                  color="m", ax=ax1)
             stoch['slowk'].plot(label="SLOWK",
                                 color="y", ax=ax1)
             stoch['slowd'].plot(label="SLOWD",
                                 color="k", ax=ax1)
+            willr['willr14'].plot(linestyle=':', label="R%",
+                                  color="#DD0000", ax=ax1)
             tr['vl'].plot(label="VL",
                           color="c", ax=ax1)
             vr['v_rate'].plot(label="VOL", kind='area',
@@ -63,8 +66,8 @@ class Draw():
             # stochf['fastk'].plot(label="FASTK")
             # stochf['fastd'].plot(label="FASTD")
             ax1.set_yticks([0, 25, 50, 75, 100, 125])
-            plt.legend(loc='upper center', bbox_to_anchor=(0.42, 1.23),
-                       ncol=5, fancybox=False, shadow=False)
+            plt.legend(loc='upper center', bbox_to_anchor=(0.48, 1.23),
+                       ncol=6, fancybox=False, shadow=False)
 
             ax2 = fig.add_subplot(2, 1, 2)
         else:

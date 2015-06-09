@@ -94,7 +94,7 @@ class Analysis():
             stoch = ti.calc_stoch()
             ti.calc_stochf()
             ti.calc_macd()
-            ti.calc_willr()
+            willr = ti.calc_willr()
             ti.calc_momentum(timeperiod=10)
             ti.calc_momentum(timeperiod=25)
             tr = ti.calc_tr()
@@ -115,7 +115,7 @@ class Analysis():
                          self.code, 'ti_')
 
             draw.plot(stock_d, ewma, bbands, sar,
-                      ret, rsi, roc, mfi, ultosc,
+                      ret, rsi, roc, mfi, ultosc, willr,
                       stoch, tr, vr,
                       clf_result[0],
                       axis=2)

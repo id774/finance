@@ -33,6 +33,7 @@ def test_plot():
     mfi = ti.calc_mfi()
     ultosc = ti.calc_ultosc()
     stoch = ti.calc_stoch()
+    willr = ti.calc_willr()
     tr = ti.calc_tr()
     vr = ti.calc_volume_rate()
 
@@ -43,7 +44,7 @@ def test_plot():
     sar = ti.calc_sar()
 
     draw.plot(stock, ewma, bbands, sar,
-              ret, rsi, roc, mfi, ultosc,
+              ret, rsi, roc, mfi, ultosc, willr,
               stoch, tr, vr,
               clf_result=0)
 
