@@ -272,13 +272,13 @@ if __name__ == '__main__':
     sma = test_calc_sma()
     ewma = test_calc_ewma()
     rsi = test_calc_rsi()
-    willr = test_calc_willr()
     mfi = test_calc_mfi()
     roc = test_calc_roc()
     cci = test_calc_cci()
     ultosc = test_calc_ultosc()
     stoch = test_calc_stoch()
     stochf = test_calc_stochf()
+    willr = test_calc_willr()
     macd = test_calc_macd()
     momentum = test_calc_momentum()
     bbands = test_calc_bbands()
@@ -305,6 +305,8 @@ if __name__ == '__main__':
     stock = pd.merge(stock, stoch,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, stochf,
+                     left_index=True, right_index=True)
+    stock = pd.merge(stock, willr,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, macd,
                      left_index=True, right_index=True)
