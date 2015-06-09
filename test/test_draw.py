@@ -40,8 +40,9 @@ def test_plot():
     ewma = ti.calc_ewma(span=25)
     ewma = ti.calc_ewma(span=75)
     bbands = ti.calc_bbands()
+    sar = ti.calc_sar()
 
-    draw.plot(stock, ewma, bbands,
+    draw.plot(stock, ewma, bbands, sar,
               ret, rsi, roc, mfi, ultosc,
               stoch, tr, vr,
               clf_result=0)

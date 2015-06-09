@@ -23,7 +23,7 @@ class Draw():
         self.fontprop = font_manager.FontProperties(
             fname=font_path)
 
-    def plot(self, stock_d, ewma, bbands,
+    def plot(self, stock_d, ewma, bbands, sar,
              ret, rsi, roc, mfi, ultosc,
              stoch, tr, vr,
              clf_result, axis=2):
@@ -85,6 +85,8 @@ class Draw():
                                   color="m", ax=ax2)
         bbands['lowerband'].plot(label="LOWER",
                                  color="y", ax=ax2)
+        sar['sar'].plot(linestyle=':', label="SAR",
+                        color="#444444", ax=ax2)
 
         stock_d.plot(kind='ohlc',
                      colorup='r', colordown='b',
@@ -140,7 +142,7 @@ class Draw():
                     '{:,d}'.format(_last_close),
                     ]),
                    fontdict={"fontproperties": self.fontprop})
-        plt.legend(loc='upper center', bbox_to_anchor=(0.3, 1.228),
-                   ncol=3, fancybox=False, shadow=False)
+        plt.legend(loc='upper center', bbox_to_anchor=(0.367, 1.228),
+                   ncol=4, fancybox=False, shadow=False)
         plt.savefig("".join(["chart_", self.code, ".png"]))
         plt.close()

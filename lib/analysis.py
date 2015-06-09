@@ -79,6 +79,7 @@ class Analysis():
             ewma = ti.calc_ewma(span=25)
             ewma = ti.calc_ewma(span=75)
             bbands = ti.calc_bbands()
+            sar = ti.calc_sar()
             draw = Draw(self.code, self.name)
 
             ret = ti.calc_ret_index()
@@ -93,6 +94,7 @@ class Analysis():
             stoch = ti.calc_stoch()
             ti.calc_stochf()
             ti.calc_macd()
+            ti.calc_willr()
             ti.calc_momentum(timeperiod=10)
             ti.calc_momentum(timeperiod=25)
             tr = ti.calc_tr()
@@ -112,7 +114,7 @@ class Analysis():
             io.save_data(io.merge_df(stock_d, ti.stock),
                          self.code, 'ti_')
 
-            draw.plot(stock_d, ewma, bbands,
+            draw.plot(stock_d, ewma, bbands, sar,
                       ret, rsi, roc, mfi, ultosc,
                       stoch, tr, vr,
                       clf_result[0],
