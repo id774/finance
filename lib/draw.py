@@ -86,7 +86,7 @@ class Draw():
         bbands['lowerband'].plot(label="LOWER",
                                  color="y", ax=ax2)
         sar['sar'].plot(linestyle=':', label="SAR",
-                        color="#444444", ax=ax2)
+                        color="#0044FF", ax=ax2)
 
         stock_d.plot(kind='ohlc',
                      colorup='r', colordown='b',
