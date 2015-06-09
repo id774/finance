@@ -94,14 +94,6 @@ class TechnicalIndicators():
         self.stock['fastd'] = stochf[1]
         return self.stock
 
-    def calc_willr(self, timeperiod=14):
-        column = 'willr' + str(timeperiod)
-        self.stock[column] = ta.WILLR(self.high,
-                                      self.low,
-                                      self.close,
-                                      timeperiod=timeperiod)
-        return self.stock
-
     def calc_macd(self,
                   fastperiod=12, slowperiod=26, signalperiod=9):
         macd, macdsignal, macdhist = ta.MACD(
@@ -126,6 +118,21 @@ class TechnicalIndicators():
         self.stock['upperband'] = upperband
         self.stock['middleband'] = middleband
         self.stock['lowerband'] = lowerband
+        return self.stock
+
+    def calc_sar(self, acceleration=0.02, maximum=0.2):
+        self.stock['sar'] = ta.SAR(self.high,
+                                   self.low,
+                                   acceleration=acceleration,
+                                   maximum=maximum)
+        return self.stock
+
+    def calc_willr(self, timeperiod=14):
+        column = 'willr' + str(timeperiod)
+        self.stock[column] = ta.WILLR(self.high,
+                                      self.low,
+                                      self.close,
+                                      timeperiod=timeperiod)
         return self.stock
 
     def calc_tr(self):

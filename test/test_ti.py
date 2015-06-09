@@ -143,17 +143,6 @@ def test_calc_stochf():
 
     return stochf
 
-def test_calc_willr():
-    stock = testdata()
-    ti = TechnicalIndicators(stock)
-    willr = ti.calc_willr(timeperiod=14)
-
-    expected = -0.53
-    result = willr.ix['2015-03-20', 'willr14']
-    result = round(result, 2)
-    eq_(expected, result)
-    return willr
-
 def test_calc_macd():
     stock = testdata()
     ti = TechnicalIndicators(stock)
@@ -194,6 +183,28 @@ def test_calc_bbands():
     result = [round(x, 0) for x in result]
     eq_(expected, result)
     return bbands
+
+def test_calc_sar():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    sar = ti.calc_sar()
+
+    expected = 18896.79
+    result = sar.ix['2015-03-20', 'sar']
+    result = round(result, 2)
+    eq_(expected, result)
+    return sar
+
+def test_calc_willr():
+    stock = testdata()
+    ti = TechnicalIndicators(stock)
+    willr = ti.calc_willr(timeperiod=14)
+
+    expected = -0.53
+    result = willr.ix['2015-03-20', 'willr14']
+    result = round(result, 2)
+    eq_(expected, result)
+    return willr
 
 def test_calc_tr():
     stock = testdata()
@@ -278,10 +289,11 @@ if __name__ == '__main__':
     ultosc = test_calc_ultosc()
     stoch = test_calc_stoch()
     stochf = test_calc_stochf()
-    willr = test_calc_willr()
     macd = test_calc_macd()
     momentum = test_calc_momentum()
     bbands = test_calc_bbands()
+    sar = test_calc_sar()
+    willr = test_calc_willr()
     tr = test_calc_tr()
     atr = test_calc_atr()
     natr = test_calc_natr()
@@ -306,11 +318,13 @@ if __name__ == '__main__':
                      left_index=True, right_index=True)
     stock = pd.merge(stock, stochf,
                      left_index=True, right_index=True)
-    stock = pd.merge(stock, willr,
-                     left_index=True, right_index=True)
     stock = pd.merge(stock, macd,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, momentum,
+                     left_index=True, right_index=True)
+    stock = pd.merge(stock, willr,
+                     left_index=True, right_index=True)
+    stock = pd.merge(stock, sar,
                      left_index=True, right_index=True)
     stock = pd.merge(stock, bbands,
                      left_index=True, right_index=True)
