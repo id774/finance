@@ -57,7 +57,7 @@ class Draw():
                                 color="y", ax=ax1)
             stoch['slowd'].plot(label="SLOWD",
                                 color="k", ax=ax1)
-            willr['willr14'].plot(linestyle=':', label="R%",
+            willr['willr14'].plot(linestyle=':', label="%R",
                                   color="#DD0000", ax=ax1)
             tr['vl'].plot(label="VL",
                           color="c", ax=ax1)
