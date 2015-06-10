@@ -26,10 +26,10 @@ def test_plot():
 
     ti = TechnicalIndicators(stock)
 
-    ret = ti.calc_ret_index()
     rsi = ti.calc_rsi(timeperiod=9)
     rsi = ti.calc_rsi(timeperiod=14)
     roc = ti.calc_roc()
+    roc = ti.calc_roc(timeperiod=25)
     mfi = ti.calc_mfi()
     ultosc = ti.calc_ultosc()
     stoch = ti.calc_stoch()
@@ -44,7 +44,7 @@ def test_plot():
     sar = ti.calc_sar()
 
     draw.plot(stock, ewma, bbands, sar,
-              ret, rsi, roc, mfi, ultosc, willr,
+              rsi, roc, mfi, ultosc, willr,
               stoch, tr, vr,
               clf_result=0)
 

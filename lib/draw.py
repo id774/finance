@@ -24,7 +24,7 @@ class Draw():
             fname=font_path)
 
     def plot(self, stock_d, ewma, bbands, sar,
-             ret, rsi, roc, mfi, ultosc, willr,
+             rsi, roc, mfi, ultosc, willr,
              stoch, tr, vr,
              clf_result, axis=2):
 
@@ -35,20 +35,20 @@ class Draw():
         fig = plt.figure(figsize=(12.80, 10.24))
 
         if axis >= 2:
-            ret['ret_index'] = ret['ret_index'] * 100
             roc['roc10'] = roc['roc10'] + 50
+            roc['roc25'] = roc['roc25'] + 50
             willr['willr14'] = willr['willr14'] + 100
             tr['vl'] = tr['vl'] * 10
 
             ax1 = fig.add_subplot(2, 1, 1)
-            ret['ret_index'].plot(label="RET",
-                                  color="#888888", ax=ax1)
             rsi['rsi9'].plot(label="RSI9",
                              color="g", ax=ax1)
             rsi['rsi14'].plot(label="RSI14",
                               color="r", ax=ax1)
-            roc['roc10'].plot(label="ROC",
+            roc['roc10'].plot(label="ROC10",
                               color="b", ax=ax1)
+            roc['roc25'].plot(label="ROC25",
+                              color="#888888", ax=ax1)
             mfi['mfi14'].plot(label="MFI",
                               color="#DD88DD", ax=ax1)
             ultosc['ultosc'].plot(label="UO",
@@ -65,7 +65,7 @@ class Draw():
                               color="#DDFFFF", ax=ax1)
             # stochf['fastk'].plot(label="FASTK")
             # stochf['fastd'].plot(label="FASTD")
-            ax1.set_yticks([0, 25, 50, 75, 100, 125])
+            ax1.set_yticks([0, 25, 50, 75, 100])
             plt.legend(loc='upper center', bbox_to_anchor=(0.48, 1.23),
                        ncol=6, fancybox=False, shadow=False)
 
@@ -95,7 +95,6 @@ class Draw():
                      colorup='r', colordown='b',
                      ax=ax2)
 
-        _ret_index = round(ret.ix[-1, 'ret_index'], 2)
         _volume = int(stock_d.ix[-1, 'Volume'])
         _open = int(stock_d.ix[-1, 'Open'])
         _high = int(stock_d.ix[-1, 'High'])
@@ -133,9 +132,7 @@ class Draw():
                     str(_close_ratio),
                     '%) 明日予測:',
                     _clf_result,
-                    "\nリターン:",
-                    str(_ret_index),
-                    ' 出来高:',
+                    "\n出来高:",
                     '{:,d}'.format(_volume),
                     ' 最高:',
                     '{:,d}'.format(_stock_max),

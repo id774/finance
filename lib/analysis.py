@@ -115,7 +115,7 @@ class Analysis():
                          self.code, 'ti_')
 
             draw.plot(stock_d, ewma, bbands, sar,
-                      ret, rsi, roc, mfi, ultosc, willr,
+                      rsi, roc, mfi, ultosc, willr,
                       stoch, tr, vr,
                       clf_result[0],
                       axis=2)
