@@ -27,9 +27,10 @@ class FileIO():
             return self._read_with_jpstock(stock,
                                            start='2014-09-01')
 
-    def _read_from_web(self, start, end):
+    def _read_from_web(self, stock, start, end):
         start = datetime.datetime.strptime(start, '%Y-%m-%d')
-        return data.DataReader('^N225', 'yahoo', start, end)
+        return data.DataReader("".join(['^', stock]),
+                               'yahoo', start, end)
 
     def _read_with_jpstock(self, stock, start):
         try:
@@ -43,8 +44,8 @@ class FileIO():
             return pd.DataFrame([])
 
     def read_data(self, stock, start, end):
-        if stock == 'N225':
-            return self._read_from_web(start, end)
+        if stock in {'N225', 'GSPC', 'IXIC', 'DJI'}:
+            return self._read_from_web(stock, start, end)
         else:
             return self._read_with_jpstock(stock, start)
 

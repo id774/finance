@@ -10,10 +10,10 @@ class JpStock:
                 '?code={0}.T&{1}&{2}&tm={3}&p={4}')
 
     def get(self, code, start=None, end=None, interval='d'):
-        if code == 'N225':
+        if code in {'N225', 'GSPC', 'IXIC', 'DJI'}:
             start = datetime.datetime.strptime(start, '%Y-%m-%d')
-            result = data.DataReader('^N225', 'yahoo', start, end)
-
+            result = data.DataReader("".join(['^', code]),
+                                     'yahoo', start, end)
             return result.asfreq('B')
 
         base = self._base_url()

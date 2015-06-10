@@ -14,13 +14,16 @@ class Aggregator():
         stocks = pd.read_csv(self.stock_list, header=None)
         for s in stocks.values:
             _code = str(s[0])
-            _name = str(s[1])
-            _csvfile = os.path.join(self.data_dir,
-                                    "".join(['ti_', _code, ".csv"]))
-            if os.path.exists(_csvfile):
-                _stock_d = pd.read_csv(_csvfile,
-                                       index_col=0, parse_dates=True)
-                ti_dic[(_code, _name)] = _stock_d
+            if _code in {'N225', 'GSPC', 'IXIC', 'DJI'}:
+                pass
+            else:
+                _name = str(s[1])
+                _csvfile = os.path.join(self.data_dir,
+                                        "".join(['ti_', _code, ".csv"]))
+                if os.path.exists(_csvfile):
+                    _stock_d = pd.read_csv(_csvfile,
+                                           index_col=0, parse_dates=True)
+                    ti_dic[(_code, _name)] = _stock_d
         return ti_dic
 
     def summarize(self, range=1):
@@ -40,8 +43,11 @@ class Aggregator():
             df[_code] = pd.Series([_open, _high, _low, _close,
                                    _diff, _ratio,
                                    _name])
-        df.index = ['Open', 'High', 'Low', 'Close',
-                    'Diff', 'Ratio', 'Name']
+        if df.empty:
+            return df
+        else:
+            df.index = ['Open', 'High', 'Low', 'Close',
+                        'Diff', 'Ratio', 'Name']
         return df.T.sort('Ratio', ascending=False)
 
 if __name__ == '__main__':
