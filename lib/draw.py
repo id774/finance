@@ -38,7 +38,7 @@ class Draw():
             roc['roc10'] = roc['roc10'] + 50
             roc['roc25'] = roc['roc25'] + 50
             willr['willr14'] = willr['willr14'] + 100
-            tr['vl'] = tr['vl'] * 10
+            tr['vl'] = tr['vl'] * 5
 
             ax1 = fig.add_subplot(2, 1, 1)
             rsi['rsi9'].plot(label="RSI9",
