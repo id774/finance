@@ -89,6 +89,8 @@ class Analysis():
             mfi = ti.calc_mfi()
             roc = ti.calc_roc(timeperiod=10)
             roc = ti.calc_roc(timeperiod=25)
+            roc = ti.calc_roc(timeperiod=50)
+            roc = ti.calc_roc(timeperiod=75)
             ti.calc_cci()
             ultosc = ti.calc_ultosc()
             stoch = ti.calc_stoch()
