@@ -40,14 +40,15 @@ class Aggregator():
             _close = int(_stock_d.ix[-1, 'Adj Close'])
             _diff = _end - _start
             _ratio = round((1 + _diff) / _close * 100, 2)
+            _corr = round(_stock_d['rolling_corr'].mean(), 2)
             df[_code] = pd.Series([_open, _high, _low, _close,
-                                   _diff, _ratio,
+                                   _diff, _ratio, _corr,
                                    _name])
         if df.empty:
             return df
         else:
             df.index = ['Open', 'High', 'Low', 'Close',
-                        'Diff', 'Ratio', 'Name']
+                        'Diff', 'Ratio', 'Corr', 'Name']
         return df.T.sort(sortkey, ascending=ascending)
 
 if __name__ == '__main__':
