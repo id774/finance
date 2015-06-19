@@ -14,7 +14,8 @@ from draw import Draw
 class Analysis():
 
     def __init__(self, code="", name="", start='2014-09-01',
-                 days=180, csvfile=None, update=False):
+                 days=180, csvfile=None, update=False,
+                 reference=[]):
         self.code = code
         self.name = name
         self.start = start
@@ -23,6 +24,7 @@ class Analysis():
         self.csvfile = csvfile
         self.update = update
         self.clffile = "".join(['clf_', code, '.pickle'])
+        self.reference = reference
 
     def run(self):
         io = FileIO()
@@ -113,6 +115,11 @@ class Analysis():
             msg = "".join(["Classified: ", str(clf_result[0])])
             print(msg)
 
+            if len(self.reference) > 0:
+                ref = ti.calc_rolling_corr(self.reference)
+            else:
+                ref = []
+
             io.save_data(io.merge_df(stock_d, ti.stock),
                          self.code, 'ti_')
 
@@ -120,6 +127,7 @@ class Analysis():
                       rsi, roc, mfi, ultosc, willr,
                       stoch, tr, vr,
                       clf_result[0],
+                      ref,
                       axis=2)
 
             return ti

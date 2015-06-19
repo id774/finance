@@ -177,3 +177,8 @@ class TechnicalIndicators():
                                 self.volume.max()
                                 * 100)
         return self.stock
+
+    def calc_rolling_corr(self, reference, window=5):
+        r = reference.pct_change()
+        c = self.stock_raw['Adj Close'].pct_change()
+        return pd.rolling_corr(c, r, window)

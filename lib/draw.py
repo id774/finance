@@ -22,11 +22,12 @@ class Draw():
             font_path = "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf"
         self.fontprop = font_manager.FontProperties(
             fname=font_path)
+        self.ref_result = ""
 
     def plot(self, stock_d, ewma, bbands, sar,
              rsi, roc, mfi, ultosc, willr,
              stoch, tr, vr,
-             clf_result, axis=2):
+             clf_result, ref=[], axis=2):
 
         plotting._all_kinds.append('ohlc')
         plotting._common_kinds.append('ohlc')
@@ -63,8 +64,12 @@ class Draw():
                           color="c", ax=ax1)
             vr['v_rate'].plot(label="VOL", kind='area',
                               color="#DDFFFF", ax=ax1)
-            # stochf['fastk'].plot(label="FASTK")
-            # stochf['fastd'].plot(label="FASTD")
+            if len(ref) > 0:
+                self.ref_result = (" NKY相関:" +
+                                   str(round(ref.mean(), 2)))
+                ref = ref * 50 + 50
+                ref.plot(linestyle=':', label="REF",
+                         color="#BBBBBB", ax=ax1)
             ax1.set_yticks([0, 25, 50, 75, 100])
             plt.legend(loc='upper center', bbox_to_anchor=(0.48, 1.23),
                        ncol=6, fancybox=False, shadow=False)
@@ -130,9 +135,11 @@ class Draw():
                     _close_diff,
                     ', ',
                     str(_close_ratio),
-                    '%) 明日予測:',
+                    '%)',
+                    self.ref_result,
+                    "\n明日予測:",
                     _clf_result,
-                    "\n出来高:",
+                    ' 出来高:',
                     '{:,d}'.format(_volume),
                     ' 最高:',
                     '{:,d}'.format(_stock_max),
