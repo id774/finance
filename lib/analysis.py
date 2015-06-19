@@ -116,7 +116,8 @@ class Analysis():
             print(msg)
 
             if len(self.reference) > 0:
-                ref = ti.calc_rolling_corr(self.reference)
+                ti.calc_rolling_corr(self.reference)
+                ref = ti.stock['rolling_corr']
             else:
                 ref = []
 
