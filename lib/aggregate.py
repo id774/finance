@@ -26,7 +26,7 @@ class Aggregator():
                     ti_dic[(_code, _name)] = _stock_d
         return ti_dic
 
-    def summarize(self, range=1):
+    def summarize(self, range=1, sortkey='Ratio', ascending=False):
         range = range * -1 - 1
         df = pd.DataFrame([])
         for k, _stock_d in self.ti_dic.items():
@@ -48,7 +48,7 @@ class Aggregator():
         else:
             df.index = ['Open', 'High', 'Low', 'Close',
                         'Diff', 'Ratio', 'Name']
-        return df.T.sort('Ratio', ascending=False)
+        return df.T.sort(sortkey, ascending=ascending)
 
 if __name__ == '__main__':
     argsmin = 0
