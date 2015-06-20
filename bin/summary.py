@@ -8,8 +8,9 @@ else:
     sys.path.append(p)
 from aggregate import Aggregator
 
-def aggregate(aggregator, filename, range=2):
-    result = aggregator.summarize(range=range)
+def aggregate(aggregator, filename, range=1, sortkey='Ratio', ascending=False):
+    result = aggregator.summarize(range=range,
+                                  sortkey=sortkey, ascending=ascending)
     p = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), '..', 'data',
         filename)
@@ -26,6 +27,7 @@ def main():
     aggregate(aggregator, 'summary.csv', range=1)
     aggregate(aggregator, 'summary_10.csv', range=10)
     aggregate(aggregator, 'summary_25.csv', range=25)
+    aggregate(aggregator, 'rolling_corr.csv', sortkey='Corr')
 
 if __name__ == '__main__':
     argsmin = 0
