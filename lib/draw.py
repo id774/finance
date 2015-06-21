@@ -65,7 +65,7 @@ class Draw():
             vr['v_rate'].plot(label="VOL", kind='area',
                               color="#DDFFFF", ax=ax1)
             if len(ref) > 0:
-                self.ref_result = (" NKY相関:" +
+                self.ref_result = (" 日経平均相関:" +
                                    str(round(ref.mean(), 2)))
                 ref = ref * 50 + 50
                 ref.plot(linestyle=':', label="REF",
