@@ -59,7 +59,7 @@ class Draw():
             stoch['slowd'].plot(label="SLOWD",
                                 color="k", ax=ax1)
             willr['willr14'].plot(linestyle=':', label="%R",
-                                  color="#DD0000", ax=ax1)
+                                  color="#FF0088", ax=ax1)
             tr['vl'].plot(label="VL",
                           color="c", ax=ax1)
             vr['v_rate'].plot(label="VOL", kind='area',
@@ -69,7 +69,7 @@ class Draw():
                                    str(round(ref.mean(), 2)))
                 ref = ref * 50 + 50
                 ref.plot(linestyle=':', label="REF",
-                         color="#BBBBBB", ax=ax1)
+                         color="#DDDDDD", ax=ax1)
             ax1.set_yticks([0, 25, 50, 75, 100])
             plt.legend(loc='upper center', bbox_to_anchor=(0.48, 1.23),
                        ncol=6, fancybox=False, shadow=False)
@@ -94,7 +94,7 @@ class Draw():
         bbands['lowerband'].plot(label="LOWER",
                                  color="y", ax=ax2)
         sar['sar'].plot(linestyle=':', label="SAR",
-                        color="#FF0088", ax=ax2)
+                        color="#00FF88", ax=ax2)
 
         stock_d.plot(kind='ohlc',
                      colorup='r', colordown='b',
