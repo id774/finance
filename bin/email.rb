@@ -1,7 +1,6 @@
 require 'mail'
 
-def sendmail
-  hostname = `hostname`.chop
+def sendmail(filename, title, hostname)
   return unless hostname.include?("id774.net")
 
   options = {
@@ -15,16 +14,13 @@ def sendmail
     delivery_method :smtp, options
   end
 
-  filename = "summary.csv"
   dir = File.expand_path(File.dirname(__FILE__))
   path = File.join(dir, "..", "data", filename)
-
-  today = Time.now.strftime("%a %d %b %Y")
 
   mail = Mail.new do
     from     "finance@#{hostname}"
     to       "finance@id774.net"
-    subject  "[cron][#{hostname}] Summary Report of Financial Data on #{today}"
+    subject  title
     body     File.read(path)
   end
 
@@ -34,5 +30,12 @@ def sendmail
 end
 
 if __FILE__ == $0
-  sendmail
+  hostname = `hostname`.chop
+  today = Time.now.strftime("%a %d %b %Y")
+
+  filename = ARGV.shift || "summary.csv"
+  report_name = ARGV.shift || "Summary Report of Financial Data"
+
+  title = "[cron][#{hostname}] #{report_name} on #{today}"
+  sendmail(filename, title, hostname)
 end
