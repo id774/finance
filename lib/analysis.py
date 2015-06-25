@@ -75,10 +75,13 @@ class Analysis():
             ti = TechnicalIndicators(stock_d)
 
             ti.calc_sma()
+            ti.calc_sma(timeperiod=5)
             ti.calc_sma(timeperiod=25)
+            ti.calc_sma(timeperiod=50)
             ti.calc_sma(timeperiod=75)
             ewma = ti.calc_ewma(span=5)
             ewma = ti.calc_ewma(span=25)
+            ewma = ti.calc_ewma(span=50)
             ewma = ti.calc_ewma(span=75)
             bbands = ti.calc_bbands()
             sar = ti.calc_sar()

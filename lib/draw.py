@@ -78,19 +78,16 @@ class Draw():
         else:
             ax2 = fig.add_subplot(1, 1, 1)
 
-        # sma['sma5'].plot(label="SMA5")
-        # sma['sma25'].plot(label="SMA25")
-        # sma['sma75'].plot(label="SMA75")
         ewma['ewma5'].plot(label="MA5",
                            color="k", ax=ax2)
         ewma['ewma25'].plot(label="MA25",
                             color="g", ax=ax2)
+        ewma['ewma50'].plot(label="MA50",
+                            color="m", ax=ax2)
         ewma['ewma75'].plot(label="MA75",
                             color="r", ax=ax2)
         bbands['upperband'].plot(label="UPPER",
                                  color="c", ax=ax2)
-        bbands['middleband'].plot(label="MIDDLE",
-                                  color="m", ax=ax2)
         bbands['lowerband'].plot(label="LOWER",
                                  color="y", ax=ax2)
         sar['sar'].plot(linestyle=':', label="SAR",
