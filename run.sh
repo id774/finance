@@ -16,6 +16,7 @@ date "+%Y/%m/%d %T">>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/charts.py -s $STOCKTXT -d $STARTDATE -y $DAYS -u>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py>>$JOBLOG 2>&1
 $RUBY $WORK_DIR/bin/email.rb>>$JOBLOG 2>&1
+$RUBY $WORK_DIR/bin/email.rb "rolling_corr.csv" "Summary Report sorted by corr">>$JOBLOG 2>&1
 
 echo -n "*** $0: Job ended on `/bin/hostname` at ">>$JOBLOG 2>&1
 date "+%Y/%m/%d %T">>$JOBLOG 2>&1
