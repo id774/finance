@@ -39,6 +39,7 @@ def test_plot():
 
     ewma = ti.calc_ewma(span=5)
     ewma = ti.calc_ewma(span=25)
+    ewma = ti.calc_ewma(span=50)
     ewma = ti.calc_ewma(span=75)
     bbands = ti.calc_bbands()
     sar = ti.calc_sar()
