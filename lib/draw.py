@@ -105,12 +105,12 @@ class Draw():
         _last_close = int(stock_d.ix[-2, 'Adj Close'])
         _stock_max = int(stock_d.ix[:, 'High'].max())
         _stock_min = int(stock_d.ix[:, 'Low'].min())
-        _close_diff = _close - _last_close
-        _close_ratio = round((1 + _close_diff) / _close * 100, 2)
-        if _close_diff >= 0:
-            _close_diff = "".join(['+', str(_close_diff)])
+        _close_change = _close - _last_close
+        _close_ratio = round((1 + _close_change) / _close * 100, 2)
+        if _close_change >= 0:
+            _close_change = "".join(['+', str(_close_change)])
         else:
-            _close_diff = str(_close_diff)
+            _close_change = str(_close_change)
         if clf_result == 0:
             _clf_result = "↓"
         else:
@@ -129,7 +129,7 @@ class Draw():
                     ' 終:',
                     '{:,d}'.format(_close),
                     ' (',
-                    _close_diff,
+                    _close_change,
                     ', ',
                     str(_close_ratio),
                     '%)',
