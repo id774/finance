@@ -146,7 +146,11 @@ class Draw():
                     '{:,d}'.format(_last_close),
                     ]),
                    fontdict={"fontproperties": self.fontprop})
-        plt.legend(loc='upper center', bbox_to_anchor=(0.367, 1.228),
-                   ncol=4, fancybox=False, shadow=False)
+        if axis >= 2:
+            plt.legend(loc='upper center', bbox_to_anchor=(0.367, 1.228),
+                       ncol=4, fancybox=False, shadow=False)
+        else:
+            plt.legend(loc='upper center', bbox_to_anchor=(0.38, 1.12),
+                       ncol=4, fancybox=False, shadow=False)
         plt.savefig("".join(["chart_", self.code, ".png"]))
         plt.close()
