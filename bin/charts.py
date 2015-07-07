@@ -45,6 +45,8 @@ def main():
                       help="specify start date as '2014-09-01'")
     parser.add_option("-y", "--days", dest="days",
                       help="plot days as '90', specify 0 for all days")
+    parser.add_option("-a", "--axis", dest="axis",
+                      help="setting y-axis limit (1 or 2, default 2)")
     (options, args) = parser.parse_args()
 
     if len(args) != 0:
@@ -61,7 +63,8 @@ def main():
                             start=options.startdate,
                             days=options.days,
                             csvfile=options.csvfile,
-                            update=options.update)
+                            update=options.update,
+                            axis=options.axis)
         return analysis.run()
 
 if __name__ == '__main__':

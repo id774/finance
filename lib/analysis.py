@@ -15,6 +15,7 @@ class Analysis():
 
     def __init__(self, code="", name="", start='2014-09-01',
                  days=180, csvfile=None, update=False,
+                 axis=2,
                  reference=[]):
         self.code = code
         self.name = name
@@ -24,6 +25,10 @@ class Analysis():
         self.csvfile = csvfile
         self.update = update
         self.clffile = "".join(['clf_', code, '.pickle'])
+        if axis:
+            self.axis = int(axis)
+        else:
+            self.axis = 2
         self.reference = reference
 
     def run(self):
@@ -133,7 +138,7 @@ class Analysis():
                       stoch, tr, vr,
                       clf_result[0],
                       ref,
-                      axis=2)
+                      axis=self.axis)
 
             return ti
 
