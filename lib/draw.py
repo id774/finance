@@ -49,27 +49,27 @@ class Draw():
             roc['roc10'].plot(label="ROC10",
                               color="b", ax=ax1)
             roc['roc25'].plot(label="ROC25",
-                              color="#888888", ax=ax1)
+                              color="#888888", ax=ax1, grid=True)
             mfi['mfi14'].plot(label="MFI",
-                              color="#DD88DD", ax=ax1)
+                              color="#DD88DD", ax=ax1, grid=True)
             ultosc['ultosc'].plot(label="UO",
-                                  color="m", ax=ax1)
+                                  color="m", ax=ax1, grid=True)
             stoch['slowk'].plot(label="SLOWK",
-                                color="y", ax=ax1)
+                                color="y", ax=ax1, grid=True)
             stoch['slowd'].plot(label="SLOWD",
-                                color="k", ax=ax1)
+                                color="k", ax=ax1, grid=True)
             willr['willr14'].plot(linestyle=':', label="%R",
-                                  color="#FF0088", ax=ax1)
+                                  color="#FF0088", ax=ax1, grid=True)
             tr['vl'].plot(label="VL",
-                          color="c", ax=ax1)
+                          color="c", ax=ax1, grid=True)
             vr['v_rate'].plot(label="VOL", kind='area',
-                              color="#DDFFFF", ax=ax1)
+                              color="#DDFFFF", ax=ax1, grid=True)
             if len(ref) > 0:
                 self.ref_result = (" 日経平均相関:" +
                                    str(round(ref.mean(), 2)))
                 ref = ref * 50 + 50
                 ref.plot(linestyle=':', label="REF",
-                         color="#DDDDDD", ax=ax1)
+                         color="#DDDDDD", ax=ax1, grid=True)
             ax1.set_yticks([0, 25, 50, 75, 100])
             plt.legend(loc='upper center', bbox_to_anchor=(0.48, 1.23),
                        ncol=6, fancybox=False, shadow=False)
@@ -79,23 +79,23 @@ class Draw():
             ax2 = fig.add_subplot(1, 1, 1)
 
         ewma['ewma5'].plot(label="MA5",
-                           color="k", ax=ax2)
+                           color="k", ax=ax2, grid=True)
         ewma['ewma25'].plot(label="MA25",
-                            color="g", ax=ax2)
+                            color="g", ax=ax2, grid=True)
         ewma['ewma50'].plot(label="MA50",
-                            color="m", ax=ax2)
+                            color="m", ax=ax2, grid=True)
         ewma['ewma75'].plot(label="MA75",
-                            color="r", ax=ax2)
+                            color="r", ax=ax2, grid=True)
         bbands['upperband'].plot(label="UPPER",
-                                 color="c", ax=ax2)
+                                 color="c", ax=ax2, grid=True)
         bbands['lowerband'].plot(label="LOWER",
-                                 color="y", ax=ax2)
+                                 color="y", ax=ax2, grid=True)
         sar['sar'].plot(linestyle=':', label="SAR",
-                        color="#00FF88", ax=ax2)
+                        color="#00FF88", ax=ax2, grid=True)
 
         stock_d.plot(kind='ohlc',
                      colorup='r', colordown='b',
-                     ax=ax2)
+                     ax=ax2, grid=True)
 
         _volume = int(stock_d.ix[-1, 'Volume'])
         _open = int(stock_d.ix[-1, 'Open'])
