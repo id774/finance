@@ -37,6 +37,12 @@ def main():
     parser = OptionParser(usage)
     parser.add_option("-s", "--stock", dest="stocktxt",
                       help="read scraping stock names from text file")
+    parser.add_option("-o", "--output", dest="output",
+                      help="output file name")
+    parser.add_option("-r", "--range", dest="range",
+                      help="range for summary")
+    parser.add_option("-k", "--sortkey", dest="sortkey",
+                      help="sort key")
     (options, args) = parser.parse_args()
 
     if len(args) != 0:
@@ -46,10 +52,10 @@ def main():
         summary = Summary(filename=options.stocktxt)
     else:
         summary = Summary()
-    summary.aggregate('summary.csv', range=1)
-    summary.aggregate('summary_10.csv', range=10)
-    summary.aggregate('summary_25.csv', range=25)
-    summary.aggregate('rolling_corr.csv', sortkey='Corr')
+
+    summary.aggregate(options.output,
+                      range=int(options.range),
+                      sortkey=options.sortkey)
 
 if __name__ == '__main__':
     argsmin = 0
