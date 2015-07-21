@@ -8,26 +8,48 @@ else:
     sys.path.append(p)
 from aggregate import Aggregator
 
-def aggregate(aggregator, filename, range=1, sortkey='Ratio', ascending=False):
-    result = aggregator.summarize(range=range,
-                                  sortkey=sortkey, ascending=ascending)
-    p = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), '..', 'data',
-        filename)
-    result.to_csv(p, sep="\t", index_label="Code")
+class Summary():
+
+    def __init__(self, filename='stocks.txt', **kwargs):
+        self.c_dir = os.path.dirname(os.path.abspath(__file__))
+        self.base_dir = os.path.join(self.c_dir, '..')
+        self.data_dir = os.path.join(self.base_dir, 'data')
+        self.stock_list = os.path.join(self.data_dir,
+                                       filename)
+        self.aggregator = Aggregator(self.stock_list, self.data_dir)
+
+    def aggregate(self,
+                  filename,
+                  range=1,
+                  sortkey='Ratio',
+                  ascending=False):
+        result = self.aggregator.summarize(range=range,
+                                           sortkey=sortkey,
+                                           ascending=ascending)
+        p = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), '..', 'data',
+            filename)
+        result.to_csv(p, sep="\t", index_label="Code")
 
 def main():
-    c_dir = os.path.dirname(os.path.abspath(__file__))
-    base_dir = os.path.join(c_dir, '..')
-    data_dir = os.path.join(base_dir, 'data')
-    stock_list = os.path.join(data_dir,
-                              'stocks.txt')
+    from optparse import OptionParser
+    usage = "usage: %prog [options] arg"
+    parser = OptionParser(usage)
+    parser.add_option("-s", "--stock", dest="stocktxt",
+                      help="read scraping stock names from text file")
+    (options, args) = parser.parse_args()
 
-    aggregator = Aggregator(stock_list, data_dir)
-    aggregate(aggregator, 'summary.csv', range=1)
-    aggregate(aggregator, 'summary_10.csv', range=10)
-    aggregate(aggregator, 'summary_25.csv', range=25)
-    aggregate(aggregator, 'rolling_corr.csv', sortkey='Corr')
+    if len(args) != 0:
+        parser.error("incorrect number of arguments")
+
+    if options.stocktxt:
+        summary = Summary(filename=options.stocktxt)
+    else:
+        summary = Summary()
+    summary.aggregate('summary.csv', range=1)
+    summary.aggregate('summary_10.csv', range=10)
+    summary.aggregate('summary_25.csv', range=25)
+    summary.aggregate('rolling_corr.csv', sortkey='Corr')
 
 if __name__ == '__main__':
     argsmin = 0
