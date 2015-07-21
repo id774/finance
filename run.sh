@@ -14,11 +14,11 @@ echo -n "*** $0: Job started on `/bin/hostname` at ">>$JOBLOG 2>&1
 date "+%Y/%m/%d %T">>$JOBLOG 2>&1
 
 $PYTHON $WORK_DIR/bin/charts.py -s $STOCKTXT -d $STARTDATE -y $DAYS -u>>$JOBLOG 2>&1
-$PYTHON $WORK_DIR/bin/summary.py -o summary.csv -k Ratio -r 1>>$JOBLOG 2>&1
-$PYTHON $WORK_DIR/bin/summary.py -o summary_10.csv -k Ratio -r 10>>$JOBLOG 2>&1
-$PYTHON $WORK_DIR/bin/summary.py -o summary_25.csv -k Ratio -r 25>>$JOBLOG 2>&1
-$PYTHON $WORK_DIR/bin/summary.py -o rolling_corr.csv -k Corr -r 1>>$JOBLOG 2>&1
-$PYTHON $WORK_DIR/bin/summary.py -s my_stocks.txt -o portfolio.csv -k Ratio -r 1>>$JOBLOG 2>&1
+$PYTHON $WORK_DIR/bin/summary.py -o summary.csv -r 1 -k Ratio>>$JOBLOG 2>&1
+$PYTHON $WORK_DIR/bin/summary.py -o summary_10.csv -r 10 -k Ratio>>$JOBLOG 2>&1
+$PYTHON $WORK_DIR/bin/summary.py -o summary_25.csv -r 25 -k Ratio>>$JOBLOG 2>&1
+$PYTHON $WORK_DIR/bin/summary.py -o rolling_corr.csv -r 1 -k Corr>>$JOBLOG 2>&1
+$PYTHON $WORK_DIR/bin/summary.py -s my_stocks.txt -o portfolio.csv -r 1 -k Ratio>>$JOBLOG 2>&1
 $RUBY $WORK_DIR/bin/email.rb>>$JOBLOG 2>&1
 $RUBY $WORK_DIR/bin/email.rb "rolling_corr.csv" "Summary Report sorted by corr">>$JOBLOG 2>&1
 $RUBY $WORK_DIR/bin/email.rb "portfolio.csv" "Summary Report of your Portfolio">>$JOBLOG 2>&1
