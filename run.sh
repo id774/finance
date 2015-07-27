@@ -19,6 +19,7 @@ $PYTHON $WORK_DIR/bin/summary.py -o summary_10.csv -r 10 -k Ratio>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -o summary_25.csv -r 25 -k Ratio>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -o rolling_corr.csv -r 1 -k Corr>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -s my_stocks.txt -o portfolio.csv -r 1 -k Ratio>>$JOBLOG 2>&1
+$RUBY $WORK_DIR/bin/reference.rb>>$JOBLOG 2>&1
 $RUBY $WORK_DIR/bin/email.rb>>$JOBLOG 2>&1
 $RUBY $WORK_DIR/bin/email.rb "rolling_corr.csv" "Summary Report sorted by corr">>$JOBLOG 2>&1
 $RUBY $WORK_DIR/bin/email.rb "portfolio.csv" "Summary Report of your Portfolio">>$JOBLOG 2>&1
