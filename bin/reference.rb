@@ -10,8 +10,10 @@ CSV.open('ref_index.csv', "wb") do |csv|
       jps = JpStock.quote(:code=>code)
       if jps.per and jps.eps
         expected_price = jps.per * jps.eps
-        csv << [jps.code, jps.company_name, jps.close, jps.prev_close, expected_price, jps.open, jps.high, jps.low, jps.volume, jps.market_cap, jps.shares_issued, jps.dividend_yield, jps.dividend_one, jps.per, jps.pbr, jps.eps, jps.bps, jps.price_min, jps.round_lot, jps.years_high, jps.years_low]
+      else
+        expected_price = nil
       end
+      csv << [jps.code, jps.company_name, jps.close, jps.prev_close, expected_price, jps.open, jps.high, jps.low, jps.volume, jps.market_cap, jps.shares_issued, jps.dividend_yield, jps.dividend_one, jps.per, jps.pbr, jps.eps, jps.bps, jps.price_min, jps.round_lot, jps.years_high, jps.years_low]
     end
   end
 end
