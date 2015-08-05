@@ -55,10 +55,10 @@ class Classifier():
 
         if os.path.exists(self.filename):
             self.clf = self._load_clf()
-            train_X, train_y = f.create_features(arr)
+            train_X, train_y = f.binary_class(arr)
         else:
             self.clf = self.new_clf(classifier=classifier)
-            train_X, train_y = f.create_features(arr, len(arr))
+            train_X, train_y = f.binary_class(arr, len(arr))
 
         self.clf.fit(train_X, train_y)
         if remember:

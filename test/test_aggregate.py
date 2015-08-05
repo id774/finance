@@ -12,7 +12,7 @@ from aggregate import Aggregator
 def test_summarize():
     c_dir = os.path.dirname(os.path.abspath(__file__))
     base_dir = os.path.join(c_dir, '..')
-    stock_list = os.path.join(base_dir, 'test',
+    stock_list = os.path.join(base_dir, 'data',
                               'stocks.txt')
     data_dir = os.path.join(base_dir, 'test')
     aggregator = Aggregator(stock_list, data_dir)

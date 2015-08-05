@@ -20,14 +20,14 @@ def testdata():
                             index_col=0, parse_dates=True)
     return stock_tse.asfreq('B')[days:]
 
-def test_create_features():
+def test_binary_class():
     stock_d = testdata()
     ti = TechnicalIndicators(stock_d)
     ti.calc_ret_index()
 
     ret_index = ti.stock['ret_index']
     f = Features()
-    train_X, train_y = f.create_features(ret_index, range=90)
+    train_X, train_y = f.binary_class(ret_index, range=90)
 
     expected = [1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1,
                 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1,
@@ -53,7 +53,7 @@ def test_create_features():
     r = len(train_X)
     eq_(r, expected)
 
-    train_X, train_y = f.create_features(ret_index)
+    train_X, train_y = f.binary_class(ret_index)
 
     expected = 0
     eq_(train_y[0], expected)
@@ -74,4 +74,4 @@ def test_create_features():
     eq_(r, expected)
 
 if __name__ == '__main__':
-    test_create_features()
+    test_binary_class()
