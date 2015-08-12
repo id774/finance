@@ -9,6 +9,7 @@ else:
 from file_io import FileIO
 from ti import TechnicalIndicators
 from classifier import Classifier
+from regression import Regression
 from draw import Draw
 
 class Analysis():
@@ -25,6 +26,7 @@ class Analysis():
         self.csvfile = csvfile
         self.update = update
         self.clffile = "".join(['clf_', code, '.pickle'])
+        self.regfile = "".join(['reg_', code, '.pickle'])
         if axis:
             self.axis = int(axis)
         else:
@@ -115,13 +117,21 @@ class Analysis():
             ti.calc_natr()
             vr = ti.calc_volume_rate()
 
-            clf = Classifier(self.clffile)
             ret_index = ti.stock['ret_index']
+            clf = Classifier(self.clffile)
             train_X, train_y = clf.train(ret_index, will_update)
             msg = "".join(["Train Records: ", str(len(train_y))])
             print(msg)
             clf_result = clf.classify(ret_index)
             msg = "".join(["Classified: ", str(clf_result[0])])
+            print(msg)
+
+            reg = Regression(self.regfile)
+            train_X, train_y = reg.train(ret_index, False)
+            msg = "".join(["Train Records: ", str(len(train_y))])
+            base = ti.stock_raw['Adj Close'][0]
+            reg_result = round(reg.predict(ret_index, base)[0], 2)
+            msg = "".join(["Predicted: ", str(reg_result)])
             print(msg)
 
             if len(self.reference) > 0:
