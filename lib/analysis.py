@@ -122,9 +122,10 @@ class Analysis():
             train_X, train_y = clf.train(ret_index, will_update)
             msg = "".join(["Train Records: ", str(len(train_y))])
             print(msg)
-            clf_result = clf.classify(ret_index)
-            msg = "".join(["Classified: ", str(clf_result[0])])
+            clf_result = clf.classify(ret_index)[0]
+            msg = "".join(["Classified: ", str(clf_result)])
             print(msg)
+            ti.stock.ix[-1, 'classified'] = clf_result
 
             reg = Regression(self.regfile)
             train_X, train_y = reg.train(ret_index, False)
@@ -133,6 +134,7 @@ class Analysis():
             reg_result = round(reg.predict(ret_index, base)[0], 2)
             msg = "".join(["Predicted: ", str(reg_result)])
             print(msg)
+            ti.stock.ix[-1, 'predicted'] = reg_result
 
             if len(self.reference) > 0:
                 ti.calc_rolling_corr(self.reference)
@@ -146,7 +148,7 @@ class Analysis():
             draw.plot(stock_d, ewma, bbands, sar,
                       rsi, roc, mfi, ultosc, willr,
                       stoch, tr, vr,
-                      clf_result[0],
+                      clf_result,
                       ref,
                       axis=self.axis)
 
