@@ -127,7 +127,9 @@ class Analysis():
             print(msg)
             ti.stock.ix[-1, 'classified'] = clf_result
 
-            reg = Regression(self.regfile)
+            reg = Regression(self.regfile,
+                             alpha=1,
+                             regression_type="Ridge")
             train_X, train_y = reg.train(ret_index, False)
             msg = "".join(["Train Records: ", str(len(train_y))])
             base = ti.stock_raw['Adj Close'][0]
