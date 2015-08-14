@@ -43,8 +43,8 @@ class Aggregator():
             _corr = round(_stock_d['rolling_corr'].mean(), 2)
             _classified = int(_stock_d.ix[-1, 'classified'])
             _predicted = int(_stock_d.ix[-1, 'predicted'])
-            df[_code] = pd.Series([_open, _corr,
-                                   _high, _low, _close,
+            df[_code] = pd.Series([_corr,
+                                   _open, _high, _low, _close,
                                    _predicted,
                                    _change, _ratio,
                                    _classified,
@@ -52,8 +52,8 @@ class Aggregator():
         if df.empty:
             return df
         else:
-            df.index = ['Open', 'Corr',
-                        'High', 'Low', 'Close',
+            df.index = ['Corr',
+                        'Open', 'High', 'Low', 'Close',
                         'Predict',
                         'Change', 'Ratio',
                         'Trend',
