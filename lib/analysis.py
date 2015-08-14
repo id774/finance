@@ -133,7 +133,7 @@ class Analysis():
             train_X, train_y = reg.train(ret_index, False)
             msg = "".join(["Train Records: ", str(len(train_y))])
             base = ti.stock_raw['Adj Close'][0]
-            reg_result = round(reg.predict(ret_index, base)[0], 0)
+            reg_result = int(reg.predict(ret_index, base)[0])
             msg = "".join(["Predicted: ", str(reg_result)])
             print(msg)
             ti.stock.ix[-1, 'predicted'] = reg_result
@@ -150,7 +150,7 @@ class Analysis():
             draw.plot(stock_d, ewma, bbands, sar,
                       rsi, roc, mfi, ultosc, willr,
                       stoch, tr, vr,
-                      clf_result,
+                      clf_result, reg_result,
                       ref,
                       axis=self.axis)
 

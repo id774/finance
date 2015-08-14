@@ -27,7 +27,8 @@ class Draw():
     def plot(self, stock_d, ewma, bbands, sar,
              rsi, roc, mfi, ultosc, willr,
              stoch, tr, vr,
-             clf_result, ref=[], axis=2):
+             clf_result, reg_result,
+             ref=[], axis=2):
 
         plotting._all_kinds.append('ohlc')
         plotting._common_kinds.append('ohlc')
@@ -65,7 +66,7 @@ class Draw():
             vr['v_rate'].plot(label="VOL", kind='area',
                               color="#DDFFFF", ax=ax1, grid=True)
             if len(ref) > 0:
-                self.ref_result = (" 日経平均相関:" +
+                self.ref_result = (" 日経相関:" +
                                    str(round(ref.mean(), 2)))
                 ref = ref * 50 + 50
                 ref.plot(linestyle=':', label="REF",
@@ -97,14 +98,8 @@ class Draw():
                      colorup='r', colordown='b',
                      ax=ax2, grid=True)
 
-        _volume = int(stock_d.ix[-1, 'Volume'])
-        _open = int(stock_d.ix[-1, 'Open'])
-        _high = int(stock_d.ix[-1, 'High'])
-        _low = int(stock_d.ix[-1, 'Low'])
         _close = int(stock_d.ix[-1, 'Adj Close'])
         _last_close = int(stock_d.ix[-2, 'Adj Close'])
-        _stock_max = int(stock_d.ix[:, 'High'].max())
-        _stock_min = int(stock_d.ix[:, 'Low'].min())
         _close_change = _close - _last_close
         _close_ratio = round((1 + _close_change) / _close * 100, 2)
         if _close_change >= 0:
@@ -116,17 +111,11 @@ class Draw():
         else:
             _clf_result = "↑"
 
-        today = datetime.datetime.today().strftime("%a %d %b %Y")
+        today = datetime.datetime.today().strftime("%Y/%m/%d")
         plt.xlabel("".join(
-                   [self.name, '(', self.code, ') ',
+                   [self.name, '(', self.code, ')  ',
                     today,
-                    "\n始:",
-                    '{:,d}'.format(_open),
-                    ' 高:',
-                    '{:,d}'.format(_high),
-                    ' 安:',
-                    '{:,d}'.format(_low),
-                    ' 終:',
+                    "\n終値:",
                     '{:,d}'.format(_close),
                     ' (',
                     _close_change,
@@ -134,16 +123,10 @@ class Draw():
                     str(_close_ratio),
                     '%)',
                     self.ref_result,
-                    "\n明日予測:",
+                    "\nトレンド推定:",
                     _clf_result,
-                    ' 出来高:',
-                    '{:,d}'.format(_volume),
-                    ' 最高:',
-                    '{:,d}'.format(_stock_max),
-                    ' 最安:',
-                    '{:,d}'.format(_stock_min),
-                    ' 前終:',
-                    '{:,d}'.format(_last_close),
+                    ' 株価推定:',
+                    '{:,d}'.format(reg_result),
                     ]),
                    fontdict={"fontproperties": self.fontprop})
         if axis >= 2:
