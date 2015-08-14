@@ -130,7 +130,7 @@ class Analysis():
             reg = Regression(self.regfile,
                              alpha=1,
                              regression_type="Ridge")
-            train_X, train_y = reg.train(ret_index, False)
+            train_X, train_y = reg.train(ret_index, will_update)
             msg = "".join(["Train Records: ", str(len(train_y))])
             base = ti.stock_raw['Adj Close'][0]
             reg_result = int(reg.predict(ret_index, base)[0])
