@@ -42,7 +42,7 @@ class Aggregator():
             _ratio = round((1 + _change) / _close * 100, 2)
             _corr = round(_stock_d['rolling_corr'].mean(), 2)
             _classified = int(_stock_d.ix[-1, 'classified'])
-            _predicted = round(_stock_d.ix[-1, 'predicted'], 2)
+            _predicted = int(_stock_d.ix[-1, 'predicted'])
             df[_code] = pd.Series([_open, _corr,
                                    _high, _low, _close,
                                    _predicted,
