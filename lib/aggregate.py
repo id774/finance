@@ -45,18 +45,16 @@ class Aggregator():
             _predicted = int(_stock_d.ix[-1, 'predicted'])
             df[_code] = pd.Series([_corr,
                                    _open, _high, _low, _close,
-                                   _predicted,
                                    _change, _ratio,
-                                   _classified,
+                                   _classified, _predicted,
                                    _name])
         if df.empty:
             return df
         else:
             df.index = ['Corr',
                         'Open', 'High', 'Low', 'Close',
-                        'Predict',
                         'Change', 'Ratio',
-                        'Trend',
+                        'Trend', 'Pred',
                         'Name']
         return df.T.sort(sortkey, ascending=ascending)
 
