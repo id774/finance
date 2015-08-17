@@ -39,7 +39,7 @@ def main():
     parser.add_option("-r", "--readfile", dest="csvfile",
                       help="read stock data from csv file")
     parser.add_option("-u", "--update",
-                      help="update csvfile",
+                      help="update csvfile (overwirte)",
                       action="store_true", dest="update")
     parser.add_option("-d", "--date", dest="startdate",
                       help="specify start date as '2014-09-01'")
@@ -47,6 +47,8 @@ def main():
                       help="plot days as '90', specify 0 for all days")
     parser.add_option("-a", "--axis", dest="axis",
                       help="setting y-axis limit (1 or 2, default 2)")
+    parser.add_option("-p", "--complexity", dest="complexity",
+                      help="complexity of chart (1-3, default 3)")
     (options, args) = parser.parse_args()
 
     if len(args) != 0:
@@ -64,7 +66,8 @@ def main():
                             days=options.days,
                             csvfile=options.csvfile,
                             update=options.update,
-                            axis=options.axis)
+                            axis=int(options.axis),
+                            complexity=int(options.complexity))
         return analysis.run()
 
 if __name__ == '__main__':

@@ -28,7 +28,7 @@ class Draw():
              rsi, roc, mfi, ultosc, willr,
              stoch, tr, vr,
              clf_result, reg_result,
-             ref=[], axis=2):
+             ref=[], axis=2, complexity=3):
 
         plotting._all_kinds.append('ohlc')
         plotting._common_kinds.append('ohlc')
@@ -51,16 +51,19 @@ class Draw():
                               color="b", ax=ax1)
             roc['roc25'].plot(label="ROC25",
                               color="#888888", ax=ax1, grid=True)
-            mfi['mfi14'].plot(label="MFI",
-                              color="#DD88DD", ax=ax1, grid=True)
-            ultosc['ultosc'].plot(label="UO",
-                                  color="m", ax=ax1, grid=True)
-            stoch['slowk'].plot(label="SLOWK",
-                                color="y", ax=ax1, grid=True)
-            stoch['slowd'].plot(label="SLOWD",
-                                color="k", ax=ax1, grid=True)
-            willr['willr14'].plot(linestyle=':', label="%R",
-                                  color="#FF0088", ax=ax1, grid=True)
+            if complexity >= 3:
+                mfi['mfi14'].plot(label="MFI",
+                                  color="#DD88DD", ax=ax1, grid=True)
+                ultosc['ultosc'].plot(label="UO",
+                                      color="m", ax=ax1, grid=True)
+            if complexity >= 2:
+                stoch['slowk'].plot(label="SLOWK",
+                                    color="y", ax=ax1, grid=True)
+                stoch['slowd'].plot(label="SLOWD",
+                                    color="k", ax=ax1, grid=True)
+            if complexity >= 3:
+                willr['willr14'].plot(linestyle=':', label="%R",
+                                      color="#FF0088", ax=ax1, grid=True)
             tr['vl'].plot(label="VL",
                           color="c", ax=ax1, grid=True)
             vr['v_rate'].plot(label="VOL", kind='area',
@@ -72,8 +75,9 @@ class Draw():
                 ref.plot(linestyle=':', label="REF",
                          color="#DDDDDD", ax=ax1, grid=True)
             ax1.set_yticks([0, 25, 50, 75, 100])
+            ncol = complexity + 3
             plt.legend(loc='upper center', bbox_to_anchor=(0.48, 1.23),
-                       ncol=6, fancybox=False, shadow=False)
+                       ncol=ncol, fancybox=False, shadow=False)
 
             ax2 = fig.add_subplot(2, 1, 2)
         else:
@@ -87,12 +91,14 @@ class Draw():
                             color="m", ax=ax2, grid=True)
         ewma['ewma75'].plot(label="MA75",
                             color="r", ax=ax2, grid=True)
-        bbands['upperband'].plot(label="UPPER",
-                                 color="c", ax=ax2, grid=True)
-        bbands['lowerband'].plot(label="LOWER",
-                                 color="y", ax=ax2, grid=True)
-        sar['sar'].plot(linestyle=':', label="SAR",
-                        color="#00FF88", ax=ax2, grid=True)
+        if complexity >= 2:
+            bbands['upperband'].plot(label="UPPER",
+                                     color="c", ax=ax2, grid=True)
+            bbands['lowerband'].plot(label="LOWER",
+                                     color="y", ax=ax2, grid=True)
+        if complexity >= 3:
+            sar['sar'].plot(linestyle=':', label="SAR",
+                            color="#00FF88", ax=ax2, grid=True)
 
         stock_d.plot(kind='ohlc',
                      colorup='r', colordown='b',
@@ -129,11 +135,12 @@ class Draw():
                     '{:,d}'.format(reg_result),
                     ]),
                    fontdict={"fontproperties": self.fontprop})
+        ncol = complexity + 1
         if axis >= 2:
             plt.legend(loc='upper center', bbox_to_anchor=(0.367, 1.228),
-                       ncol=4, fancybox=False, shadow=False)
+                       ncol=ncol, fancybox=False, shadow=False)
         else:
             plt.legend(loc='upper center', bbox_to_anchor=(0.38, 1.12),
-                       ncol=4, fancybox=False, shadow=False)
+                       ncol=ncol, fancybox=False, shadow=False)
         plt.savefig("".join(["chart_", self.code, ".png"]))
         plt.close()
