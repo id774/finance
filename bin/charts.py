@@ -9,7 +9,7 @@ else:
     sys.path.append(p)
 from analysis import Analysis
 
-def read_csv(filename, start, days, update):
+def read_csv(filename, start, days, update, axis, complexity):
     stocks = pd.read_csv(filename, header=None)
     reference = []
     for s in stocks.values:
@@ -20,7 +20,9 @@ def read_csv(filename, start, days, update):
                             days=days,
                             csvfile="".join(['stock_', str(s[0]), '.csv']),
                             update=True,
-                            reference=reference)
+                            reference=reference,
+                            axis=int(axis),
+                            complexity=int(complexity))
         result = analysis.run()
         if code == "N225" and result:
             reference = result.stock_raw['Adj Close']
@@ -58,7 +60,9 @@ def main():
         return read_csv(filename=options.stocktxt,
                         start=options.startdate,
                         days=options.days,
-                        update=options.update)
+                        update=options.update,
+                        axis=int(options.axis),
+                        complexity=int(options.complexity))
     else:
         analysis = Analysis(code=options.stockcode,
                             name=options.stockname,

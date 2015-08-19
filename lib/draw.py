@@ -66,7 +66,7 @@ class Draw():
                                       color="#FF0088", ax=ax1, grid=True)
             tr['vl'].plot(label="VL",
                           color="c", ax=ax1, grid=True)
-            vr['v_rate'].plot(label="VOL", kind='area',
+            vr['v_rate'].plot(label="VOLUME", kind='area',
                               color="#DDFFFF", ax=ax1, grid=True)
             if len(ref) > 0:
                 self.ref_result = (" 日経相関:" +
