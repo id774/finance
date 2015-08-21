@@ -17,7 +17,7 @@ def read_csv(filename, start, days, update, axis, complexity):
         analysis = Analysis(code=code,
                             name=s[1],
                             start=start,
-                            days=days,
+                            days=int(days),
                             csvfile="".join(['stock_', str(s[0]), '.csv']),
                             update=True,
                             reference=reference,
@@ -56,10 +56,19 @@ def main():
     if len(args) != 0:
         parser.error("incorrect number of arguments")
 
+    if options.days is None:
+        options.days = 180
+
+    if options.axis is None:
+        options.axis = 2
+
+    if options.complexity is None:
+        options.complexity = 3
+
     if options.stocktxt:
         return read_csv(filename=options.stocktxt,
                         start=options.startdate,
-                        days=options.days,
+                        days=int(options.days),
                         update=options.update,
                         axis=int(options.axis),
                         complexity=int(options.complexity))
@@ -67,7 +76,7 @@ def main():
         analysis = Analysis(code=options.stockcode,
                             name=options.stockname,
                             start=options.startdate,
-                            days=options.days,
+                            days=int(options.days),
                             csvfile=options.csvfile,
                             update=options.update,
                             axis=int(options.axis),

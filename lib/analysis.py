@@ -23,7 +23,7 @@ class Analysis():
         self.name = name
         self.start = start
         self.end = datetime.datetime.now()
-        self.days = int(days) * -1
+        self.days = days * -1
         self.csvfile = csvfile
         self.update = update
         self.clffile = "".join(['clf_', code, '.pickle'])
