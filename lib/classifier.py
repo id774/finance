@@ -9,9 +9,7 @@ try:
 except:
     import pickle
 p = os.path.dirname(os.path.abspath(__file__))
-if p in sys.path:
-    pass
-else:
+if not p in sys.path:
     sys.path.append(p)
 from features import Features
 

@@ -5,9 +5,7 @@ import pandas.tools.plotting as plotting
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
 p = os.path.dirname(os.path.abspath(__file__))
-if p in sys.path:
-    pass
-else:
+if not p in sys.path:
     sys.path.append(p)
 from ohlc_plot import OhlcPlot
 

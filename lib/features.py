@@ -2,9 +2,7 @@ import sys
 import os
 import numpy as np
 p = os.path.dirname(os.path.abspath(__file__))
-if p in sys.path:
-    pass
-else:
+if not p in sys.path:
     sys.path.append(p)
 
 class Features():

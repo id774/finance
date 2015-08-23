@@ -2,9 +2,7 @@ import sys
 import os
 p = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), '..', 'lib')
-if p in sys.path:
-    pass
-else:
+if not p in sys.path:
     sys.path.append(p)
 from analysis import Analysis
 from file_io import FileIO
