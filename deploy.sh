@@ -6,6 +6,8 @@ sudo cp -av bin $TARGET_DIR
 sudo cp -av lib $TARGET_DIR
 test -d $TARGET_DIR/clf || sudo mkdir -p $TARGET_DIR/clf
 test -d $TARGET_DIR/data || sudo mkdir -p $TARGET_DIR/data
+test -d $TARGET_DIR/bin/__pycache__ && sudo rm -rf $TARGET_DIR/bin/__pycache__
+test -d $TARGET_DIR/lib/__pycache__ && sudo rm -rf $TARGET_DIR/lib/__pycache__
 sudo cp -av run.sh $TARGET_DIR/
 sudo chmod 750 $TARGET_DIR
 sudo chmod 750 $TARGET_DIR/run.sh
