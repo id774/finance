@@ -97,7 +97,9 @@ class Draw():
         if complexity >= 3:
             sar['sar'].plot(linestyle=':', label="SAR",
                             color="#00FF88", ax=ax2, grid=True)
-
+        if axis == 1:
+            vr['v_rate_p'].plot(linestyle=':', label="VOLUME",
+                                color="#444444", ax=ax2, grid=True)
         stock_d.plot(kind='ohlc',
                      colorup='r', colordown='b',
                      ax=ax2, grid=True)

@@ -174,8 +174,13 @@ class TechnicalIndicators():
 
     def calc_volume_rate(self):
         self.stock['v_rate'] = (self.volume /
-                                self.volume.max()
-                                * 100)
+                                self.volume.max())
+        _under = self.low.min()
+        _top = self.high.max()
+        _range = _top - _under
+        self.stock['v_rate_p'] = (self.stock['v_rate'] *
+                                  (_range / 4) + _under)
+        self.stock['v_rate'] = self.stock['v_rate'] * 100
         return self.stock
 
     def calc_rolling_corr(self, reference, window=5):
