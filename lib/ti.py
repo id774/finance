@@ -180,7 +180,7 @@ class TechnicalIndicators():
         _range = _top - _under
         self.stock['v_rate_p'] = (self.stock['v_rate'] *
                                   (_range / 4) + _under)
-        self.stock['v_rate'] = self.stock['v_rate'] * 100
+        self.stock['v_rate'] = self.stock['v_rate'] * 50
         return self.stock
 
     def calc_rolling_corr(self, reference, window=5):
