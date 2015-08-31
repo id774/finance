@@ -2,7 +2,7 @@ import sys
 import os
 import datetime
 p = os.path.dirname(os.path.abspath(__file__))
-if not p in sys.path:
+if p not in sys.path:
     sys.path.append(p)
 from file_io import FileIO
 from ti import TechnicalIndicators

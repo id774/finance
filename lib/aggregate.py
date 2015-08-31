@@ -14,7 +14,7 @@ class Aggregator():
         stocks = pd.read_csv(self.stock_list, header=None)
         for s in stocks.values:
             _code = str(s[0])
-            if not _code in {'N225', 'GSPC', 'IXIC', 'DJI'}:
+            if _code not in {'N225', 'GSPC', 'IXIC', 'DJI'}:
                 _name = str(s[1])
                 _csvfile = os.path.join(self.data_dir,
                                         "".join(['ti_', _code, ".csv"]))

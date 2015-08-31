@@ -4,7 +4,7 @@ import datetime
 import pandas as pd
 from pandas_datareader import data
 p = os.path.dirname(os.path.abspath(__file__))
-if not p in sys.path:
+if p not in sys.path:
     sys.path.append(p)
 from jpstock import JpStock
 

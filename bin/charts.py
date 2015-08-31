@@ -3,7 +3,7 @@ import os
 import pandas as pd
 p = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), '..', 'lib')
-if not p in sys.path:
+if p not in sys.path:
     sys.path.append(p)
 from analysis import Analysis
 
