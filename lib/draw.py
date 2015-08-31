@@ -136,11 +136,12 @@ class Draw():
                     '{:,d}'.format(reg_result),
                     ]),
                    fontdict={"fontproperties": self.fontprop})
-        ncol = complexity + 2
         if axis >= 2:
+            ncol = complexity + 3
             plt.legend(loc='upper center', bbox_to_anchor=(0.48, 1.23),
                        ncol=ncol, fancybox=False, shadow=False)
         else:
+            ncol = complexity + 1
             plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.105),
                        ncol=ncol, fancybox=False, shadow=False)
 
