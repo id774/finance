@@ -141,7 +141,7 @@ class Draw():
             plt.legend(loc='upper center', bbox_to_anchor=(0.48, 1.23),
                        ncol=ncol, fancybox=False, shadow=False)
         else:
-            ncol = complexity + 1
+            ncol = complexity + 2
             plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.105),
                        ncol=ncol, fancybox=False, shadow=False)
 
