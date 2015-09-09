@@ -56,7 +56,7 @@ class Analysis():
                 msg = "".join(["Read data from web: ", self.code,
                                " New records: ", str(len(newdata))])
                 print(msg)
-                if len(newdata) < 2:
+                if len(newdata) < 1:
                     will_update = False
 
                 stock_tse = stock_tse.combine_first(newdata)

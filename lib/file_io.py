@@ -25,8 +25,15 @@ class FileIO():
 
     def _read_from_web(self, stock, start, end):
         start = datetime.datetime.strptime(start, '%Y-%m-%d')
-        return data.DataReader("".join(['^', stock]),
-                               'yahoo', start, end)
+        try:
+            df = data.DataReader("".join(['^', stock]),
+                                 'yahoo', start, end)
+            if len(df) > 0:
+                return df
+            else:
+                return pd.DataFrame([])
+        except:
+            return pd.DataFrame([])
 
     def _read_with_jpstock(self, stock, start):
         try:
