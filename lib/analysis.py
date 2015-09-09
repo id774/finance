@@ -1,6 +1,7 @@
 import sys
 import os
 import datetime
+import pandas as pd
 p = os.path.dirname(os.path.abspath(__file__))
 if p not in sys.path:
     sys.path.append(p)
@@ -43,7 +44,11 @@ class Analysis():
             print(msg)
 
             if self.update and len(stock_tse) > 0:
-                t = stock_tse.index[-1].strftime('%Y-%m-%d')
+                index = pd.date_range(start=stock_tse.index[-1],
+                                      periods=2, freq='B')
+                ts = pd.Series(None, index=index)
+                next_day = ts.index[1]
+                t = next_day.strftime('%Y-%m-%d')
                 newdata = io.read_data(self.code,
                                        start=t,
                                        end=self.end)

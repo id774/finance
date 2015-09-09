@@ -270,7 +270,7 @@ def test_calc_volume_rate():
     ti = TechnicalIndicators(stock)
     vr = ti.calc_volume_rate()
 
-    expected = 43.68
+    expected = 21.84
     result = vr.ix['2015-03-19', 'v_rate']
     result = round(result, 2)
     eq_(expected, result)
