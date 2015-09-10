@@ -58,6 +58,8 @@ class Analysis():
                 print(msg)
                 if len(newdata) < 1:
                     will_update = False
+                else:
+                    print(newdata.ix[-1, :])
 
                 stock_tse = stock_tse.combine_first(newdata)
                 io.save_data(stock_tse, self.code, 'stock_')
