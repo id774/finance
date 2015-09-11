@@ -1,5 +1,6 @@
 import sys
 import os
+import datetime
 p = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), '..', 'lib')
 if p not in sys.path:
@@ -17,10 +18,11 @@ class Summary():
         self.aggregator = Aggregator(self.stock_list, self.data_dir)
 
     def aggregate(self,
-                  filename,
+                  filename="stocks.txt",
                   range=1,
                   sortkey='Ratio',
-                  ascending=False):
+                  ascending=False,
+                  history=False):
         result = self.aggregator.summarize(range=range,
                                            sortkey=sortkey,
                                            ascending=ascending)
@@ -28,6 +30,13 @@ class Summary():
             os.path.dirname(os.path.abspath(__file__)), '..', 'data',
             filename)
         result.to_csv(p, sep="\t", index_label="Code")
+
+        if history:
+            today = datetime.datetime.now().strftime('%Y%m%d')
+            p = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), '..', 'data',
+                'history', "".join([filename, '.', today, '.csv']))
+            result.to_csv(p, sep="\t", index_label="Code")
 
 def main():
     from optparse import OptionParser
@@ -41,10 +50,19 @@ def main():
                       help="range for summary")
     parser.add_option("-k", "--sortkey", dest="sortkey",
                       help="sort key")
+    parser.add_option("-y", "--history",
+                      help="save for history file",
+                      action="store_true", dest="history")
     (options, args) = parser.parse_args()
 
     if len(args) != 0:
         parser.error("incorrect number of arguments")
+
+    if options.output is None:
+        options.output = "out.csv"
+
+    if options.range is None:
+        options.range = 1
 
     if options.stocktxt:
         summary = Summary(filename=options.stocktxt)
@@ -53,7 +71,8 @@ def main():
 
     summary.aggregate(options.output,
                       range=int(options.range),
-                      sortkey=options.sortkey)
+                      sortkey=options.sortkey,
+                      history=options.history)
 
 if __name__ == '__main__':
     argsmin = 0
