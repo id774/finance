@@ -14,7 +14,7 @@ echo -n "*** $0: Job started on `/bin/hostname` at ">>$JOBLOG 2>&1
 date "+%Y/%m/%d %T">>$JOBLOG 2>&1
 
 $PYTHON $WORK_DIR/bin/charts.py -a 2 -p 3 -s $STOCKTXT -d $STARTDATE -y $DAYS -u>>$JOBLOG 2>&1
-$PYTHON $WORK_DIR/bin/summary.py -o summary.csv -r 1 -k Ratio>>$JOBLOG 2>&1
+$PYTHON $WORK_DIR/bin/summary.py -o summary.csv -y -r 1 -k Ratio>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -o summary_10.csv -r 10 -k Ratio>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -o summary_25.csv -r 25 -k Ratio>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -o rolling_corr.csv -r 1 -k Corr>>$JOBLOG 2>&1
