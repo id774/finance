@@ -13,8 +13,8 @@ from draw import Draw
 
 class Analysis():
 
-    def __init__(self, code="", name="", start='2014-09-01',
-                 days=180, csvfile=None, update=False,
+    def __init__(self, code="", name="", start='2014-10-01',
+                 days=240, csvfile=None, update=False,
                  axis=2,
                  complexity=3,
                  reference=[]):

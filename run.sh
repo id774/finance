@@ -5,8 +5,8 @@ WORK_DIR=/var/stock
 RUBY=/opt/ruby/current/bin/ruby
 PYTHON=/opt/python/current/bin/python
 STOCKTXT=$WORK_DIR/data/stocks.txt
-STARTDATE=2014-09-01
-DAYS=180
+STARTDATE=2014-10-01
+DAYS=240
 
 cd $WORK_DIR/data
 
