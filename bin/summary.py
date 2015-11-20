@@ -21,9 +21,11 @@ class Summary():
                   filename="stocks.txt",
                   range=1,
                   sortkey='Ratio',
+                  screening_key=None,
                   ascending=False,
                   history=False):
         result = self.aggregator.summarize(range=range,
+                                           screening_key=screening_key,
                                            sortkey=sortkey,
                                            ascending=ascending)
         p = os.path.join(
@@ -50,6 +52,11 @@ def main():
                       help="range for summary")
     parser.add_option("-k", "--sortkey", dest="sortkey",
                       help="sort key")
+    parser.add_option("-a", "--ascending",
+                      help="sort by ascending (default: decending)",
+                      action="store_true", dest="ascending")
+    parser.add_option("-c", "--screening_key", dest="screening_key",
+                      help="screening key")
     parser.add_option("-y", "--history",
                       help="save for history file",
                       action="store_true", dest="history")
@@ -72,6 +79,8 @@ def main():
     summary.aggregate(options.output,
                       range=int(options.range),
                       sortkey=options.sortkey,
+                      ascending=options.ascending,
+                      screening_key=options.screening_key,
                       history=options.history)
 
 if __name__ == '__main__':

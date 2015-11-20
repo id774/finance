@@ -24,7 +24,8 @@ class Aggregator():
                     ti_dic[(_code, _name)] = _stock_d
         return ti_dic
 
-    def summarize(self, range=1, sortkey='Ratio', ascending=False):
+    def summarize(self, range=1, sortkey='Ratio',
+                  ascending=False, screening_key=None):
         range = range * -1 - 1
         df = pd.DataFrame([])
         for k, _stock_d in self.ti_dic.items():
@@ -41,19 +42,34 @@ class Aggregator():
             _corr = round(_stock_d['rolling_corr'].mean(), 2)
             _classified = int(_stock_d.ix[-1, 'classified'])
             _predicted = int(_stock_d.ix[-1, 'predicted'])
-            df[_code] = pd.Series([_corr,
-                                   _open, _high, _low, _close,
-                                   _change, _ratio,
-                                   _classified, _predicted,
-                                   _name])
+            if screening_key:
+                _key = int(_stock_d.ix[-1, screening_key])
+            if screening_key.startswith("rsi"):
+                if _key >= 70 or _key <= 45:
+                    df[_code] = pd.Series([_corr,
+                                          _open, _high, _low, _close,
+                                          _change, _ratio,
+                                          _key, _name])
+            else:
+                df[_code] = pd.Series([_corr,
+                                      _open, _high, _low, _close,
+                                      _change, _ratio,
+                                      _classified, _predicted,
+                                      _name])
         if df.empty:
             return df
         else:
-            df.index = ['Corr',
-                        'Open', 'High', 'Low', 'Close',
-                        'Change', 'Ratio',
-                        'Trend', 'Pred',
-                        'Name']
+            if screening_key:
+                df.index = ['Corr',
+                            'Open', 'High', 'Low', 'Close',
+                            'Change', 'Ratio',
+                            screening_key, 'Name']
+            else:
+                df.index = ['Corr',
+                            'Open', 'High', 'Low', 'Close',
+                            'Change', 'Ratio',
+                            'Trend', 'Pred',
+                            'Name']
         return df.T.sort(sortkey, ascending=ascending)
 
 if __name__ == '__main__':
