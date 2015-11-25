@@ -105,8 +105,11 @@ class Draw():
                          color="#DDDDDD", ax=ax2, grid=True)
             ax2.set_yticks([0, 25, 50, 75, 100])
 
+        _volume = int(stock_d.ix[-1, 'Volume'])
         _close = int(stock_d.ix[-1, 'Adj Close'])
         _last_close = int(stock_d.ix[-2, 'Adj Close'])
+        _stock_max = int(stock_d.ix[:, 'High'].max())
+        _stock_min = int(stock_d.ix[:, 'Low'].min())
         _close_change = _close - _last_close
         _close_ratio = round((1 + _close_change) / _close * 100, 2)
         if _close_change >= 0:
@@ -130,7 +133,13 @@ class Draw():
                     str(_close_ratio),
                     '%)',
                     self.ref_result,
-                    "\nトレンド推定:",
+                    '\n 出来高:',
+                    '{:,d}'.format(_volume),
+                    ' 最高:',
+                    '{:,d}'.format(_stock_max),
+                    ' 最安:',
+                    '{:,d}'.format(_stock_min),
+                    " トレンド推定:",
                     _clf_result,
                     ' 株価推定:',
                     '{:,d}'.format(reg_result),
