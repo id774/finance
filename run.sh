@@ -16,7 +16,6 @@ date "+%Y/%m/%d %T">>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/charts.py -a 2 -p 3 -s $STOCKTXT -d $STARTDATE -y $DAYS -u>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -o summary.csv -y -r 1 -k Ratio>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -o summary_10.csv -r 10 -k Ratio>>$JOBLOG 2>&1
-$PYTHON $WORK_DIR/bin/summary.py -o summary_25.csv -r 25 -k Ratio>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -o rolling_corr.csv -r 1 -k Corr>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -s my_stocks.txt -o portfolio.csv -r 1 -k Ratio>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -o screening_rsi9.csv -r 1 -c rsi9 -a -k rsi9>>$JOBLOG 2>&1

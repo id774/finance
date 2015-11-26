@@ -44,12 +44,10 @@ class Aggregator():
             _predicted = int(_stock_d.ix[-1, 'predicted'])
             if screening_key:
                 _key = int(_stock_d.ix[-1, screening_key])
-                if screening_key.startswith("rsi"):
-                    if _key >= 70 or _key <= 45:
-                        df[_code] = pd.Series([_corr,
-                                              _open, _high, _low, _close,
-                                              _change, _ratio,
-                                              _key, _name])
+                df[_code] = pd.Series([_corr,
+                                      _open, _high, _low, _close,
+                                      _change, _ratio,
+                                      _key, _name])
             else:
                 df[_code] = pd.Series([_corr,
                                       _open, _high, _low, _close,
