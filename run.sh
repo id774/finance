@@ -21,7 +21,7 @@ $PYTHON $WORK_DIR/bin/summary.py -s my_stocks.txt -o portfolio.csv -r 1 -k Ratio
 $PYTHON $WORK_DIR/bin/summary.py -o screening_rsi9.csv -r 1 -c rsi9 -a -k rsi9>>$JOBLOG 2>&1
 $RUBY $WORK_DIR/bin/reference.rb>>$JOBLOG 2>&1
 $RUBY $WORK_DIR/bin/email.rb>>$JOBLOG 2>&1
-$RUBY $WORK_DIR/bin/email.rb "rolling_corr.csv" "Summary Report sorted by corr">>$JOBLOG 2>&1
+# $RUBY $WORK_DIR/bin/email.rb "rolling_corr.csv" "Summary Report sorted by corr">>$JOBLOG 2>&1
 $RUBY $WORK_DIR/bin/email.rb "portfolio.csv" "Summary Report of your Portfolio">>$JOBLOG 2>&1
 $RUBY $WORK_DIR/bin/email.rb "screening_rsi9.csv" "Screening Report by RSI9">>$JOBLOG 2>&1
 
