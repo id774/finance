@@ -53,7 +53,7 @@ def main():
     parser.add_option("-k", "--sortkey", dest="sortkey",
                       help="sort key")
     parser.add_option("-a", "--ascending",
-                      help="sort by ascending (default: decending)",
+                      help="sort by ascending (default: descending)",
                       action="store_true", dest="ascending")
     parser.add_option("-c", "--screening_key", dest="screening_key",
                       help="screening key")
