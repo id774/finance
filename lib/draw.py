@@ -54,7 +54,7 @@ class Draw():
                                      color="y", ax=ax1, grid=True)
         if complexity >= 3:
             sar['sar'].plot(linestyle=':', label="SAR",
-                            color="#00FF88", ax=ax1, grid=True)
+                            color="#FF0088", ax=ax1, grid=True)
         if axis == 1:
             vr['v_rate_p'].plot(linestyle=':', label="VOLUME",
                                 color="#444444", ax=ax1, grid=True)
@@ -92,17 +92,11 @@ class Draw():
                                     color="k", ax=ax2, grid=True)
             if complexity >= 3:
                 willr['willr14'].plot(linestyle=':', label="%R",
-                                      color="#FF0088", ax=ax2, grid=True)
+                                      color="#008888", ax=ax2, grid=True)
             tr['vl'].plot(label="VL",
                           color="c", ax=ax2, grid=True)
             vr['v_rate'].plot(label="VOLUME", kind='area',
                               color="#DDFFFF", ax=ax2, grid=True)
-            if len(ref) > 0:
-                self.ref_result = (" 日経相関:" +
-                                   str(round(ref.mean(), 2)))
-                ref = ref * 50 + 50
-                ref.plot(linestyle=':', label="REF",
-                         color="#DDDDDD", ax=ax2, grid=True)
             ax2.set_yticks([0, 25, 50, 75, 100])
 
         _volume = int(stock_d.ix[-1, 'Volume'])
