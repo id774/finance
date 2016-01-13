@@ -68,7 +68,7 @@ class Aggregator():
                             'Change', 'Ratio',
                             'Trend', 'Pred',
                             'Name']
-        return df.T.sort(sortkey, ascending=ascending)
+        return df.T.sort_values(sortkey, by=ascending)
 
 if __name__ == '__main__':
     argsmin = 0
