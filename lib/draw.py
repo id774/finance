@@ -133,7 +133,7 @@ class Draw():
                     str(_close_ratio),
                     '%)\n',
                     self.ref_result,
-                    '出来高:',
+                    ' 出来高:',
                     '{:,d}'.format(_volume),
                     ' 最高:',
                     '{:,d}'.format(_stock_max),
