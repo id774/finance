@@ -8,7 +8,7 @@ CSV.open('ref_index.csv', "wb") do |csv|
     code = row[0]
     unless code == "N225"
       jps = JpStock.quote(:code=>code)
-      csv << [jps.code, jps.company_name, jps.open, jps.high, jps.low, jps.close, jps.prev_close, jps.volume, jps.market_cap, jps.shares_issued, jps.dividend_yield, jps.dividend_one, jps.per, jps.pbr, jps.eps, jps.bps, jps.price_min, jps.round_lot, jps.years_high, jps.years_low]
+      csv << [jps.code, jps.company_name, jps.open, jps.high, jps.low, jps.close, jps.prev_close, jps.volume, jps.market_cap, jps.shares_issued, jps.dividend_yield, jps.dividend_one, jps.per, jps.pbr, jps.eps, jps.bps, jps.price_min, jps.round_lot, jps.years_high, jps.years_low] unless jps.nil?
     end
   end
 end
