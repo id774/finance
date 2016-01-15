@@ -13,7 +13,7 @@ from draw import Draw
 
 class Analysis():
 
-    def __init__(self, code="", name="", fullname=None,
+    def __init__(self, code="", name="", fullname="",
                  start='2014-10-01',
                  days=240, csvfile=None, update=False,
                  axis=2,
@@ -21,10 +21,10 @@ class Analysis():
                  reference=[]):
         self.code = code
         self.name = name
-        if fullname:
-            self.fullname = fullname
-        else:
+        if fullname == "":
             self.fullname = name
+        else:
+            self.fullname = fullname
         self.start = start
         self.end = datetime.datetime.now()
         self.days = days * -1
