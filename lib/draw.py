@@ -143,7 +143,7 @@ class Draw():
                     " トレンド推定:",
                     _clf_result,
                     ' 株価推定:',
-                    '{:,d}'.format(reg_result),
+                    '{:,d}'.format(str(reg_result)),
                     ]),
                    fontdict={"fontproperties": self.fontprop})
         if axis >= 2:
