@@ -14,6 +14,7 @@ def read_csv(filename, start, days, update, axis, complexity):
         code = str(s[0])
         analysis = Analysis(code=code,
                             name=s[1],
+                            fullname=s[2],
                             start=start,
                             days=int(days),
                             csvfile="".join(['stock_', str(s[0]), '.csv']),
@@ -73,6 +74,7 @@ def main():
     else:
         analysis = Analysis(code=options.stockcode,
                             name=options.stockname,
+                            fullname=options.stockname,
                             start=options.startdate,
                             days=int(options.days),
                             csvfile=options.csvfile,

@@ -13,13 +13,18 @@ from draw import Draw
 
 class Analysis():
 
-    def __init__(self, code="", name="", start='2014-10-01',
+    def __init__(self, code="", name="", fullname=None,
+                 start='2014-10-01',
                  days=240, csvfile=None, update=False,
                  axis=2,
                  complexity=3,
                  reference=[]):
         self.code = code
         self.name = name
+        if fullname:
+            self.fullname = fullname
+        else:
+            self.fullname = name
         self.start = start
         self.end = datetime.datetime.now()
         self.days = days * -1
@@ -96,7 +101,7 @@ class Analysis():
             ewma = ti.calc_ewma(span=75)
             bbands = ti.calc_bbands()
             sar = ti.calc_sar()
-            draw = Draw(self.code, self.name)
+            draw = Draw(self.code, self.fullname)
 
             ret = ti.calc_ret_index()
             ti.calc_vol(ret['ret_index'])
