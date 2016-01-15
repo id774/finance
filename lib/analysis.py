@@ -25,9 +25,9 @@ class Analysis():
             self.fullname = name
         else:
             if isinstance(fullname, str):
-                self.fullname = name
-            else:
                 self.fullname = fullname
+            else:
+                self.fullname = name
         self.start = start
         self.end = datetime.datetime.now()
         self.days = days * -1
