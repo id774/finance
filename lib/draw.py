@@ -62,6 +62,7 @@ class Draw():
                      colorup='r', colordown='b',
                      ax=ax1, grid=True)
         ncol = complexity + 1
+
         if axis >= 2:
             plt.legend(loc='upper center', bbox_to_anchor=(0.36, 1.228),
                        ncol=ncol, fancybox=False, shadow=False)
@@ -103,7 +104,7 @@ class Draw():
                 ref = ref * 50 + 50
                 ref.plot(linestyle=':', label="REF",
                          color="#DDDDDD", ax=ax2, grid=True)
-        ax2.set_yticks([0, 25, 50, 75, 100])
+            ax2.set_yticks([0, 25, 50, 75, 100])
 
         _volume = int(stock_d.ix[-1, 'Volume'])
         _close = int(stock_d.ix[-1, 'Adj Close'])
