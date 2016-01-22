@@ -63,6 +63,10 @@ class Draw():
                      ax=ax1, grid=True)
         ncol = complexity + 1
 
+        if len(ref) > 0:
+            self.ref_result = (" 日経相関:" +
+                               str(round(ref.mean(), 2)))
+
         if axis >= 2:
             plt.legend(loc='upper center', bbox_to_anchor=(0.36, 1.228),
                        ncol=ncol, fancybox=False, shadow=False)
@@ -99,8 +103,6 @@ class Draw():
             vr['v_rate'].plot(label="VOLUME", kind='area',
                               color="#DDFFFF", ax=ax2, grid=True)
             if len(ref) > 0:
-                self.ref_result = (" 日経相関:" +
-                                   str(round(ref.mean(), 2)))
                 ref = ref * 50 + 50
                 ref.plot(linestyle=':', label="REF",
                          color="#DDDDDD", ax=ax2, grid=True)
