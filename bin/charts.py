@@ -45,7 +45,7 @@ def main():
     parser.add_option("-d", "--date", dest="startdate",
                       help="specify start date as '2014-10-01'")
     parser.add_option("-y", "--days", dest="days",
-                      help="plot days as '240', specify 0 for all days")
+                      help="plot days as '250', specify 0 for all days")
     parser.add_option("-a", "--axis", dest="axis",
                       help="setting y-axis limit (1 or 2, default 2)")
     parser.add_option("-p", "--complexity", dest="complexity",
@@ -56,7 +56,7 @@ def main():
         parser.error("incorrect number of arguments")
 
     if options.days is None:
-        options.days = 240
+        options.days = 250
 
     if options.axis is None:
         options.axis = 2
