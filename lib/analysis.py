@@ -15,7 +15,7 @@ class Analysis():
 
     def __init__(self, code="", name="", fullname="",
                  start='2014-10-01',
-                 days=250, csvfile=None, update=False,
+                 days=240, csvfile=None, update=False,
                  axis=2,
                  complexity=3,
                  reference=[]):
