@@ -169,7 +169,10 @@ class Analysis():
 
             return ti
 
-        except (ValueError, KeyError):
-            msg = "".join(["Error occured in ", self.code])
-            print(msg)
+        except (ValueError, KeyError) as e:
+            print("Error occured in ", self.code, " at analysis.py")
+            print('type:', str(type(e)))
+            print('args:', str(e.args))
+            print('message:', e.message)
+            print('e:' + str(e))
             return None
