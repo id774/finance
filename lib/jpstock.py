@@ -60,7 +60,7 @@ if __name__ == '__main__':
                 stock_tse.to_csv("".join(["stock_", stock, ".csv"]),
                                  sep=",", index_label="Date")
             except ValueError as e:
-                print("Value Error occured in ", stock, " at jpstock.py")
+                print("Value Error occured in", stock, "at jpstock.py")
                 print('type:', str(type(e)))
                 print('args:', str(e.args))
                 print('message:', e.message)

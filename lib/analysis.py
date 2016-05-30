@@ -170,7 +170,7 @@ class Analysis():
             return ti
 
         except (ValueError, KeyError) as e:
-            print("Error occured in ", self.code, " at analysis.py")
+            print("Error occured in", self.code, "at analysis.py")
             print('type:', str(type(e)))
             print('args:', str(e.args))
             print('message:', e.message)
