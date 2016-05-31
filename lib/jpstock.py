@@ -2,8 +2,18 @@ import sys
 import datetime
 import pandas as pd
 from pandas_datareader import data
+from pandas.core.datetools import to_datetime
 
 class JpStock:
+
+    def _sanitize_dates(self, start, end):
+        start = to_datetime(start)
+        end = to_datetime(end)
+        if start is None:
+            start = datetime.datetime.today() - datetime.timedelta(365)
+        if end is None:
+            end = datetime.datetime.today()
+        return start, end
 
     def _base_url(self):
         return ('http://info.finance.yahoo.co.jp/history/'
@@ -17,7 +27,7 @@ class JpStock:
             return result.asfreq('B')
 
         base = self._base_url()
-        start, end = data._sanitize_dates(start, end)
+        start, end = self._sanitize_dates(start, end)
         start = 'sy={0}&sm={1}&sd={2}'.format(
             start.year, start.month, start.day)
         end = 'ey={0}&em={1}&ed={2}'.format(end.year, end.month, end.day)
