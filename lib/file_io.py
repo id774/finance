@@ -36,7 +36,6 @@ class FileIO():
             print("Exception occured in", stock, "at read_from_web")
             print('type:', str(type(e)))
             print('args:', str(e.args))
-            print('message:', e.message)
             print('e:' + str(e))
             return pd.DataFrame([])
 
@@ -52,7 +51,6 @@ class FileIO():
             print("Exception occured in", stock, "at read_with_jpstock")
             print('type:', str(type(e)))
             print('args:', str(e.args))
-            print('message:', e.message)
             print('e:' + str(e))
             return pd.DataFrame([])
 
