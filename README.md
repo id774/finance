@@ -30,6 +30,11 @@ Try Demo with ipython
 
 Startup ipython.
 
+Requirements
+------------
+
+See requirements.txt.
+
 ``` html
 from demo import demo
 ti = demo()

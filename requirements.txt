@@ -1,0 +1,7 @@
+matplotlib==1.5.1
+numpy==1.11.0
+pandas==0.16.2
+pandas-datareader==0.2.1
+scikit-learn==0.17.1
+scipy==0.17.1
+TA-Lib==0.4.9
