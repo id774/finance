@@ -3,7 +3,7 @@ import os
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
-from sklearn.lda import LDA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 try:
     import cPickle as pickle
 except:
@@ -65,4 +65,4 @@ class Classifier():
         return train_X, train_y
 
     def classify(self, test_X):
-        return self.clf.predict(test_X.values[-14:])
+        return self.clf.predict(test_X.values[-14:].reshape([1, -1]))

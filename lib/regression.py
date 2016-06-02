@@ -53,4 +53,4 @@ class Regression():
         return train_X, train_y
 
     def predict(self, test_X, base):
-        return self.clf.predict(test_X.values[-14:]) * base
+        return self.clf.predict(test_X.values[-14:].reshape([1, -1])) * base
