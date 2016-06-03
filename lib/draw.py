@@ -78,9 +78,9 @@ class Draw():
 
             ax2 = fig.add_subplot(2, 1, 2)
             rsi['rsi9'].plot(label="RSI9",
-                             color="g", ax=ax2)
+                             color="r", ax=ax2)
             rsi['rsi14'].plot(label="RSI14",
-                              color="r", ax=ax2)
+                              color="g", ax=ax2)
             roc['roc10'].plot(label="ROC10",
                               color="b", ax=ax2)
             roc['roc25'].plot(label="ROC25",
@@ -92,9 +92,9 @@ class Draw():
                                       color="m", ax=ax2, grid=True)
             if complexity >= 2:
                 stoch['slowk'].plot(label="SLOWK",
-                                    color="y", ax=ax2, grid=True)
-                stoch['slowd'].plot(label="SLOWD",
                                     color="k", ax=ax2, grid=True)
+                stoch['slowd'].plot(label="SLOWD",
+                                    color="y", ax=ax2, grid=True)
             if complexity >= 3:
                 willr['willr14'].plot(linestyle=':', label="%R",
                                       color="#008888", ax=ax2, grid=True)
