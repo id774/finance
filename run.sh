@@ -18,7 +18,7 @@ $PYTHON $WORK_DIR/bin/summary.py -o summary.csv -y -r 1 -k Ratio>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -o summary_10.csv -r 10 -k Ratio>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -o rolling_corr.csv -r 1 -k Corr>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -s my_stocks.txt -o portfolio.csv -r 1 -k Ratio>>$JOBLOG 2>&1
-$PYTHON $WORK_DIR/bin/summary.py -s topix_core30.txt -o topix_core30.csv -r 1 -k Ratio>>$JOBLOG 2>&1
+$PYTHON $WORK_DIR/bin/summary.py -s topix_core30.txt -o topix_core30.csv -r 1 -c rsi9 -a -k Ratio>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -o screening_rsi9.csv -r 1 -c rsi9 -a -k rsi9>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -o screening_willr14.csv -r 1 -c willr14 -k willr14>>$JOBLOG 2>&1
 $RUBY $WORK_DIR/bin/reference.rb>>$JOBLOG 2>&1
