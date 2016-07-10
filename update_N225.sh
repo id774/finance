@@ -13,7 +13,7 @@ cd $WORK_DIR/data
 echo -n "*** $0: Job started on `/bin/hostname` at ">>$JOBLOG 2>&1
 date "+%Y/%m/%d %T">>$JOBLOG 2>&1
 
-$PYTHON $WORK_DIR/bin/charts.py -a 2 -p 3 -c N225 -n $BF|7PJ?6Q3t2A(B -d 2015-01-01 -y 180 -r stock_N225.csv -u
+$PYTHON $WORK_DIR/bin/charts.py -a 2 -p 3 -c N225 -n 日経平均株価 -d 2015-01-01 -y 180 -r stock_N225.csv -u
 
 echo -n "*** $0: Job ended on `/bin/hostname` at ">>$JOBLOG 2>&1
 date "+%Y/%m/%d %T">>$JOBLOG 2>&1
