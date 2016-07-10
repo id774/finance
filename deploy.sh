@@ -10,8 +10,10 @@ test -d $TARGET_DIR/data/history || sudo mkdir -p $TARGET_DIR/data/history
 test -d $TARGET_DIR/bin/__pycache__ && sudo rm -rf $TARGET_DIR/bin/__pycache__
 test -d $TARGET_DIR/lib/__pycache__ && sudo rm -rf $TARGET_DIR/lib/__pycache__
 sudo cp -av run.sh $TARGET_DIR/
+sudo cp -av update_N225.sh $TARGET_DIR/
 sudo chmod 750 $TARGET_DIR
 sudo chmod 750 $TARGET_DIR/run.sh
+sudo chmod 750 $TARGET_DIR/update_N225.sh
 sudo chmod 770 $TARGET_DIR/data
 sudo chmod -R g+r,o-rwx $TARGET_DIR
 sudo chown -R root:adm $TARGET_DIR
