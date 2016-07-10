@@ -20,3 +20,6 @@ sudo chown -R root:adm $TARGET_DIR
 sudo chown root:www-data $TARGET_DIR
 sudo chown -R $USER:adm $TARGET_DIR/clf
 sudo chown -R $USER:www-data $TARGET_DIR/data
+sudo cp -av cron.d/stock /etc/cron.d/
+sudo chmod -R g+r,o-rwx /etc/cron.d/stock
+sudo chown -R root:adm /etc/cron.d/stock
