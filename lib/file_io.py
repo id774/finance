@@ -34,9 +34,8 @@ class FileIO():
                 return pd.DataFrame([])
         except Exception as e:
             print("Exception occured in", stock, "at read_from_web")
-            print('type:', str(type(e)))
-            print('args:', str(e.args))
-            print('e:' + str(e))
+            print('ErrorType:', str(type(e)))
+            print('ErrorMessage:', str(e))
             return pd.DataFrame([])
 
     def _read_with_jpstock(self, stock, start):
@@ -49,9 +48,8 @@ class FileIO():
                 return pd.DataFrame([])
         except Exception as e:
             print("Exception occured in", stock, "at read_with_jpstock")
-            print('type:', str(type(e)))
-            print('args:', str(e.args))
-            print('e:' + str(e))
+            print('ErrorType:', str(type(e)))
+            print('ErrorMessage:', str(e))
             return pd.DataFrame([])
 
     def read_data(self, stock, start, end):
