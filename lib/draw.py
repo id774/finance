@@ -80,11 +80,11 @@ class Draw():
             rsi['rsi9'].plot(label="RSI9",
                              color="k", ax=ax2)
             rsi['rsi14'].plot(label="RSI14",
-                              color="y", ax=ax2)
+                              color="r", ax=ax2)
             roc['roc10'].plot(label="ROC10",
                               color="b", ax=ax2)
             roc['roc25'].plot(label="ROC25",
-                              color="#888888", ax=ax2, grid=True)
+                              color="g", ax=ax2, grid=True)
             if complexity >= 3:
                 mfi['mfi14'].plot(label="MFI",
                                   color="#DD88DD", ax=ax2, grid=True)
@@ -92,9 +92,9 @@ class Draw():
                                       color="m", ax=ax2, grid=True)
             if complexity >= 2:
                 stoch['slowk'].plot(label="SLOWK",
-                                    color="r", ax=ax2, grid=True)
+                                    color="y", ax=ax2, grid=True)
                 stoch['slowd'].plot(label="SLOWD",
-                                    color="g", ax=ax2, grid=True)
+                                    color="#888888", ax=ax2, grid=True)
             if complexity >= 3:
                 willr['willr14'].plot(linestyle=':', label="%R",
                                       color="#008888", ax=ax2, grid=True)
