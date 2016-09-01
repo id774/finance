@@ -32,7 +32,7 @@ class Aggregator():
         base_date = datetime.date.today() - datetime.timedelta(1)
         for k, _stock_d in self.ti_dic.items():
             last_date = _stock_d.index[-1].to_datetime().date()
-            if base_date >= last_date:
+            if last_date >= base_date:
                 _code = str(k[0])
                 _name = str(k[1])
                 _start = int(_stock_d.ix[range, 'Adj Close'])
