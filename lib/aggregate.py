@@ -1,6 +1,7 @@
 import sys
 import os
 import pandas as pd
+import datetime
 
 class Aggregator():
 
@@ -28,32 +29,35 @@ class Aggregator():
                   ascending=False, screening_key=None):
         range = range * -1 - 1
         df = pd.DataFrame([])
+        base_date = datetime.date.today() - datetime.timedelta(1)
         for k, _stock_d in self.ti_dic.items():
-            _code = str(k[0])
-            _name = str(k[1])
-            _start = int(_stock_d.ix[range, 'Adj Close'])
-            _end = int(_stock_d.ix[-1, 'Adj Close'])
-            _open = int(_stock_d.ix[-1, 'Open'])
-            _high = int(_stock_d.ix[-1, 'High'])
-            _low = int(_stock_d.ix[-1, 'Low'])
-            _close = int(_stock_d.ix[-1, 'Adj Close'])
-            _change = _end - _start
-            _ratio = round((1 + _change) / _close * 100, 2)
-            _corr = round(_stock_d['rolling_corr'].mean(), 2)
-            _classified = int(_stock_d.ix[-1, 'classified'])
-            _predicted = int(_stock_d.ix[-1, 'predicted'])
-            if screening_key:
-                _key = int(_stock_d.ix[-1, screening_key])
-                df[_code] = pd.Series([_corr,
-                                      _open, _high, _low, _close,
-                                      _change, _ratio,
-                                      _key, _name])
-            else:
-                df[_code] = pd.Series([_corr,
-                                      _open, _high, _low, _close,
-                                      _change, _ratio,
-                                      _classified, _predicted,
-                                      _name])
+            last_date = _stock_d.index[-1].to_datetime().date()
+            if base_date >= last_date:
+                _code = str(k[0])
+                _name = str(k[1])
+                _start = int(_stock_d.ix[range, 'Adj Close'])
+                _end = int(_stock_d.ix[-1, 'Adj Close'])
+                _open = int(_stock_d.ix[-1, 'Open'])
+                _high = int(_stock_d.ix[-1, 'High'])
+                _low = int(_stock_d.ix[-1, 'Low'])
+                _close = int(_stock_d.ix[-1, 'Adj Close'])
+                _change = _end - _start
+                _ratio = round((1 + _change) / _close * 100, 2)
+                _corr = round(_stock_d['rolling_corr'].mean(), 2)
+                _classified = int(_stock_d.ix[-1, 'classified'])
+                _predicted = int(_stock_d.ix[-1, 'predicted'])
+                if screening_key:
+                    _key = int(_stock_d.ix[-1, screening_key])
+                    df[_code] = pd.Series([_corr,
+                                          _open, _high, _low, _close,
+                                          _change, _ratio,
+                                          _key, _name])
+                else:
+                    df[_code] = pd.Series([_corr,
+                                          _open, _high, _low, _close,
+                                          _change, _ratio,
+                                          _classified, _predicted,
+                                          _name])
         if df.empty:
             return df
         else:
