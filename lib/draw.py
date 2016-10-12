@@ -142,9 +142,9 @@ class Draw():
                     '{:,d}'.format(_stock_max),
                     ' 最安:',
                     '{:,d}'.format(_stock_min),
-                    " トレンド推定:",
+                    ' 分類器予測:',
                     _clf_result,
-                    ' 株価推定:',
+                    ' 回帰分析:',
                     '{:,d}'.format(reg_result),
                     ]),
                    fontdict={"fontproperties": self.fontprop})
