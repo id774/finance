@@ -22,7 +22,7 @@ class Draw():
             fname=font_path)
         self.ref_result = ""
 
-    def plot(self, stock_d, ewma, bbands, sar,
+    def plot(self, stock_d, prefix, ewma, bbands, sar,
              rsi, roc, mfi, ultosc, willr,
              stoch, tr, vr,
              clf_result, reg_result,
@@ -39,7 +39,7 @@ class Draw():
         else:
             ax1 = fig.add_subplot(1, 1, 1)
 
-        if complexity < 3:
+        if complexity < 4:
             ewma['ewma5'].plot(label="MA5",
                                color="k", ax=ax1, grid=True)
         ewma['ewma25'].plot(label="MA25",
@@ -48,7 +48,7 @@ class Draw():
                             color="m", ax=ax1, grid=True)
         ewma['ewma75'].plot(label="MA75",
                             color="r", ax=ax1, grid=True)
-        if complexity >= 3:
+        if complexity >= 4:
             ewma['ewma200'].plot(label="MA200",
                                  color="k", ax=ax1, grid=True)
         if complexity >= 2:
@@ -161,5 +161,5 @@ class Draw():
             plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.105),
                        ncol=ncol, fancybox=False, shadow=False)
 
-        plt.savefig("".join(["chart_", self.code, ".png"]))
+        plt.savefig("".join([prefix, "_", self.code, ".png"]))
         plt.close()

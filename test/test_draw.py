@@ -43,7 +43,7 @@ def test_plot():
     bbands = ti.calc_bbands()
     sar = ti.calc_sar()
 
-    draw.plot(stock, ewma, bbands, sar,
+    draw.plot(stock, 'test', ewma, bbands, sar,
               rsi, roc, mfi, ultosc, willr,
               stoch, tr, vr,
               clf_result=0, reg_result=5000,
@@ -52,7 +52,7 @@ def test_plot():
     eq_(draw.code, 'N225')
     eq_(draw.name, '日経平均株価')
 
-    filename = 'chart_N225.png'
+    filename = 'test_N225.png'
     expected = True
     eq_(expected, os.path.exists(filename))
 

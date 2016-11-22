@@ -161,7 +161,12 @@ class Analysis():
             io.save_data(io.merge_df(stock_d, ti.stock),
                          self.code, 'ti_')
 
-            draw.plot(stock_d, ewma, bbands, sar,
+            if self.complexity >= 4:
+                _prefix = 'long'
+            else:
+                _prefix = 'chart'
+
+            draw.plot(stock_d, 'chart', ewma, bbands, sar,
                       rsi, roc, mfi, ultosc, willr,
                       stoch, tr, vr,
                       clf_result, reg_result,
