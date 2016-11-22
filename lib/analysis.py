@@ -166,7 +166,7 @@ class Analysis():
             else:
                 _prefix = 'chart'
 
-            draw.plot(stock_d, 'chart', ewma, bbands, sar,
+            draw.plot(stock_d, _prefix, ewma, bbands, sar,
                       rsi, roc, mfi, ultosc, willr,
                       stoch, tr, vr,
                       clf_result, reg_result,
