@@ -7,7 +7,7 @@ PYTHON=/opt/python/current/bin/python
 STOCKTXT=$WORK_DIR/data/stocks.txt
 STARTDATE=2014-10-01
 DAYS=240
-LONGDAYS=400
+LONGDAYS=600
 
 cd $WORK_DIR/data
 
