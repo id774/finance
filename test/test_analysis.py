@@ -52,7 +52,7 @@ def test_run(code='N225',
     eq_(expected, result)
 
     filename = 'ti_N225.csv'
-    expected = True
+    expected = False
     eq_(expected, os.path.exists(filename))
     if os.path.exists(filename):
         os.remove(filename)

@@ -158,8 +158,9 @@ class Analysis():
             else:
                 ref = []
 
-            io.save_data(io.merge_df(stock_d, ti.stock),
-                         self.code, 'ti_')
+            if will_update is True:
+                io.save_data(io.merge_df(stock_d, ti.stock),
+                             self.code, 'ti_')
 
             if self.complexity >= 4:
                 _prefix = 'long'
