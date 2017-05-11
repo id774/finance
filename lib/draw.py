@@ -75,31 +75,31 @@ class Draw():
             plt.legend(loc='upper center', bbox_to_anchor=(0.36, 1.228),
                        ncol=ncol, fancybox=False, shadow=False)
 
-            roc['roc10'] = roc['roc10'] + 50
-            roc['roc25'] = roc['roc25'] + 50
-            willr['willr14'] = willr['willr14'] + 100
             tr['vl'] = tr['vl'] * 5
 
             ax2 = fig.add_subplot(2, 1, 2)
             rsi['rsi9'].plot(label="RSI9",
-                             color="k", ax=ax2)
+                             color="g", ax=ax2)
             rsi['rsi14'].plot(label="RSI14",
-                              color="r", ax=ax2)
-            roc['roc10'].plot(label="ROC10",
-                              color="b", ax=ax2)
-            roc['roc25'].plot(label="ROC25",
-                              color="g", ax=ax2, grid=True)
+                              color="k", ax=ax2)
             if complexity >= 3:
+                roc['roc10'] = roc['roc10'] + 50
+                roc['roc25'] = roc['roc25'] + 50
+                roc['roc10'].plot(label="ROC10",
+                                  color="b", ax=ax2)
+                roc['roc25'].plot(label="ROC25",
+                                  color="r", ax=ax2, grid=True)
+            if complexity >= 2:
                 mfi['mfi14'].plot(label="MFI",
                                   color="#DD88DD", ax=ax2, grid=True)
                 ultosc['ultosc'].plot(label="UO",
                                       color="m", ax=ax2, grid=True)
-            if complexity >= 2:
                 stoch['slowk'].plot(label="SLOWK",
                                     color="y", ax=ax2, grid=True)
                 stoch['slowd'].plot(label="SLOWD",
                                     color="#888888", ax=ax2, grid=True)
             if complexity >= 3:
+                willr['willr14'] = willr['willr14'] + 100
                 willr['willr14'].plot(linestyle=':', label="%R",
                                       color="#008888", ax=ax2, grid=True)
             tr['vl'].plot(label="VL",
