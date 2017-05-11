@@ -51,12 +51,12 @@ class Draw():
         if complexity >= 4:
             ewma['ewma200'].plot(label="MA200",
                                  color="k", ax=ax1, grid=True)
-        if complexity >= 2:
+        if complexity >= 3:
             bbands['upperband'].plot(label="UPPER",
                                      color="c", ax=ax1, grid=True)
             bbands['lowerband'].plot(label="LOWER",
                                      color="y", ax=ax1, grid=True)
-        if complexity >= 3:
+        if complexity >= 2:
             sar['sar'].plot(linestyle=':', label="SAR",
                             color="#FF0088", ax=ax1, grid=True)
         if axis == 1:
