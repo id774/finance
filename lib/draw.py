@@ -79,14 +79,14 @@ class Draw():
 
             ax2 = fig.add_subplot(2, 1, 2)
             rsi['rsi9'].plot(label="RSI9",
-                             color="g", ax=ax2)
+                             color="b", ax=ax2)
             rsi['rsi14'].plot(label="RSI14",
                               color="k", ax=ax2)
             if complexity >= 3:
                 roc['roc10'] = roc['roc10'] + 50
                 roc['roc25'] = roc['roc25'] + 50
                 roc['roc10'].plot(label="ROC10",
-                                  color="b", ax=ax2)
+                                  color="g", ax=ax2)
                 roc['roc25'].plot(label="ROC25",
                                   color="r", ax=ax2, grid=True)
             if complexity >= 2:
