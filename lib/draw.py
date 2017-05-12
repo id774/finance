@@ -106,10 +106,12 @@ class Draw():
                           color="c", ax=ax2, grid=True)
             vr['v_rate'].plot(label="VOLUME", kind='area',
                               color="#DDFFFF", ax=ax2, grid=True)
-            if len(ref) > 0:
-                ref = ref * 50 + 50
-                ref.plot(linestyle=':', label="REF",
-                         color="#DDDDDD", ax=ax2, grid=True)
+            if complexity >= 3:
+                if len(ref) > 0:
+                    ref = ref * 50 + 50
+                    ref.plot(linestyle=':', label="REF",
+                             color="#DDDDDD", ax=ax2, grid=True)
+
             ax2.set_yticks([0, 25, 50, 75, 100])
 
         _volume = int(stock_d.ix[-1, 'Volume'])
