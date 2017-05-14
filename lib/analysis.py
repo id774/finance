@@ -30,7 +30,7 @@ class Analysis():
             self.fullname = name
         self.start = start
         self.end = datetime.datetime.now()
-        self.days = days * -1
+        self.minus_days = days * -1
         self.csvfile = csvfile
         self.update = update
         self.clffile = "".join(['clf_', code, '.pickle'])
@@ -89,7 +89,7 @@ class Analysis():
             io.save_data(stock_tse, self.code, 'stock_')
 
         try:
-            stock_d = stock_tse.asfreq('B').dropna()[self.days:]
+            stock_d = stock_tse.asfreq('B').dropna()[self.minus_days:]
 
             ti = TechnicalIndicators(stock_d)
 
@@ -162,7 +162,7 @@ class Analysis():
                 io.save_data(io.merge_df(stock_d, ti.stock),
                              self.code, 'ti_')
 
-            if self.days < -300:
+            if self.minus_days < -300:
                 _prefix = 'long'
             else:
                 _prefix = 'chart'
