@@ -162,7 +162,7 @@ class Analysis():
                 io.save_data(io.merge_df(stock_d, ti.stock),
                              self.code, 'ti_')
 
-            if self.complexity >= 4:
+            if self.days < -300:
                 _prefix = 'long'
             else:
                 _prefix = 'chart'

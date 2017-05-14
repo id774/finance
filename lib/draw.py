@@ -39,7 +39,7 @@ class Draw():
         else:
             ax1 = fig.add_subplot(1, 1, 1)
 
-        if complexity < 4:
+        if complexity >= 2:
             ewma['ewma5'].plot(label="MA5",
                                color="k", ax=ax1, grid=True)
         ewma['ewma25'].plot(label="MA25",
@@ -48,7 +48,7 @@ class Draw():
                             color="m", ax=ax1, grid=True)
         ewma['ewma75'].plot(label="MA75",
                             color="r", ax=ax1, grid=True)
-        if complexity >= 4:
+        if complexity < 2:
             ewma['ewma200'].plot(label="MA200",
                                  color="k", ax=ax1, grid=True)
         if complexity >= 3:
