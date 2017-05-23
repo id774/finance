@@ -164,6 +164,8 @@ class Analysis():
 
             if self.minus_days < -300:
                 _prefix = 'long'
+            elif self.minus_days >= -60:
+                _prefix = 'short'
             else:
                 _prefix = 'chart'
 
