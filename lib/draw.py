@@ -100,8 +100,8 @@ class Draw():
                                     color="#888888", ax=ax2, grid=True)
             if complexity >= 3:
                 willr['willr14'] = willr['willr14'] + 100
-                willr['willr14'].plot(linestyle=':', label="%R",
-                                      color="#008888", ax=ax2, grid=True)
+                willr['willr14'].plot(label="%R",
+                                      color="#BBBBFF", ax=ax2, grid=True)
             tr['vl'].plot(label="VL",
                           color="c", ax=ax2, grid=True)
             vr['v_rate'].plot(label="VOLUME", kind='area',
