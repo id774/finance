@@ -20,11 +20,9 @@ $PYTHON $WORK_DIR/bin/charts.py -a 2 -p 3 -s $STOCKTXT -d $STARTDATE -y $SHORTDA
 $PYTHON $WORK_DIR/bin/charts.py -a 2 -p 2 -s $STOCKTXT -d $STARTDATE -y $DAYS>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -o summary.csv -y -r 1 -k Ratio>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -o summary_10.csv -r 10 -k Ratio>>$JOBLOG 2>&1
-$PYTHON $WORK_DIR/bin/summary.py -o rolling_corr.csv -r 1 -k Corr>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -s my_stocks.txt -o portfolio.csv -r 1 -k Ratio>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -s topix_core30.txt -o topix_core30.csv -r 1 -c rsi9 -k Ratio>>$JOBLOG 2>&1
 $PYTHON $WORK_DIR/bin/summary.py -o screening_rsi14.csv -r 1 -c rsi14 -a -k rsi14>>$JOBLOG 2>&1
-# $PYTHON $WORK_DIR/bin/summary.py -o screening_willr14.csv -r 1 -c willr14 -k willr14>>$JOBLOG 2>&1
 $RUBY $WORK_DIR/bin/reference.rb>>$JOBLOG 2>&1
 $RUBY $WORK_DIR/bin/email.rb>>$JOBLOG 2>&1
 # $RUBY $WORK_DIR/bin/email.rb "rolling_corr.csv" "Summary Report sorted by corr">>$JOBLOG 2>&1

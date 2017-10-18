@@ -43,18 +43,17 @@ class Aggregator():
                 _close = int(_stock_d.ix[-1, 'Adj Close'])
                 _change = _end - _start
                 _ratio = round((1 + _change) / _close * 100, 2)
-                _corr = round(_stock_d['rolling_corr'].mean(), 2)
                 _classified = int(_stock_d.ix[-1, 'classified'])
                 _predicted = int(_stock_d.ix[-1, 'predicted'])
                 if screening_key:
                     _key = int(_stock_d.ix[-1, screening_key])
-                    df[_code] = pd.Series([_corr,
-                                          _open, _high, _low, _close,
+                    df[_code] = pd.Series([_open,
+                                          _high, _low, _close,
                                           _change, _ratio,
                                           _key, _name])
                 else:
-                    df[_code] = pd.Series([_corr,
-                                          _open, _high, _low, _close,
+                    df[_code] = pd.Series([_open,
+                                          _high, _low, _close,
                                           _change, _ratio,
                                           _classified, _predicted,
                                           _name])
@@ -62,13 +61,13 @@ class Aggregator():
             return df
         else:
             if screening_key:
-                df.index = ['Corr',
-                            'Open', 'High', 'Low', 'Close',
+                df.index = ['Open',
+                            'High', 'Low', 'Close',
                             'Change', 'Ratio',
                             screening_key, 'Name']
             else:
-                df.index = ['Corr',
-                            'Open', 'High', 'Low', 'Close',
+                df.index = ['Open',
+                            'High', 'Low', 'Close',
                             'Change', 'Ratio',
                             'Trend', 'Pred',
                             'Name']
