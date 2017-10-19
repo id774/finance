@@ -20,13 +20,12 @@ class Draw():
             font_path = "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf"
         self.fontprop = font_manager.FontProperties(
             fname=font_path)
-        self.ref_result = ""
 
     def plot(self, stock_d, prefix, ewma, bbands, sar,
              rsi, roc, mfi, ultosc, willr,
              stoch, tr, vr,
              clf_result, reg_result,
-             ref=[], axis=2, complexity=3):
+             axis=2, complexity=3):
 
         plotting._all_kinds.append('ohlc')
         plotting._common_kinds.append('ohlc')
@@ -67,10 +66,6 @@ class Draw():
                      ax=ax1, grid=True)
         ncol = complexity + 1
 
-        if len(ref) > 0:
-            self.ref_result = (" 日経相関:" +
-                               str(round(ref.mean(), 2)))
-
         if axis >= 2:
             plt.legend(loc='upper center', bbox_to_anchor=(0.36, 1.228),
                        ncol=ncol, fancybox=False, shadow=False)
@@ -106,11 +101,6 @@ class Draw():
                           color="c", ax=ax2, grid=True)
             vr['v_rate'].plot(label="VOLUME", kind='area',
                               color="#DDFFFF", ax=ax2, grid=True)
-            if complexity >= 3:
-                if len(ref) > 0:
-                    ref = ref * 50 + 50
-                    ref.plot(linestyle=':', label="REF",
-                             color="#DDDDDD", ax=ax2, grid=True)
 
             ax2.set_yticks([0, 25, 50, 75, 100])
 
@@ -141,7 +131,6 @@ class Draw():
                     ', ',
                     str(_close_ratio),
                     '%)\n',
-                    self.ref_result,
                     ' 出来高:',
                     '{:,d}'.format(_volume),
                     ' 最高:',

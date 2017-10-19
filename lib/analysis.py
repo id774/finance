@@ -17,8 +17,7 @@ class Analysis():
                  start='2014-10-01',
                  days=240, csvfile=None, update=False,
                  axis=2,
-                 complexity=3,
-                 reference=[]):
+                 complexity=3):
         self.code = code
         self.name = name
         if isinstance(fullname, str):
@@ -37,7 +36,6 @@ class Analysis():
         self.regfile = "".join(['reg_', code, '.pickle'])
         self.axis = axis
         self.complexity = complexity
-        self.reference = reference
 
     def run(self):
         io = FileIO()
@@ -152,12 +150,6 @@ class Analysis():
             print(msg)
             ti.stock.ix[-1, 'predicted'] = reg_result
 
-            if len(self.reference) > 0:
-                ti.calc_rolling_corr(self.reference)
-                ref = ti.stock['rolling_corr']
-            else:
-                ref = []
-
             if will_update is True:
                 io.save_data(io.merge_df(stock_d, ti.stock),
                              self.code, 'ti_')
@@ -173,7 +165,6 @@ class Analysis():
                       rsi, roc, mfi, ultosc, willr,
                       stoch, tr, vr,
                       clf_result, reg_result,
-                      ref,
                       axis=self.axis,
                       complexity=self.complexity)
 

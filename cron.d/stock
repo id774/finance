@@ -1,2 +1,1 @@
 10 18  * * 1-5 root test -x /var/stock/run.sh && /var/stock/run.sh
-45 10  * * 2-6 root test -x /var/stock/update_N225.sh && /var/stock/update_N225.sh

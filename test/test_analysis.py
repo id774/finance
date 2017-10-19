@@ -28,8 +28,7 @@ def test_run(code='N225',
                  'stock_N225.csv'),
              update=False,
              axis=2,
-             complexity=3,
-             reference=[]):
+             complexity=3):
 
     analysis = Analysis(code=code,
                         name=name,

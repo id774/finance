@@ -46,8 +46,7 @@ def test_plot():
     draw.plot(stock, 'test', ewma, bbands, sar,
               rsi, roc, mfi, ultosc, willr,
               stoch, tr, vr,
-              clf_result=0, reg_result=5000,
-              ref=[])
+              clf_result=0, reg_result=5000)
 
     eq_(draw.code, 'N225')
     eq_(draw.name, '日経平均株価')
