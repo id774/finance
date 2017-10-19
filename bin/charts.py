@@ -9,7 +9,6 @@ from analysis import Analysis
 
 def read_csv(filename, start, days, update, axis, complexity):
     stocks = pd.read_csv(filename, header=None)
-    reference = []
     for s in stocks.values:
         code = str(s[0])
         analysis = Analysis(code=code,
@@ -19,12 +18,9 @@ def read_csv(filename, start, days, update, axis, complexity):
                             days=int(days),
                             csvfile="".join(['stock_', str(s[0]), '.csv']),
                             update=True,
-                            reference=reference,
                             axis=int(axis),
                             complexity=int(complexity))
         result = analysis.run()
-        if code == "N225" and result:
-            reference = result.stock_raw['Adj Close']
     return result
 
 def main():
