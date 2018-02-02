@@ -43,16 +43,18 @@ class Analysis():
 
         JST = timezone(timedelta(hours=+9), 'JST')
 
-        now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
-        msg = "".join([now, "Start Analysis: ", self.code])
+        now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
+        level = "[info]"
+        msg = "".join([now, level, " ", "Start Analysis: ", self.code])
         print(msg)
 
         if self.csvfile:
             stock_tse = io.read_from_csv(self.code,
                                          self.csvfile)
 
-            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
-            msg = "".join([now, "Read data from csv: ", self.code,
+            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
+            level = "[info]"
+            msg = "".join([now, level, " ", "Read data from csv: ", self.code,
                            " Records: ", str(len(stock_tse))])
             print(msg)
 
@@ -66,8 +68,9 @@ class Analysis():
                                        start=t,
                                        end=self.end)
 
-                now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
-                msg = "".join([now, "Read data from web: ", self.code,
+                now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
+                level = "[info]"
+                msg = "".join([now, level, " ", "Read data from web: ", self.code,
                                " New records: ", str(len(newdata))])
                 print(msg)
 
@@ -83,15 +86,17 @@ class Analysis():
                                      start=self.start,
                                      end=self.end)
 
-            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
-            msg = "".join([now, "Read data from web: ", self.code,
+            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
+            level = "[info]"
+            msg = "".join([now, level, " ", "Read data from web: ", self.code,
                            " Records: ", str(len(stock_tse))])
             print(msg)
 
         if stock_tse.empty:
 
-            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
-            msg = "".join([now, "Data empty: ", self.code])
+            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
+            level = "[info]"
+            msg = "".join([now, level, " ", "Data empty: ", self.code])
             print(msg)
 
             return None
@@ -146,14 +151,16 @@ class Analysis():
             clf = Classifier(self.clffile)
             train_X, train_y = clf.train(ret_index, will_update)
 
-            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
-            msg = "".join([now, "Classifier Train Records: ", str(len(train_y))])
+            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
+            level = "[info]"
+            msg = "".join([now, level, " ", "Classifier Train Records: ", str(len(train_y))])
             print(msg)
 
             clf_result = clf.classify(ret_index)[0]
 
-            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
-            msg = "".join([now, "Classified: ", str(clf_result)])
+            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
+            level = "[info]"
+            msg = "".join([now, level, " ", "Classified: ", str(clf_result)])
             print(msg)
 
             ti.stock.ix[-1, 'classified'] = clf_result
@@ -163,15 +170,17 @@ class Analysis():
                              regression_type="Ridge")
             train_X, train_y = reg.train(ret_index, will_update)
 
-            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
-            msg = "".join([now, "Regression Train Records: ", str(len(train_y))])
+            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
+            level = "[info]"
+            msg = "".join([now, level, " ", "Regression Train Records: ", str(len(train_y))])
             print(msg)
 
             base = ti.stock_raw['Adj Close'][0]
             reg_result = int(reg.predict(ret_index, base)[0])
 
-            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
-            msg = "".join([now, "Predicted: ", str(reg_result)])
+            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
+            level = "[info]"
+            msg = "".join([now, level, " ", "Predicted: ", str(reg_result)])
             print(msg)
 
             ti.stock.ix[-1, 'predicted'] = reg_result
@@ -194,8 +203,9 @@ class Analysis():
                       axis=self.axis,
                       complexity=self.complexity)
 
-            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
-            msg = "".join([now, "Finish Analysis: ", self.code])
+            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
+            level = "[info]"
+            msg = "".join([now, level, " ", "Finish Analysis: ", self.code])
             print(msg)
 
             return ti
