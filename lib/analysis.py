@@ -1,6 +1,6 @@
 import sys
 import os
-import datetime
+from datetime import datetime, timedelta, timezone
 import pandas as pd
 p = os.path.dirname(os.path.abspath(__file__))
 if p not in sys.path:
@@ -28,7 +28,7 @@ class Analysis():
         else:
             self.fullname = name
         self.start = start
-        self.end = datetime.datetime.now()
+        self.end = datetime.now()
         self.minus_days = days * -1
         self.csvfile = csvfile
         self.update = update
@@ -41,11 +41,18 @@ class Analysis():
         io = FileIO()
         will_update = self.update
 
+        JST = timezone(timedelta(hours=+9), 'JST')
+
+        now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
+        msg = "".join([now, "Start Analysis: ", self.code])
+        print(msg)
+
         if self.csvfile:
             stock_tse = io.read_from_csv(self.code,
                                          self.csvfile)
 
-            msg = "".join(["Read data from csv: ", self.code,
+            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
+            msg = "".join([now, "Read data from csv: ", self.code,
                            " Records: ", str(len(stock_tse))])
             print(msg)
 
@@ -59,9 +66,11 @@ class Analysis():
                                        start=t,
                                        end=self.end)
 
-                msg = "".join(["Read data from web: ", self.code,
+                now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
+                msg = "".join([now, "Read data from web: ", self.code,
                                " New records: ", str(len(newdata))])
                 print(msg)
+
                 if len(newdata) < 1:
                     will_update = False
                 else:
@@ -74,13 +83,17 @@ class Analysis():
                                      start=self.start,
                                      end=self.end)
 
-            msg = "".join(["Read data from web: ", self.code,
+            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
+            msg = "".join([now, "Read data from web: ", self.code,
                            " Records: ", str(len(stock_tse))])
             print(msg)
 
         if stock_tse.empty:
-            msg = "".join(["Data empty: ", self.code])
+
+            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
+            msg = "".join([now, "Data empty: ", self.code])
             print(msg)
+
             return None
 
         if not self.csvfile:
@@ -132,22 +145,35 @@ class Analysis():
             ret_index = ti.stock['ret_index']
             clf = Classifier(self.clffile)
             train_X, train_y = clf.train(ret_index, will_update)
-            msg = "".join(["Train Records: ", str(len(train_y))])
+
+            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
+            msg = "".join([now, "Classifier Train Records: ", str(len(train_y))])
             print(msg)
+
             clf_result = clf.classify(ret_index)[0]
-            msg = "".join(["Classified: ", str(clf_result)])
+
+            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
+            msg = "".join([now, "Classified: ", str(clf_result)])
             print(msg)
+
             ti.stock.ix[-1, 'classified'] = clf_result
 
             reg = Regression(self.regfile,
                              alpha=1,
                              regression_type="Ridge")
             train_X, train_y = reg.train(ret_index, will_update)
-            msg = "".join(["Train Records: ", str(len(train_y))])
+
+            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
+            msg = "".join([now, "Regression Train Records: ", str(len(train_y))])
+            print(msg)
+
             base = ti.stock_raw['Adj Close'][0]
             reg_result = int(reg.predict(ret_index, base)[0])
-            msg = "".join(["Predicted: ", str(reg_result)])
+
+            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
+            msg = "".join([now, "Predicted: ", str(reg_result)])
             print(msg)
+
             ti.stock.ix[-1, 'predicted'] = reg_result
 
             if will_update is True:
@@ -167,6 +193,10 @@ class Analysis():
                       clf_result, reg_result,
                       axis=self.axis,
                       complexity=self.complexity)
+
+            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00] ")
+            msg = "".join([now, "Finish Analysis: ", self.code])
+            print(msg)
 
             return ti
 
