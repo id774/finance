@@ -7,8 +7,18 @@ p = os.path.dirname(os.path.abspath(__file__))
 if p not in sys.path:
     sys.path.append(p)
 from jpstock import JpStock
+from logging import getLogger, Formatter, StreamHandler, INFO
 
 class FileIO():
+
+    def __init__(self):
+        self.logger = getLogger(__name__)
+        handler = StreamHandler()
+        handler.setLevel(INFO)
+        handler.setFormatter(Formatter(fmt='%(asctime)s %(levelname)s -- %(message)s'))
+        self.logger.setLevel(INFO)
+        self.logger.addHandler(handler)
+        self.logger.propagate = False
 
     def save_data(self, df, stock, prefix):
         if not df.empty:
@@ -33,12 +43,9 @@ class FileIO():
             else:
                 return pd.DataFrame([])
         except Exception as e:
-            JST = timezone(timedelta(hours=+9), 'JST')
-            now = datetime.now(JST).isoformat()
-            level = "ERROR"
-            print(now, level, "--", "Exception occured in", stock, "at read_from_web")
-            print(now, level, "--", 'ErrorType:', str(type(e)))
-            print(now, level, "--", 'ErrorMessage:', str(e))
+            self.logger.error("".join(["Exception occured in", stock, "at read_from_web"]))
+            self.logger.error("".join(['ErrorType:', str(type(e))]))
+            self.logger.error("".join(['ErrorMessage:', str(e)]))
             return pd.DataFrame([])
 
     def _read_with_jpstock(self, stock, start):
@@ -50,12 +57,9 @@ class FileIO():
             else:
                 return pd.DataFrame([])
         except Exception as e:
-            JST = timezone(timedelta(hours=+9), 'JST')
-            now = datetime.now(JST).isoformat()
-            level = "ERROR"
-            print(now, level, "--", "Exception occured in", stock, "at read_with_jpstock")
-            print(now, level, "--", 'ErrorType:', str(type(e)))
-            print(now, level, "--", 'ErrorMessage:', str(e))
+            self.logger.error("".join(["Exception occured in", stock, "at read_with_jpstock"]))
+            self.logger.error("".join(['ErrorType:', str(type(e))]))
+            self.logger.error("".join(['ErrorMessage:', str(e)]))
             return pd.DataFrame([])
 
     def read_data(self, stock, start, end):
