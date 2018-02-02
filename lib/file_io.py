@@ -1,6 +1,6 @@
 import sys
 import os
-import datetime
+from datetime import datetime, timedelta, timezone
 import pandas as pd
 from pandas_datareader import data
 p = os.path.dirname(os.path.abspath(__file__))
@@ -24,7 +24,7 @@ class FileIO():
                                            start='2014-10-01')
 
     def _read_from_web(self, stock, start, end):
-        start = datetime.datetime.strptime(start, '%Y-%m-%d')
+        start = datetime.strptime(start, '%Y-%m-%d')
         try:
             df = data.DataReader("".join(['^', stock]),
                                  'yahoo', start, end)
@@ -33,9 +33,12 @@ class FileIO():
             else:
                 return pd.DataFrame([])
         except Exception as e:
-            print("Exception occured in", stock, "at read_from_web")
-            print('ErrorType:', str(type(e)))
-            print('ErrorMessage:', str(e))
+            JST = timezone(timedelta(hours=+9), 'JST')
+            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            level = "ERROR"
+            print(now, level, "Exception occured in", stock, "at read_from_web")
+            print(now, level, 'ErrorType:', str(type(e)))
+            print(now, level, 'ErrorMessage:', str(e))
             return pd.DataFrame([])
 
     def _read_with_jpstock(self, stock, start):
@@ -47,9 +50,12 @@ class FileIO():
             else:
                 return pd.DataFrame([])
         except Exception as e:
-            print("Exception occured in", stock, "at read_with_jpstock")
-            print('ErrorType:', str(type(e)))
-            print('ErrorMessage:', str(e))
+            JST = timezone(timedelta(hours=+9), 'JST')
+            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            level = "ERROR"
+            print(now, level, "Exception occured in", stock, "at read_with_jpstock")
+            print(now, level, 'ErrorType:', str(type(e)))
+            print(now, level, 'ErrorMessage:', str(e))
             return pd.DataFrame([])
 
     def read_data(self, stock, start, end):

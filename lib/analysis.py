@@ -38,25 +38,23 @@ class Analysis():
         self.complexity = complexity
 
     def run(self):
+        JST = timezone(timedelta(hours=+9), 'JST')
+
         io = FileIO()
         will_update = self.update
 
-        JST = timezone(timedelta(hours=+9), 'JST')
-
-        now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
-        level = "[info]"
-        msg = "".join([now, level, " ", "Start Analysis: ", self.code])
-        print(msg)
+        now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+        level = "INFO"
+        print(now, level, "Start Analysis:", self.code)
 
         if self.csvfile:
             stock_tse = io.read_from_csv(self.code,
                                          self.csvfile)
 
-            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
-            level = "[info]"
-            msg = "".join([now, level, " ", "Read data from csv: ", self.code,
-                           " Records: ", str(len(stock_tse))])
-            print(msg)
+            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            level = "INFO"
+            print(now, level, "Read data from csv:", self.code,
+                           " Records:", str(len(stock_tse)))
 
             if self.update and len(stock_tse) > 0:
                 index = pd.date_range(start=stock_tse.index[-1],
@@ -68,11 +66,10 @@ class Analysis():
                                        start=t,
                                        end=self.end)
 
-                now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
-                level = "[info]"
-                msg = "".join([now, level, " ", "Read data from web: ", self.code,
-                               " New records: ", str(len(newdata))])
-                print(msg)
+                now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+                level = "INFO"
+                print(now, level, "Read data from web:", self.code,
+                               " New records:", str(len(newdata)))
 
                 if len(newdata) < 1:
                     will_update = False
@@ -86,18 +83,16 @@ class Analysis():
                                      start=self.start,
                                      end=self.end)
 
-            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
-            level = "[info]"
-            msg = "".join([now, level, " ", "Read data from web: ", self.code,
-                           " Records: ", str(len(stock_tse))])
-            print(msg)
+            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            level = "INFO"
+            print(now, level, "Read data from web:", self.code,
+                           " Records:", str(len(stock_tse)))
 
         if stock_tse.empty:
 
-            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
-            level = "[warn]"
-            msg = "".join([now, level, " ", "Data empty: ", self.code])
-            print(msg)
+            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            level = "WARN"
+            print(now, level, "Data empty:", self.code)
 
             return None
 
@@ -151,17 +146,15 @@ class Analysis():
             clf = Classifier(self.clffile)
             train_X, train_y = clf.train(ret_index, will_update)
 
-            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
-            level = "[info]"
-            msg = "".join([now, level, " ", "Classifier Train Records: ", str(len(train_y))])
-            print(msg)
+            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            level = "INFO"
+            print(now, level, "Classifier Train Records:", str(len(train_y)))
 
             clf_result = clf.classify(ret_index)[0]
 
-            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
-            level = "[info]"
-            msg = "".join([now, level, " ", "Classified: ", str(clf_result)])
-            print(msg)
+            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            level = "INFO"
+            print(now, level, "Classified:", str(clf_result))
 
             ti.stock.ix[-1, 'classified'] = clf_result
 
@@ -170,18 +163,16 @@ class Analysis():
                              regression_type="Ridge")
             train_X, train_y = reg.train(ret_index, will_update)
 
-            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
-            level = "[info]"
-            msg = "".join([now, level, " ", "Regression Train Records: ", str(len(train_y))])
-            print(msg)
+            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            level = "INFO"
+            print(now, level, "Regression Train Records:", tr(len(train_y)))
 
             base = ti.stock_raw['Adj Close'][0]
             reg_result = int(reg.predict(ret_index, base)[0])
 
-            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
-            level = "[info]"
-            msg = "".join([now, level, " ", "Predicted: ", str(reg_result)])
-            print(msg)
+            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            level = "INFO"
+            print(now, level, "Predicted:", str(reg_result))
 
             ti.stock.ix[-1, 'predicted'] = reg_result
 
@@ -203,15 +194,17 @@ class Analysis():
                       axis=self.axis,
                       complexity=self.complexity)
 
-            now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
-            level = "[info]"
-            msg = "".join([now, level, " ", "Finish Analysis: ", self.code])
-            print(msg)
+            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            level = "INFO"
+            print(now, level, "Finish Analysis:", self.code)
 
             return ti
 
         except (ValueError, KeyError) as e:
-            print("Error occured in", self.code, "at analysis.py")
-            print('ErrorType:', str(type(e)))
-            print('ErrorMessage:', str(e))
+            JST = timezone(timedelta(hours=+9), 'JST')
+            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            level = "ERROR"
+            print(now, level, "Error occured in", self.code, "at analysis.py")
+            print(now, level, 'ErrorType:', str(type(e)))
+            print(now, level, 'ErrorMessage:', str(e))
             return None

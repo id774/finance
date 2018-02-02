@@ -1,5 +1,5 @@
 import sys
-import datetime
+from datetime import datetime, timedelta, timezone
 import pandas as pd
 from pandas_datareader import data
 from pandas.core.datetools import to_datetime
@@ -10,9 +10,9 @@ class JpStock:
         start = to_datetime(start)
         end = to_datetime(end)
         if start is None:
-            start = datetime.datetime.today() - datetime.timedelta(365)
+            start = datetime.today() - timedelta(365)
         if end is None:
-            end = datetime.datetime.today()
+            end = datetime.today()
         return start, end
 
     def _base_url(self):
@@ -21,7 +21,7 @@ class JpStock:
 
     def get(self, code, start=None, end=None, interval='d'):
         if code in {'N225', 'GSPC', 'IXIC', 'DJI'}:
-            start = datetime.datetime.strptime(start, '%Y-%m-%d')
+            start = datetime.strptime(start, '%Y-%m-%d')
             result = data.DataReader("".join(['^', code]),
                                      'yahoo', start, end)
             return result.asfreq('B')
@@ -70,9 +70,12 @@ if __name__ == '__main__':
                 stock_tse.to_csv("".join(["stock_", stock, ".csv"]),
                                  sep=",", index_label="Date")
             except ValueError as e:
-                print("Value Error occured in", stock, "at jpstock.py")
-                print('ErrorType:', str(type(e)))
-                print('ErrorMessage:', str(e))
+                JST = timezone(timedelta(hours=+9), 'JST')
+                now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+                level = "ERROR"
+                print(now, level, "Value Error occured in", stock, "at jpstock.py")
+                print(now, level, 'ErrorType:', str(type(e)))
+                print(now, level, 'ErrorMessage:', str(e))
         else:
             print("This program needs at least %(argsmin)s arguments" %
                   locals())
