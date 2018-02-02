@@ -43,17 +43,17 @@ class Analysis():
         io = FileIO()
         will_update = self.update
 
-        now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+        now = datetime.now(JST).isoformat()
         level = "INFO"
-        print(now, level, "Start Analysis:", self.code)
+        print(now, level, "--", "Start Analysis:", self.code)
 
         if self.csvfile:
             stock_tse = io.read_from_csv(self.code,
                                          self.csvfile)
 
-            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            now = datetime.now(JST).isoformat()
             level = "INFO"
-            print(now, level, "Read data from csv:", self.code,
+            print(now, level, "--", "Read data from csv:", self.code,
                            " Records:", str(len(stock_tse)))
 
             if self.update and len(stock_tse) > 0:
@@ -66,9 +66,9 @@ class Analysis():
                                        start=t,
                                        end=self.end)
 
-                now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+                now = datetime.now(JST).isoformat()
                 level = "INFO"
-                print(now, level, "Read data from web:", self.code,
+                print(now, level, "--", "Read data from web:", self.code,
                                " New records:", str(len(newdata)))
 
                 if len(newdata) < 1:
@@ -83,16 +83,16 @@ class Analysis():
                                      start=self.start,
                                      end=self.end)
 
-            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            now = datetime.now(JST).isoformat()
             level = "INFO"
-            print(now, level, "Read data from web:", self.code,
+            print(now, level, "--", "Read data from web:", self.code,
                            " Records:", str(len(stock_tse)))
 
         if stock_tse.empty:
 
-            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            now = datetime.now(JST).isoformat()
             level = "WARN"
-            print(now, level, "Data empty:", self.code)
+            print(now, level, "--", "Data empty:", self.code)
 
             return None
 
@@ -146,15 +146,15 @@ class Analysis():
             clf = Classifier(self.clffile)
             train_X, train_y = clf.train(ret_index, will_update)
 
-            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            now = datetime.now(JST).isoformat()
             level = "INFO"
-            print(now, level, "Classifier Train Records:", str(len(train_y)))
+            print(now, level, "--", "Classifier Train Records:", str(len(train_y)))
 
             clf_result = clf.classify(ret_index)[0]
 
-            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            now = datetime.now(JST).isoformat()
             level = "INFO"
-            print(now, level, "Classified:", str(clf_result))
+            print(now, level, "--", "Classified:", str(clf_result))
 
             ti.stock.ix[-1, 'classified'] = clf_result
 
@@ -163,16 +163,16 @@ class Analysis():
                              regression_type="Ridge")
             train_X, train_y = reg.train(ret_index, will_update)
 
-            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            now = datetime.now(JST).isoformat()
             level = "INFO"
-            print(now, level, "Regression Train Records:", str(len(train_y)))
+            print(now, level, "--", "Regression Train Records:", str(len(train_y)))
 
             base = ti.stock_raw['Adj Close'][0]
             reg_result = int(reg.predict(ret_index, base)[0])
 
-            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            now = datetime.now(JST).isoformat()
             level = "INFO"
-            print(now, level, "Predicted:", str(reg_result))
+            print(now, level, "--", "Predicted:", str(reg_result))
 
             ti.stock.ix[-1, 'predicted'] = reg_result
 
@@ -194,17 +194,17 @@ class Analysis():
                       axis=self.axis,
                       complexity=self.complexity)
 
-            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            now = datetime.now(JST).isoformat()
             level = "INFO"
-            print(now, level, "Finish Analysis:", self.code)
+            print(now, level, "--", "Finish Analysis:", self.code)
 
             return ti
 
         except (ValueError, KeyError) as e:
             JST = timezone(timedelta(hours=+9), 'JST')
-            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            now = datetime.now(JST).isoformat()
             level = "ERROR"
-            print(now, level, "Error occured in", self.code, "at analysis.py")
-            print(now, level, 'ErrorType:', str(type(e)))
-            print(now, level, 'ErrorMessage:', str(e))
+            print(now, level, "--", "Error occured in", self.code, "at analysis.py")
+            print(now, level, "--", 'ErrorType:', str(type(e)))
+            print(now, level, "--", 'ErrorMessage:', str(e))
             return None

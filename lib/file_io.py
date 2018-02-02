@@ -34,7 +34,7 @@ class FileIO():
                 return pd.DataFrame([])
         except Exception as e:
             JST = timezone(timedelta(hours=+9), 'JST')
-            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            now = datetime.now(JST).isoformat()
             level = "ERROR"
             print(now, level, "Exception occured in", stock, "at read_from_web")
             print(now, level, 'ErrorType:', str(type(e)))
@@ -51,7 +51,7 @@ class FileIO():
                 return pd.DataFrame([])
         except Exception as e:
             JST = timezone(timedelta(hours=+9), 'JST')
-            now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+            now = datetime.now(JST).isoformat()
             level = "ERROR"
             print(now, level, "Exception occured in", stock, "at read_with_jpstock")
             print(now, level, 'ErrorType:', str(type(e)))

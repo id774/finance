@@ -71,7 +71,7 @@ if __name__ == '__main__':
                                  sep=",", index_label="Date")
             except ValueError as e:
                 JST = timezone(timedelta(hours=+9), 'JST')
-                now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+                now = datetime.now(JST).isoformat()
                 level = "ERROR"
                 print(now, level, "Value Error occured in", stock, "at jpstock.py")
                 print(now, level, 'ErrorType:', str(type(e)))
