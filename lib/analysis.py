@@ -10,7 +10,7 @@ from ti import TechnicalIndicators
 from classifier import Classifier
 from regression import Regression
 from draw import Draw
-from logging import getLogger, Formatter, StreamHandler, INFO
+from get_logger import get_logger
 
 class Analysis():
 
@@ -19,14 +19,7 @@ class Analysis():
                  days=240, csvfile=None, update=False,
                  axis=2,
                  complexity=3):
-        self.logger = getLogger(__name__)
-        handler = StreamHandler()
-        handler.setLevel(INFO)
-        handler.setFormatter(Formatter(fmt='%(asctime)s %(levelname)s -- %(message)s'))
-        self.logger.setLevel(INFO)
-        self.logger.addHandler(handler)
-        self.logger.propagate = False
-
+        self.logger = get_logger(__name__)
         self.code = code
         self.name = name
         if isinstance(fullname, str):

@@ -7,18 +7,12 @@ p = os.path.dirname(os.path.abspath(__file__))
 if p not in sys.path:
     sys.path.append(p)
 from jpstock import JpStock
-from logging import getLogger, Formatter, StreamHandler, INFO
+from get_logger import get_logger
 
 class FileIO():
 
     def __init__(self):
-        self.logger = getLogger(__name__)
-        handler = StreamHandler()
-        handler.setLevel(INFO)
-        handler.setFormatter(Formatter(fmt='%(asctime)s %(levelname)s -- %(message)s'))
-        self.logger.setLevel(INFO)
-        self.logger.addHandler(handler)
-        self.logger.propagate = False
+        self.logger = get_logger(__name__)
 
     def save_data(self, df, stock, prefix):
         if not df.empty:
