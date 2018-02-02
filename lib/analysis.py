@@ -50,14 +50,14 @@ class Analysis():
         io = FileIO()
         will_update = self.update
 
-        self.logger.info("".join(["Start Analysis:", self.code]))
+        self.logger.info("".join(["Start Analysis: ", self.code]))
 
         if self.csvfile:
             stock_tse = io.read_from_csv(self.code,
                                          self.csvfile)
 
-            self.logger.info("".join(["Read data from csv:", self.code,
-                           " Records:", str(len(stock_tse))]))
+            self.logger.info("".join(["Read data from csv: ", self.code,
+                           " Records: ", str(len(stock_tse))]))
 
             if self.update and len(stock_tse) > 0:
                 index = pd.date_range(start=stock_tse.index[-1],
@@ -69,8 +69,8 @@ class Analysis():
                                        start=t,
                                        end=self.end)
 
-                self.logger.info("".join(["Read data from web:", self.code,
-                               " New records:", str(len(newdata))]))
+                self.logger.info("".join(["Read data from web: ", self.code,
+                               " New records: ", str(len(newdata))]))
 
                 if len(newdata) < 1:
                     will_update = False
@@ -84,12 +84,12 @@ class Analysis():
                                      start=self.start,
                                      end=self.end)
 
-            self.logger.info("".join(["Read data from web:", self.code,
-                           " Records:", str(len(stock_tse))]))
+            self.logger.info("".join(["Read data from web: ", self.code,
+                           " Records: ", str(len(stock_tse))]))
 
         if stock_tse.empty:
 
-            self.logger.info("".join(["Data empty:", self.code]))
+            self.logger.warn("".join(["Data empty: ", self.code]))
 
             return None
 
@@ -143,11 +143,11 @@ class Analysis():
             clf = Classifier(self.clffile)
             train_X, train_y = clf.train(ret_index, will_update)
 
-            self.logger.info("".join(["Classifier Train Records:", str(len(train_y))]))
+            self.logger.info("".join(["Classifier Train Records: ", str(len(train_y))]))
 
             clf_result = clf.classify(ret_index)[0]
 
-            self.logger.info("".join(["Classified:", str(clf_result)]))
+            self.logger.info("".join(["Classified: ", str(clf_result)]))
 
             ti.stock.ix[-1, 'classified'] = clf_result
 
@@ -156,12 +156,12 @@ class Analysis():
                              regression_type="Ridge")
             train_X, train_y = reg.train(ret_index, will_update)
 
-            self.logger.info("".join(["Regression Train Records:", str(len(train_y))]))
+            self.logger.info("".join(["Regression Train Records: ", str(len(train_y))]))
 
             base = ti.stock_raw['Adj Close'][0]
             reg_result = int(reg.predict(ret_index, base)[0])
 
-            self.logger.info("".join(["Predicted:", str(reg_result)]))
+            self.logger.info("".join(["Predicted: ", str(reg_result)]))
 
             ti.stock.ix[-1, 'predicted'] = reg_result
 
@@ -183,12 +183,12 @@ class Analysis():
                       axis=self.axis,
                       complexity=self.complexity)
 
-            self.logger.info("".join(["Finish Analysis:", self.code]))
+            self.logger.info("".join(["Finish Analysis: ", self.code]))
 
             return ti
 
         except (ValueError, KeyError) as e:
-            self.logger.error("".join(["Error occured in", self.code, "at analysis.py"]))
-            self.logger.error("".join(['ErrorType:', str(type(e))]))
-            self.logger.error("".join(['ErrorMessage:', str(e)]))
+            self.logger.error("".join(["Error occured in ", self.code, " at analysis.py"]))
+            self.logger.error("".join(['ErrorType: ', str(type(e))]))
+            self.logger.error("".join(['ErrorMessage: ', str(e)]))
             return None

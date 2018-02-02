@@ -43,9 +43,9 @@ class FileIO():
             else:
                 return pd.DataFrame([])
         except Exception as e:
-            self.logger.error("".join(["Exception occured in", stock, "at read_from_web"]))
-            self.logger.error("".join(['ErrorType:', str(type(e))]))
-            self.logger.error("".join(['ErrorMessage:', str(e)]))
+            self.logger.error("".join(["Exception occured in ", stock, " at read_from_web"]))
+            self.logger.error("".join(['ErrorType: ', str(type(e))]))
+            self.logger.error("".join(['ErrorMessage: ', str(e)]))
             return pd.DataFrame([])
 
     def _read_with_jpstock(self, stock, start):
@@ -57,9 +57,9 @@ class FileIO():
             else:
                 return pd.DataFrame([])
         except Exception as e:
-            self.logger.error("".join(["Exception occured in", stock, "at read_with_jpstock"]))
-            self.logger.error("".join(['ErrorType:', str(type(e))]))
-            self.logger.error("".join(['ErrorMessage:', str(e)]))
+            self.logger.error("".join(["Exception occured in ", stock, " at read_with_jpstock"]))
+            self.logger.error("".join(['ErrorType: ', str(type(e))]))
+            self.logger.error("".join(['ErrorMessage: ', str(e)]))
             return pd.DataFrame([])
 
     def read_data(self, stock, start, end):
