@@ -95,7 +95,7 @@ class Analysis():
         if stock_tse.empty:
 
             now = datetime.now(JST).strftime("[%Y-%m-%dT%H:%M:%S+09:00]")
-            level = "[info]"
+            level = "[warn]"
             msg = "".join([now, level, " ", "Data empty: ", self.code])
             print(msg)
 
