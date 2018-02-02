@@ -165,7 +165,7 @@ class Analysis():
 
             now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
             level = "INFO"
-            print(now, level, "Regression Train Records:", tr(len(train_y)))
+            print(now, level, "Regression Train Records:", str(len(train_y)))
 
             base = ti.stock_raw['Adj Close'][0]
             reg_result = int(reg.predict(ret_index, base)[0])
