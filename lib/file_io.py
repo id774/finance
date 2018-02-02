@@ -36,9 +36,9 @@ class FileIO():
             JST = timezone(timedelta(hours=+9), 'JST')
             now = datetime.now(JST).isoformat()
             level = "ERROR"
-            print(now, level, "Exception occured in", stock, "at read_from_web")
-            print(now, level, 'ErrorType:', str(type(e)))
-            print(now, level, 'ErrorMessage:', str(e))
+            print(now, level, "--", "Exception occured in", stock, "at read_from_web")
+            print(now, level, "--", 'ErrorType:', str(type(e)))
+            print(now, level, "--", 'ErrorMessage:', str(e))
             return pd.DataFrame([])
 
     def _read_with_jpstock(self, stock, start):
@@ -53,9 +53,9 @@ class FileIO():
             JST = timezone(timedelta(hours=+9), 'JST')
             now = datetime.now(JST).isoformat()
             level = "ERROR"
-            print(now, level, "Exception occured in", stock, "at read_with_jpstock")
-            print(now, level, 'ErrorType:', str(type(e)))
-            print(now, level, 'ErrorMessage:', str(e))
+            print(now, level, "--", "Exception occured in", stock, "at read_with_jpstock")
+            print(now, level, "--", 'ErrorType:', str(type(e)))
+            print(now, level, "--", 'ErrorMessage:', str(e))
             return pd.DataFrame([])
 
     def read_data(self, stock, start, end):

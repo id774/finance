@@ -73,9 +73,9 @@ if __name__ == '__main__':
                 JST = timezone(timedelta(hours=+9), 'JST')
                 now = datetime.now(JST).isoformat()
                 level = "ERROR"
-                print(now, level, "Value Error occured in", stock, "at jpstock.py")
-                print(now, level, 'ErrorType:', str(type(e)))
-                print(now, level, 'ErrorMessage:', str(e))
+                print(now, level, "--", "Value Error occured in", stock, "at jpstock.py")
+                print(now, level, "--", 'ErrorType:', str(type(e)))
+                print(now, level, "--", 'ErrorMessage:', str(e))
         else:
             print("This program needs at least %(argsmin)s arguments" %
                   locals())
