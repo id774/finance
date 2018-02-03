@@ -7,9 +7,6 @@ p = os.path.join(
 if p not in sys.path:
     sys.path.append(p)
 from file_io import FileIO
-from get_logger import get_logger
-
-logger = get_logger(__name__)
 
 def testdata():
     days = 30
@@ -22,7 +19,7 @@ def testdata():
 
 def test_save_data():
     stock = testdata()
-    io = FileIO(logger)
+    io = FileIO()
 
     filename = 'test_N225.csv'
 
@@ -35,7 +32,7 @@ def test_save_data():
         os.remove(filename)
 
 def test_read_csv():
-    io = FileIO(logger)
+    io = FileIO()
     filename = os.path.join(os.path.dirname(
                             os.path.abspath(__file__)),
                             'stock_N225.csv')

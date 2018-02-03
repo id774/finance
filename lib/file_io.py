@@ -7,11 +7,12 @@ p = os.path.dirname(os.path.abspath(__file__))
 if p not in sys.path:
     sys.path.append(p)
 from jpstock import JpStock
+from get_logger import get_logger
 
 class FileIO():
 
-    def __init__(self, logger):
-        self.logger = logger
+    def __init__(self):
+        self.logger = get_logger(__name__)
 
     def save_data(self, df, stock, prefix):
         if not df.empty:

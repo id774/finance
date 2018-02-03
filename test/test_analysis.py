@@ -7,9 +7,6 @@ p = os.path.join(
 if p not in sys.path:
     sys.path.append(p)
 from analysis import Analysis
-from get_logger import get_logger
-
-logger = get_logger(__name__)
 
 def testdata():
     days = 30
@@ -33,8 +30,7 @@ def test_run(code='N225',
              axis=2,
              complexity=3):
 
-    analysis = Analysis(logger,
-                        code=code,
+    analysis = Analysis(code=code,
                         name=name,
                         start=start,
                         days=days,

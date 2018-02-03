@@ -10,16 +10,16 @@ from ti import TechnicalIndicators
 from classifier import Classifier
 from regression import Regression
 from draw import Draw
+from get_logger import get_logger
 
 class Analysis():
 
-    def __init__(self, logger,
-                 code="", name="", fullname="",
+    def __init__(self, code="", name="", fullname="",
                  start='2014-10-01',
                  days=240, csvfile=None, update=False,
                  axis=2,
                  complexity=3):
-        self.logger = logger
+        self.logger = get_logger(__name__)
         self.code = code
         self.name = name
         if isinstance(fullname, str):
@@ -40,7 +40,7 @@ class Analysis():
         self.complexity = complexity
 
     def run(self):
-        io = FileIO(self.logger)
+        io = FileIO()
         will_update = self.update
 
         self.logger.info("".join(["Start Analysis: ", self.code]))

@@ -6,16 +6,12 @@ p = os.path.join(
 if p not in sys.path:
     sys.path.append(p)
 from analysis import Analysis
-from get_logger import get_logger
 
-logger = get_logger(__name__)
-
-def read_csv(logger, filename, start, days, update, axis, complexity):
+def read_csv(filename, start, days, update, axis, complexity):
     stocks = pd.read_csv(filename, header=None)
     for s in stocks.values:
         code = str(s[0])
-        analysis = Analysis(logger,
-                            code=code,
+        analysis = Analysis(code=code,
                             name=s[1],
                             fullname=s[2],
                             start=start,
@@ -65,16 +61,14 @@ def main():
         options.complexity = 3
 
     if options.stocktxt:
-        return read_csv(logger,
-                        filename=options.stocktxt,
+        return read_csv(filename=options.stocktxt,
                         start=options.startdate,
                         days=int(options.days),
                         update=options.update,
                         axis=int(options.axis),
                         complexity=int(options.complexity))
     else:
-        analysis = Analysis(logger,
-                            code=options.stockcode,
+        analysis = Analysis(code=options.stockcode,
                             name=options.stockname,
                             fullname=options.stockname,
                             start=options.startdate,
