@@ -10,7 +10,7 @@ from ti import TechnicalIndicators
 from classifier import Classifier
 from regression import Regression
 from draw import Draw
-from get_logger import get_logger
+from get_logger import Logger
 
 class Analysis():
 
@@ -19,7 +19,7 @@ class Analysis():
                  days=240, csvfile=None, update=False,
                  axis=2,
                  complexity=3):
-        self.logger = get_logger(__name__)
+        self.logger = Logger()
         self.code = code
         self.name = name
         if isinstance(fullname, str):

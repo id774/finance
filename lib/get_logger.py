@@ -1,11 +1,18 @@
-from logging import getLogger, Formatter, StreamHandler, INFO
+from datetime import datetime, timedelta, timezone
 
-def get_logger(modname):
-    logger = getLogger(modname)
-    handler = StreamHandler()
-    handler.setLevel(INFO)
-    handler.setFormatter(Formatter(fmt='%(asctime)s %(levelname)s -- %(message)s'))
-    logger.setLevel(INFO)
-    logger.addHandler(handler)
-    logger.propagate = False
-    return logger
+class Logger():
+
+    def info(self, message):
+        JST = timezone(timedelta(hours=+9), 'JST')
+        now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+        print(now, "INFO", message)
+
+    def warn(self, message):
+        JST = timezone(timedelta(hours=+9), 'JST')
+        now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+        print(now, "WARN", message)
+
+    def error(self, message):
+        JST = timezone(timedelta(hours=+9), 'JST')
+        now = datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+        print(now, "ERROR", message)
