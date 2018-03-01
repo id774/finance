@@ -5,6 +5,8 @@ try:
     import pandas.plotting._core as plotting
 except ImportError:
     import pandas.tools.plotting as plotting
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
 p = os.path.dirname(os.path.abspath(__file__))

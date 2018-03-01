@@ -3,6 +3,8 @@ try:
     import pandas.plotting._core as plotting
 except ImportError:
     import pandas.tools.plotting as plotting
+import matplotlib
+matplotlib.use('agg')
 from matplotlib.dates import AutoDateFormatter
 from matplotlib.dates import AutoDateLocator
 from matplotlib.dates import date2num
