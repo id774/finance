@@ -1,5 +1,8 @@
 import pandas as pd
-import pandas.tools.plotting as plotting
+try:
+    import pandas.plotting._core as plotting
+except ImportError:
+    import pandas.tools.plotting as plotting
 from matplotlib.dates import AutoDateFormatter
 from matplotlib.dates import AutoDateLocator
 from matplotlib.dates import date2num

@@ -1,7 +1,10 @@
 import sys
 import os
 import datetime
-import pandas.tools.plotting as plotting
+try:
+    import pandas.plotting._core as plotting
+except ImportError:
+    import pandas.tools.plotting as plotting
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
 p = os.path.dirname(os.path.abspath(__file__))
