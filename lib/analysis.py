@@ -1,6 +1,6 @@
 import sys
 import os
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 import pandas as pd
 p = os.path.dirname(os.path.abspath(__file__))
 if p not in sys.path:
@@ -50,7 +50,7 @@ class Analysis():
                                          self.csvfile)
 
             self.logger.info("".join(["Read data from csv: ", self.code,
-                           " Records: ", str(len(stock_tse))]))
+                             " Records: ", str(len(stock_tse))]))
 
             if self.update and len(stock_tse) > 0:
                 index = pd.date_range(start=stock_tse.index[-1],
@@ -63,7 +63,7 @@ class Analysis():
                                        end=self.end)
 
                 self.logger.info("".join(["Read data from web: ", self.code,
-                               " New records: ", str(len(newdata))]))
+                                 " New records: ", str(len(newdata))]))
 
                 if len(newdata) < 1:
                     will_update = False
@@ -78,7 +78,7 @@ class Analysis():
                                      end=self.end)
 
             self.logger.info("".join(["Read data from web: ", self.code,
-                           " Records: ", str(len(stock_tse))]))
+                             " Records: ", str(len(stock_tse))]))
 
         if stock_tse.empty:
 
@@ -136,7 +136,8 @@ class Analysis():
             clf = Classifier(self.clffile)
             train_X, train_y = clf.train(ret_index, will_update)
 
-            self.logger.info("".join(["Classifier Train Records: ", str(len(train_y))]))
+            self.logger.info("".join(["Classifier Train Records: ",
+                                      str(len(train_y))]))
 
             clf_result = clf.classify(ret_index)[0]
 
@@ -149,7 +150,8 @@ class Analysis():
                              regression_type="Ridge")
             train_X, train_y = reg.train(ret_index, will_update)
 
-            self.logger.info("".join(["Regression Train Records: ", str(len(train_y))]))
+            self.logger.info("".join(["Regression Train Records: ",
+                                      str(len(train_y))]))
 
             base = ti.stock_raw['Adj Close'][0]
             reg_result = int(reg.predict(ret_index, base)[0])
@@ -181,7 +183,8 @@ class Analysis():
             return ti
 
         except (ValueError, KeyError) as e:
-            self.logger.error("".join(["Error occured in ", self.code, " at analysis.py"]))
+            self.logger.error("".join(["Error occured in ",
+                                       self.code, " at analysis.py"]))
             self.logger.error("".join(['ErrorType: ', str(type(e))]))
             self.logger.error("".join(['ErrorMessage: ', str(e)]))
             return None

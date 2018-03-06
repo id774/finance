@@ -1,5 +1,5 @@
 import sys
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 import pandas as pd
 from pandas_datareader import data
 from pandas.core.datetools import to_datetime
