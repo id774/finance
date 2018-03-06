@@ -20,7 +20,10 @@ class Draw():
         self.code = code
         self.name = name
         if sys.platform == "darwin":
-            font_path = "/Library/Fonts/Osaka.ttf"
+            if os.path.exists("/Library/Fonts/Osaka.ttf"):
+                font_path = "/Library/Fonts/Osaka.ttf"
+            else:
+                font_path = "/Library/Fonts/Arial.ttf"
         else:
             font_path = "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf"
         self.fontprop = font_manager.FontProperties(
