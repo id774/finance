@@ -29,7 +29,7 @@ class Aggregator():
                   ascending=False, screening_key=None):
         range = range * -1 - 1
         df = pd.DataFrame([])
-        base_date = datetime.date.today() - datetime.timedelta(7)
+        base_date = datetime.date.today() - datetime.timedelta(10)
         for k, _stock_d in self.ti_dic.items():
             last_date = _stock_d.index[-1].to_datetime().date()
             if last_date >= base_date:
