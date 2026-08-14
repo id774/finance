@@ -11,9 +11,16 @@
 #  continue or to stop on that difference.
 #
 #  An exception raised by pandas, TA-Lib, scikit-learn, matplotlib or
-#  the price client is caught at the boundary of the layer that owns it
+#  the HTTP client is caught at the boundary of the layer that owns it
 #  and re-raised as one of these, so that no third-party exception type
 #  reaches an entry point.
+#
+#  The data source errors are split further than the rest because the
+#  operator's response differs by kind. A rejected API key needs a
+#  configuration change; a rate limit needs a slower schedule; a dataset
+#  the subscribed plan does not carry needs neither, and is not a fault
+#  to be fixed. Collapsing them into one type would leave the nightly
+#  log unable to say which of the three happened.
 #
 #  Author: id774 (More info: http://id774.net)
 #  Source Code: https://github.com/id774/finance
@@ -25,6 +32,9 @@
 #  - Standard library only
 #
 #  Version History:
+#  v1.1 2026-08-14
+#       Add the authentication, rate limit, unavailable dataset and
+#       invalid code errors the J-Quants adapter distinguishes.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -41,6 +51,29 @@ class ConfigurationError(FinanceError):
 
 class DataSourceError(FinanceError):
     """ Raised when prices cannot be retrieved from the external source. """
+
+
+class AuthenticationError(DataSourceError):
+    """ Raised when the market data API rejects or is given no credential. """
+
+
+class RateLimitError(DataSourceError):
+    """ Raised when the market data API refuses a request as too frequent. """
+
+
+class DataUnavailableError(DataSourceError):
+    """
+    Raised when the API is reachable but the data is outside the plan.
+
+    This is not a fault. A subscription that does not carry a dataset,
+    or a date outside the window the plan publishes, answers with this
+    so that a caller can skip the stock and continue rather than treat
+    the run as broken.
+    """
+
+
+class InvalidStockCodeError(DataSourceError):
+    """ Raised when a stock code cannot name a listing at the source. """
 
 
 class DataFormatError(FinanceError):

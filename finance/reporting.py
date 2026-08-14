@@ -24,6 +24,8 @@
 #  - pandas
 #
 #  Version History:
+#  v1.1 2026-08-14
+#       Measure staleness against the newest date the plan publishes.
 #  v1.0 2026-08-14
 #       Separate the summary pipeline from the command line.
 #
@@ -95,12 +97,18 @@ def build_summary(
     frames = load_indicator_frames(settings, entries)
     logger.info("Aggregating %d of %d stocks from %s", len(frames), len(entries), list_path)
 
+    # Staleness is measured against the newest date the plan publishes,
+    # not against today. On a delayed plan the freshest possible row is
+    # already weeks old, and comparing it with today would report every
+    # stock as stale and write an empty summary every night.
+    as_of = settings.jquants.latest_available(when)
+
     table = Aggregator(frames).summarize(
         span=request.span,
         sortkey=request.sortkey,
         ascending=request.ascending,
         screening_key=request.screening_key,
-        today=when,
+        as_of=as_of,
     )
 
     output_path = settings.data_file(request.output)

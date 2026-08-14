@@ -151,15 +151,14 @@ def test_merge_frames_joins_on_the_index(raw_prices):
 def test_stock_list_reads_optional_columns(tmp_path):
     path = tmp_path / "stocks.txt"
     path.write_text(
-        "N225,日経平均株価\n7203,トヨタ,トヨタ自動車(株),自動車,CORE30\n\n",
+        "6758,ソニー\n7203,トヨタ,トヨタ自動車(株),自動車,CORE30\n\n",
         encoding="utf-8",
     )
     entries = read_stock_list(path)
 
     assert len(entries) == 2
-    assert entries[0].is_index is True
-    assert entries[0].display_name == "日経平均株価"
-    assert entries[1].is_index is False
+    assert entries[0].fullname == ""
+    assert entries[0].display_name == "ソニー"
     assert entries[1].fullname == "トヨタ自動車(株)"
     assert entries[1].display_name == "トヨタ自動車(株)"
 
@@ -192,7 +191,7 @@ def test_an_empty_stock_list_is_refused(tmp_path):
 def clean_environment(monkeypatch):
     """ Remove every application variable so a test starts from defaults. """
     for name in list(__import__("os").environ):
-        if name.startswith("FINANCE_"):
+        if name.startswith("FINANCE_") or name == "JQUANTS_API_KEY":
             monkeypatch.delenv(name, raising=False)
 
 
@@ -204,9 +203,11 @@ def test_defaults(tmp_path, monkeypatch):
     assert settings.history_dir == (tmp_path / "data" / "history").resolve()
     assert settings.model_dir == (tmp_path / "clf").resolve()
     assert settings.stock_list == "stocks.txt"
-    assert settings.start_date == "2014-10-01"
+    assert settings.start_date == ""
     assert settings.log_level == "INFO"
     assert settings.mail.enabled is False
+    assert settings.jquants.base_url == "https://api.jquants.com/v2"
+    assert settings.jquants.has_api_key() is False
 
 
 def test_environment_overrides_defaults(tmp_path, monkeypatch):
@@ -251,7 +252,7 @@ def test_environment_beats_the_configuration_file(tmp_path, monkeypatch):
 def test_a_blank_variable_reads_as_unset(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("FINANCE_START_DATE", "   ")
-    assert load_settings().start_date == "2014-10-01"
+    assert load_settings().start_date == ""
 
 
 def test_a_malformed_date_is_refused(tmp_path, monkeypatch):
@@ -291,7 +292,13 @@ def test_a_configuration_file_that_is_not_a_mapping_is_refused(tmp_path, monkeyp
 
 def test_start_date_is_parsed(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("FINANCE_START_DATE", "2014-10-01")
     assert load_settings().start_date_as_date() == date(2014, 10, 1)
+
+
+def test_an_unset_start_date_reads_as_no_start_date(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    assert load_settings().start_date_as_date() is None
 
 
 def test_the_mail_host_guard():

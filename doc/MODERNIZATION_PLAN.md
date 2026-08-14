@@ -9,6 +9,19 @@ The rule the whole plan is built around: **the files this repository writes are
 a contract with `finance-dashboard`, and the modernization does not renegotiate
 it.**
 
+> **Superseded on one point.** This document plans for Yahoo Finance to remain
+> the price source, reached through `yfinance`, and section 6 argues for that as
+> the narrowest available move. It is no longer true. The pipeline now fetches
+> from the J-Quants API, and the reasons — which are about the terms and the
+> nature of the interface rather than about whether the old route worked — are
+> in [`JQUANTS_MIGRATION.md`](JQUANTS_MIGRATION.md).
+>
+> Everything else here still holds: the survey of what was found, the contract
+> analysis, the package structure, the CLI, the dependency work and the evidence
+> that the calculations survived the library jump. The text is left as it was
+> written rather than edited into agreement with a later decision, because its
+> value is as a record of what was known at the time.
+
 ---
 
 ## 1. The system as it was found

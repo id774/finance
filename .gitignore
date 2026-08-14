@@ -2,10 +2,15 @@
 .svn
 
 # Generated data. The stock lists under data/ are tracked; everything
-# the pipeline writes into it is not.
+# the pipeline writes into it is not. Market data obtained from the
+# J-Quants API must never be committed: the licence covers personal
+# analysis, not redistribution, and a public repository is
+# redistribution.
 data/*.csv
 data/*.png
+data/data_source.txt
 data/history/
+data/legacy.*/
 clf/*.pickle
 log/*.log
 *.pickle
@@ -21,5 +26,11 @@ dist/
 .pytest_cache/
 .ruff_cache/
 
-# Local configuration
+# Local configuration and credentials. The API key belongs in the
+# environment, but an env file left in the working tree must not be
+# committed either.
 config.yml
+env
+.env
+*.env
+jquants-api.toml

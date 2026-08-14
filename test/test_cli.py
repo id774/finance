@@ -24,6 +24,9 @@
 #  - A missing stock list exits 1 with a message.
 #  - Output lands in the directory given by --data-dir.
 #  - A summary with -y also writes a history copy.
+#  - An updating run records where the data came from and how old it is.
+#  - A run that only draws charts records nothing and needs no API key.
+#  - A run that would fetch without an API key fails before it does.
 #  - A failing stock makes the whole run exit 1.
 #  - The notify command declines quietly when mail is unconfigured.
 #
@@ -37,6 +40,8 @@
 #  - pandas, pytest
 #
 #  Version History:
+#  v1.1 2026-08-14
+#       Cover the recorded data source and the API key requirement.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -72,12 +77,12 @@ def test_charts_accepts_every_option_run_sh_passes():
 
 def test_charts_accepts_the_single_stock_options():
     arguments = charts_cli.parse_arguments(
-        ["-c", "N225", "-n", "日経平均株価", "-r", "stock_N225.csv", "-y", "180"]
+        ["-c", "7203", "-n", "トヨタ", "-r", "stock_7203.csv", "-y", "180"]
     )
 
-    assert arguments.code == "N225"
-    assert arguments.name == "日経平均株価"
-    assert arguments.csvfile == "stock_N225.csv"
+    assert arguments.code == "7203"
+    assert arguments.name == "トヨタ"
+    assert arguments.csvfile == "stock_7203.csv"
     assert arguments.days == 180
     assert arguments.update is False
 
@@ -182,7 +187,7 @@ def test_charts_with_a_missing_list_fails(tmp_path, monkeypatch, capsys):
 
 def test_charts_with_a_malformed_start_date_fails(tmp_path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
-    status = charts_cli.main(["-c", "N225", "-d", "not-a-date", "--data-dir", str(tmp_path)])
+    status = charts_cli.main(["-c", "7203", "-d", "not-a-date", "--data-dir", str(tmp_path)])
 
     assert status == EXIT_FAILURE
     assert "YYYY-MM-DD" in capsys.readouterr().err
@@ -251,21 +256,92 @@ def test_summary_history_writes_a_dated_copy(tmp_path, monkeypatch, indicator_fi
     assert len(copies) == 1
 
 
+def test_charts_records_the_data_source_when_it_updates(tmp_path, monkeypatch, raw_prices):
+    monkeypatch.chdir(tmp_path)
+    data_dir = tmp_path / "out"
+    data_dir.mkdir()
+    (data_dir / "stocks.txt").write_text("7203,トヨタ\n", encoding="utf-8")
+    raw_prices.to_csv(data_dir / "stock_7203.csv", index_label="Date")
+
+    class EmptySource:
+        def __init__(self, settings):
+            self.settings = settings
+
+        def fetch(self, code, start, end):
+            return pd.DataFrame()
+
+    monkeypatch.setattr(charts_cli, "LazySource", EmptySource)
+    status = charts_cli.main(["-s", "stocks.txt", "-y", "180", "-u", "--data-dir", str(data_dir)])
+
+    assert status == EXIT_SUCCESS
+    recorded = (data_dir / "data_source.txt").read_text(encoding="utf-8")
+    assert "J-Quants" in recorded
+    # The newest row of the fixture, not the day the command ran.
+    assert "last_trading_day\t2015-03-20" in recorded
+
+
+def test_charts_does_not_record_a_data_source_without_update(tmp_path, monkeypatch, raw_prices):
+    monkeypatch.chdir(tmp_path)
+    data_dir = tmp_path / "out"
+    data_dir.mkdir()
+    (data_dir / "stocks.txt").write_text("7203,トヨタ\n", encoding="utf-8")
+    raw_prices.to_csv(data_dir / "stock_7203.csv", index_label="Date")
+
+    status = charts_cli.main(["-s", "stocks.txt", "-y", "180", "--data-dir", str(data_dir)])
+
+    assert status == EXIT_SUCCESS
+    assert not (data_dir / "data_source.txt").exists()
+
+
+def test_charts_draws_from_stored_data_without_an_api_key(tmp_path, monkeypatch, raw_prices):
+    """
+    A chart-only run must not require the credential.
+
+    run.sh draws the long and the short charts from what the updating
+    run already stored, and a workstation redrawing a chart fetches
+    nothing. Neither has any business needing an API key.
+    """
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("JQUANTS_API_KEY", raising=False)
+    data_dir = tmp_path / "out"
+    data_dir.mkdir()
+    (data_dir / "stocks.txt").write_text("7203,トヨタ\n", encoding="utf-8")
+    raw_prices.to_csv(data_dir / "stock_7203.csv", index_label="Date")
+
+    status = charts_cli.main(["-s", "stocks.txt", "-y", "180", "--data-dir", str(data_dir)])
+
+    assert status == EXIT_SUCCESS
+    assert (data_dir / "chart_7203.png").is_file()
+
+
+def test_charts_without_an_api_key_fails_before_fetching(tmp_path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("JQUANTS_API_KEY", raising=False)
+    data_dir = tmp_path / "out"
+    data_dir.mkdir()
+    (data_dir / "stocks.txt").write_text("7203,トヨタ\n", encoding="utf-8")
+
+    status = charts_cli.main(["-s", "stocks.txt", "-u", "--data-dir", str(data_dir)])
+
+    assert status == EXIT_FAILURE
+    assert "JQUANTS_API_KEY" in capsys.readouterr().err
+
+
 def test_charts_writes_where_data_dir_points(tmp_path, monkeypatch, raw_prices):
     monkeypatch.chdir(tmp_path)
     data_dir = tmp_path / "out"
     data_dir.mkdir()
-    (data_dir / "stocks.txt").write_text("N225,日経平均株価\n", encoding="utf-8")
-    raw_prices.to_csv(data_dir / "stock_N225.csv", index_label="Date")
+    (data_dir / "stocks.txt").write_text("7203,トヨタ\n", encoding="utf-8")
+    raw_prices.to_csv(data_dir / "stock_7203.csv", index_label="Date")
 
     status = charts_cli.main(
         ["-s", "stocks.txt", "-y", "180", "--data-dir", str(data_dir)]
     )
 
     assert status == EXIT_SUCCESS
-    assert (data_dir / "chart_N225.png").is_file()
+    assert (data_dir / "chart_7203.png").is_file()
     # Without -u nothing else is written.
-    assert not (data_dir / "ti_N225.csv").exists()
+    assert not (data_dir / "ti_7203.csv").exists()
 
 
 def test_a_failing_stock_makes_the_run_exit_one(tmp_path, monkeypatch, capsys):
@@ -274,14 +350,14 @@ def test_a_failing_stock_makes_the_run_exit_one(tmp_path, monkeypatch, capsys):
     data_dir.mkdir()
     (data_dir / "stocks.txt").write_text("9999,存在しない\n", encoding="utf-8")
 
-    def unreachable_source():
-        class Source:
-            def fetch(self, code, start, end):
-                return pd.DataFrame()
+    class EmptySource:
+        def __init__(self, settings):
+            self.settings = settings
 
-        return Source()
+        def fetch(self, code, start, end):
+            return pd.DataFrame()
 
-    monkeypatch.setattr(charts_cli, "create_source", unreachable_source)
+    monkeypatch.setattr(charts_cli, "LazySource", EmptySource)
     status = charts_cli.main(["-s", "stocks.txt", "--data-dir", str(data_dir)])
 
     assert status == EXIT_FAILURE

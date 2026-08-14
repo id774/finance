@@ -25,6 +25,8 @@
 #  - Standard library only
 #
 #  Version History:
+#  v1.1 2026-08-14
+#       Quiet the HTTP client's own loggers along with the rest.
 #  v1.0 2026-08-14
 #       Restructure the repository as an installable package.
 #
@@ -32,15 +34,17 @@
 
 import logging
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 LOG_FORMAT = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
 LOG_DATE_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
 
 # Third-party loggers that report their own retries and HTTP traffic at
 # INFO or DEBUG. They are held at WARNING so that a nightly log stays a
-# record of the pipeline rather than of the transport under it.
-QUIET_LOGGERS = ("matplotlib", "urllib3", "yfinance", "peewee")
+# record of the pipeline rather than of the transport under it, and so
+# that no request line carrying an API key header can reach the log
+# through a library this package does not control.
+QUIET_LOGGERS = ("matplotlib", "urllib3", "requests")
 
 
 def configure_logging(level: str = "INFO") -> None:

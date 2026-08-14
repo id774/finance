@@ -1,6 +1,60 @@
 finance Repository Version History
 ==================================
 
+v1.1 (Release Date: TBD)
+------------------------
+- Replace Yahoo Finance with the J-Quants API v2 Free plan as the price source.
+  finance/datasources/yahoo.py and the yfinance dependency are removed, and
+  nothing in the package reaches an unofficial endpoint or parses a web page for
+  prices. A structural test asserts that no module names the withdrawn provider.
+- Add finance/datasources/jquants.py, which holds the x-api-key header, the base
+  URL, /equities/bars/daily, pagination, the request interval, retries,
+  timeouts, HTTP status handling, the abbreviated v2 field names and the five
+  character stock code form, and lets none of them out. The analysis layer
+  receives the same six column frame it always did.
+- Take all six canonical columns from the adjusted series, so that candlesticks
+  and indicators sit on one basis for the first time. No formula changed; the
+  contract test still regenerates all 42 computed columns of the committed
+  fixture and compares them column by column. The decision and its reasoning are
+  in doc/DATA_CONTRACT.md section 11.
+- Treat the Free plan's publication delay, bounded history and rate limit as the
+  specification. A fetch never asks beyond what the plan publishes, a start date
+  older than the plan is raised to it, stored data that already reaches the
+  newest published date is not re-requested, and summary staleness is measured
+  against that date rather than against today. doc/POLICY.md and
+  test/test_plan_window.py hold the rules and the assertions.
+- Drop the 2014-10-01 default start date and the 600 row long chart window in
+  favour of values that fit the plan, and assert that the longest indicator
+  lookback fits inside the retained history.
+- Read the J-Quants API key from JQUANTS_API_KEY alone, refusing it in the
+  configuration file, excluding it from the Settings repr, and failing a
+  fetching run before it opens a socket when it is absent. A chart-only run
+  needs no key at all. Structural tests assert that no module outside config.py
+  reads it and that no logging call is handed it.
+- Add finance-migrate, which moves per-stock files written under the previous
+  provider into a dated archive so that the next run rebuilds them. It is run
+  once by hand, is not in run.sh, and the data source layer knows nothing about
+  it. The two providers' series do not mean the same thing and are not merged.
+- Withdraw the market indices. The Free plan carries no index values and no
+  free, licensed, machine-readable alternative was adopted, so N225, GSPC, IXIC
+  and DJI are removed along with INDEX_CODES and the is_index special case
+  rather than obtained from an unofficial source. Seed data/stocks.txt with
+  listed equities.
+- Write data_source.txt beside the generated files, recording the source, the
+  generation date and the last trading day, so that finance-dashboard can show
+  how old its figures are. An unknown last trading day is left empty rather than
+  filled in with today.
+- State in README.md, doc/REQUIREMENTS.md and doc/POLICY.md that this is
+  software for one person's private analysis: the market data is not
+  redistributed, no continuing analysis service is provided to third parties,
+  the consumer is a private dashboard, and the licence of this source code is a
+  separate question from the terms of the data put through it.
+- Add doc/JQUANTS_MIGRATION.md with the survey and the decisions, and mark
+  section 6 of doc/MODERNIZATION_PLAN.md superseded without editing its text.
+- Source the API key from an environment file in run.sh and check it before the
+  job starts; create that file empty and root-only in deploy.sh, which never
+  writes a key. Set JQUANTS_API_KEY to empty in CI, which reaches no API.
+
 v1.0 (2026-08-14)
 -----------------
 - Declare the repository dual licensed under the GPL version 3 or the LGPL

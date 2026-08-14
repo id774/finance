@@ -119,7 +119,7 @@ class Aggregator:
         sortkey: str | None = DEFAULT_SORT_KEY,
         ascending: bool = False,
         screening_key: str | None = None,
-        today: date | None = None,
+        as_of: date | None = None,
     ) -> pd.DataFrame:
         """
         Reduce every frame to one row and sort the result.
@@ -131,8 +131,11 @@ class Aggregator:
             ascending: Sort direction.
             screening_key: An indicator column to report instead of the
                 model outputs. Selects the nine column layout.
-            today: The date staleness is measured against. Injected for
-                tests; defaults to the current date.
+            as_of: The date staleness is measured against. It is the
+                newest date the data source publishes, not the day the
+                job runs: a source that is delayed by weeks would drop
+                every stock as stale if it were compared with today.
+                Defaults to the current date.
 
         Returns:
             A frame indexed by stock code, carrying the columns of
@@ -150,7 +153,7 @@ class Aggregator:
             )
 
         offset = span * -1 - 1
-        cutoff = (today or date.today()) - timedelta(STALE_AFTER_DAYS)
+        cutoff = (as_of or date.today()) - timedelta(STALE_AFTER_DAYS)
         rows: dict[str, list[object]] = {}
 
         for (code, name), frame in self.frames.items():

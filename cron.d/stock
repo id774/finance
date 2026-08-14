@@ -1,11 +1,17 @@
 # Daily technical analysis run for the finance pipeline.
 #
 # The schedule is unchanged from the original deployment: 18:10 on
-# weekdays, after the Tokyo close at 15:00 and late enough for the day's
-# prices to have settled at the source. It is kept as it is because it
-# works and the operator relies on it; nothing about the modernization
-# calls for moving it, and there is no reason to prefer a systemd timer
-# for a plain daily batch.
+# weekdays, after the Tokyo close at 15:00. It is kept as it is because
+# it works and the operator relies on it, and there is no reason to
+# prefer a systemd timer for a plain daily batch.
+#
+# The hour matters less than it once did. The data source publishes in
+# arrears, so a run collects what was published long before it and an
+# occasional missed evening costs nothing the next run does not pick up.
+#
+# The job needs the J-Quants API key, which run.sh reads from the
+# environment file in the deployment root. It is deliberately not set
+# here: /etc/cron.d is world readable.
 #
 # run.sh exits non-zero when a step fails, so cron mails root on a
 # partial run instead of the failure going unnoticed.

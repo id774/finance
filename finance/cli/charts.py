@@ -41,7 +41,9 @@
 #      from what is already stored and writes nothing else.
 #  - -d, --date DATE
 #      Earliest date to fetch for a stock with no stored history, as
-#      YYYY-MM-DD. Overrides the configured start date.
+#      YYYY-MM-DD. Overrides the configured start date. A date before
+#      the earliest the subscribed plan keeps is raised to it and the
+#      run says so, rather than being refused.
 #  - -y, --days N
 #      How many trailing rows to analyse and chart. 0 means all. The
 #      value also selects the chart: over 300 writes long_CODE.png, 60
@@ -62,6 +64,9 @@
 #  - See pyproject.toml
 #
 #  Version History:
+#  v1.1 2026-08-14
+#       Build the J-Quants source from the settings and record where the
+#       data came from.
 #  v1.0 2026-08-14
 #       Replace optparse, honour -u, and call the shared pipeline.
 #
@@ -81,6 +86,7 @@ from finance.analysis import (
     DEFAULT_DAYS,
     Analysis,
     AnalysisRequest,
+    latest_trading_day,
     run_many,
 )
 from finance.cli import (
@@ -91,10 +97,16 @@ from finance.cli import (
     resolve_settings,
     start_logging,
 )
-from finance.datasources import create_source
+from finance.datasources import LazySource
 from finance.errors import ConfigurationError
 from finance.stocklist import read_stock_list
-from finance.storage import price_filename
+from finance.storage import DATA_SOURCE_FILE, price_filename, write_data_source
+
+# What is recorded in data_source.txt, and shown by the dashboard so
+# that a reader knows the figures are not live. The plan's delay is not
+# repeated here: it is a published property that can change, and the
+# last trading day beside this line is the fact that matters.
+SOURCE_DESCRIPTION = "J-Quants API (Free plan, delayed)"
 
 logger = logging.getLogger(__name__)
 
@@ -185,8 +197,20 @@ def main(argv: Sequence[str] | None = None) -> int:
         start_logging(settings)
 
         requests = build_requests(arguments, settings)
-        analysis = Analysis(settings, create_source())
+        analysis = Analysis(settings, LazySource(settings.jquants))
         results, failures = run_many(analysis, requests)
+
+        if arguments.update and results:
+            # Only the run that fetches records the provenance. The
+            # chart-only runs later in the job read what this one
+            # stored, and restamping the file from them would age the
+            # notice by the length of the job rather than by the data.
+            write_data_source(
+                settings.data_file(DATA_SOURCE_FILE),
+                SOURCE_DESCRIPTION,
+                analysis.today,
+                latest_trading_day(results),
+            )
 
         logger.info("Analysed %d stocks, %d failed", len(results), len(failures))
         if failures:

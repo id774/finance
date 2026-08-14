@@ -12,8 +12,14 @@
 #
 #  The protocol exists so that a test can supply prices without a
 #  network, and so that replacing the provider is one file rather than a
-#  change spread through the analysis code. No client library is
-#  imported here; create_source() imports the one it builds.
+#  change spread through the analysis code. No HTTP client is imported
+#  here; create_source() imports the one it builds.
+#
+#  There is one source, and it is J-Quants. A second name is not
+#  reserved for a provider that does not exist: an entry in this table
+#  is a promise that the name works, and a stub that raises would be a
+#  worse answer than the configuration error an unknown name already
+#  gets.
 #
 #  Author: id774 (More info: http://id774.net)
 #  Source Code: https://github.com/id774/finance
@@ -25,6 +31,9 @@
 #  - pandas
 #
 #  Version History:
+#  v1.1 2026-08-14
+#       Replace the Yahoo Finance source with J-Quants and take the
+#       settings the source is built from.
 #  v1.0 2026-08-14
 #       Initial release, replacing the direct pandas-datareader and HTML
 #       scraping calls.
@@ -38,6 +47,7 @@ from typing import Protocol, runtime_checkable
 
 import pandas as pd
 
+from finance.config import JQuantsSettings
 from finance.errors import ConfigurationError
 
 # The columns every source must return, in this order. It is the order
@@ -45,8 +55,8 @@ from finance.errors import ConfigurationError
 # that file for download.
 CANONICAL_COLUMNS: tuple[str, ...] = ("Open", "High", "Low", "Close", "Volume", "Adj Close")
 
-YAHOO = "yahoo"
-AVAILABLE_SOURCES = (YAHOO,)
+JQUANTS = "jquants"
+AVAILABLE_SOURCES = (JQUANTS,)
 
 
 @runtime_checkable
@@ -76,17 +86,49 @@ class StockDataSource(Protocol):
         ...  # pragma: no cover - protocol declaration
 
 
-def create_source(name: str = YAHOO) -> StockDataSource:
+def create_source(settings: JQuantsSettings, name: str = JQUANTS) -> StockDataSource:
     """
     Build the named price source.
 
     Raises:
         ConfigurationError: The name is not one of AVAILABLE_SOURCES.
+        AuthenticationError: The source needs a credential that is not
+            configured. It is raised while the source is built rather
+            than on the first fetch, so that a misconfigured run stops
+            before it opens a socket.
     """
-    if name == YAHOO:
-        from finance.datasources.yahoo import YahooFinanceSource
+    if name == JQUANTS:
+        from finance.datasources.jquants import JQuantsSource
 
-        return YahooFinanceSource()
+        return JQuantsSource(settings)
     raise ConfigurationError(
         "Unknown data source: {0}. Choose one of {1}".format(name, ", ".join(AVAILABLE_SOURCES))
     )
+
+
+class LazySource:
+    """
+    A price source that is built the first time it is asked to fetch.
+
+    Half the runs of the daily job draw their charts from stored files
+    and fetch nothing: the long and short chart passes read what the
+    updating pass already wrote. Those runs must not require an API key,
+    and a workstation redrawing a chart from a CSV must not need one
+    either.
+
+    Deferring construction is what allows that while keeping the
+    guarantee that matters: the credential is still checked before the
+    first request rather than during it, because building the source is
+    what checks it and building happens before the first fetch.
+    """
+
+    def __init__(self, settings: JQuantsSettings, name: str = JQUANTS) -> None:
+        self.settings = settings
+        self.name = name
+        self._source: StockDataSource | None = None
+
+    def fetch(self, code: str, start: date, end: date) -> pd.DataFrame:
+        """ Build the source if it is not built yet, and fetch. """
+        if self._source is None:
+            self._source = create_source(self.settings, self.name)
+        return self._source.fetch(code, start, end)
