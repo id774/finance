@@ -160,8 +160,8 @@ smaller, and the whole adapter is one readable file.
 
 ## 6. What was withdrawn rather than replaced
 
-**The market indices.** N225, GSPC, IXIC and DJI were charted from Yahoo. The
-Free plan carries no index values, and no free, licensed, machine-readable
+**The market indices.** Four market indices were charted from Yahoo. The Free
+plan carries no index values, and no free, licensed, machine-readable
 alternative was found. Rather than obtain them from somewhere that fails the
 conditions in section 1, the capability is withdrawn.
 

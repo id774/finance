@@ -349,8 +349,8 @@ has been adopted. Scraping one is not an option here. The link has been removed
 from the dashboard so that nothing dangles, and neither repository refers to the
 file.
 
-The four market indices the pipeline used to chart — N225, GSPC, IXIC, DJI —
-are withdrawn on the same grounds and by the same reasoning. See
+The four market indices the pipeline used to chart are withdrawn on the same
+grounds and by the same reasoning. See
 [`REQUIREMENTS.md`](REQUIREMENTS.md) section 7.4.
 
 ---

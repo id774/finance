@@ -16,8 +16,8 @@
 #  name appears in a chart caption.
 #
 #  Every entry names a listing on the Tokyo exchange. Market indices
-#  used to be listed here too, under codes such as N225, and were
-#  fetched from a provider this pipeline no longer uses. The J-Quants
+#  used to be listed here too and were fetched from a provider this
+#  pipeline no longer uses. The J-Quants
 #  Free plan does not carry index values, so there is nothing to fetch
 #  them from and no special case left to make for them: a code in a
 #  stock list is a listing, and the data source refuses anything that

@@ -40,6 +40,8 @@ v1.0.1 (Release Date: TBD)
   and DJI are removed along with INDEX_CODES and the is_index special case
   rather than obtained from an unofficial source. Seed data/stocks.txt with
   listed equities.
+- Refresh the shipped TOPIX Core30 constituents and keep the default stock list
+  in sync with them.
 - Write data_source.txt beside the generated files, recording the source, the
   generation date and the last trading day, so that finance-dashboard can show
   how old its figures are. An unknown last trading day is left empty rather than

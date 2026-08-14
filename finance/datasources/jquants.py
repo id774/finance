@@ -110,7 +110,7 @@ CODE_FIELD = "Code"
 # this API, the fifth being a trailing zero. Codes issued since 2024 may
 # carry a letter in a later position, as in 193A, so this is not a
 # digits-only pattern; the first character is still always a digit,
-# which is what tells a listing code from an index name such as N225.
+# which is what tells a listing code from a market index name.
 LOCAL_CODE_PATTERN = re.compile(r"^[0-9][0-9A-Z]{3}$")
 API_CODE_PATTERN = re.compile(r"^[0-9][0-9A-Z]{4}$")
 
