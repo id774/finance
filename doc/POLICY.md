@@ -223,8 +223,8 @@ A change is judged by:
   inside each pair of quotes. A longer one opens on the line after the quotes
   and describes the non-obvious parameters under `Args:`, the result under
   `Returns:` and the failures under `Raises:`.
-- Prefer `str.format()` over an f-string. This is a house convention shared with
-  the sibling repositories; ruff's `UP030` and `UP032` are disabled for it.
+- Prefer `str.format()` over an f-string. This is the repository's convention;
+  ruff's `UP030` and `UP032` are disabled for it.
 
 ### 2.2 Program Structure
 
@@ -353,8 +353,7 @@ recipient's option. The texts are [`COPYING`](COPYING) and
 [`COPYING.LESSER`](COPYING.LESSER), and [`LICENSE.md`](LICENSE.md) states the
 choice. This settles what earlier revisions of this document and of
 [`MODERNIZATION_PLAN.md`](MODERNIZATION_PLAN.md) recorded as an open item for the
-copyright holder; the decision came from the copyright holder, not from an
-inference drawn across the sibling repositories.
+copyright holder; the decision came from the copyright holder.
 
 - Every source module carries the line
   `License: The GPL version 3, or LGPL version 3 (Dual License).` in its header
