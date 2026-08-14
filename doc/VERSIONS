@@ -54,6 +54,12 @@ v1.0.1 (Release Date: TBD)
   separate question from the terms of the data put through it.
 - Add doc/JQUANTS_MIGRATION.md with the survey and the decisions, and mark
   section 6 of doc/MODERNIZATION_PLAN.md superseded without editing its text.
+- Expand section 2.7 of doc/POLICY.md into Documentation and Versioning, stating
+  when a module version is bumped, how module versions are numbered and roll
+  over, how repository release versions and Git tags stand apart from them, and
+  how an entry in this file is written, grouped and shortened. The rules were
+  already followed here but recorded nowhere in this repository, and they are
+  written out here rather than referred to in another one.
 - Source the API key from an environment file in run.sh and check it before the
   job starts; create that file empty and root-only in deploy.sh, which never
   writes a key. Set JQUANTS_API_KEY to empty in CI, which reaches no API.
