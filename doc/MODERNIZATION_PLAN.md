@@ -9,18 +9,14 @@ The rule the whole plan is built around: **the files this repository writes are
 a contract with `finance-dashboard`, and the modernization does not renegotiate
 it.**
 
-> **Superseded on one point.** This document plans for Yahoo Finance to remain
-> the price source, reached through `yfinance`, and section 6 argues for that as
-> the narrowest available move. It is no longer true. The pipeline now fetches
-> from the J-Quants API, and the reasons — which are about the terms and the
-> nature of the interface rather than about whether the old route worked — are
-> in [`JQUANTS_MIGRATION.md`](JQUANTS_MIGRATION.md).
+> **Updated after the provider decision.** The original plan kept Yahoo Finance
+> through `yfinance`. The pipeline now fetches from the J-Quants API. Section 6
+> summarizes the resulting design; the terms, source survey and detailed
+> reasoning are in [`JQUANTS_MIGRATION.md`](JQUANTS_MIGRATION.md).
 >
-> Everything else here still holds: the survey of what was found, the contract
-> analysis, the package structure, the CLI, the dependency work and the evidence
-> that the calculations survived the library jump. The text is left as it was
-> written rather than edited into agreement with a later decision, because its
-> value is as a record of what was known at the time.
+> The survey of what was found remains historical. The contract analysis,
+> package structure, CLI, dependency work and calculation evidence describe the
+> modernization as completed.
 
 ---
 
@@ -36,7 +32,7 @@ directory and renders it. It generates nothing. The two repositories share no
 code and no process; they share a directory of files.
 
 ```text
-Yahoo Finance
+J-Quants API (Free plan, delayed)
      |
      v
 finance (cron, daily)
@@ -273,46 +269,39 @@ deprecated-but-working; both fail outright. There is no option to keep them.
 
 ### 6.2 What replaces them
 
-One adapter over `yfinance`, mapping a code to a Yahoo symbol: the four indices
-keep their `^` prefix, and any other code becomes `CODE.T`. This is the
-narrowest possible move, because it is the same upstream data provider the
-repository has always used — only the access route changes.
+One adapter calls the documented J-Quants API v2 daily-bars endpoint. It sends
+the API key in the `x-api-key` header, translates each four character listing
+code to the API's five character form, follows pagination and contains rate
+limiting, retries and response normalization. The Free plan carries no market
+index values, so N225, GSPC, IXIC and DJI are withdrawn rather than fetched from
+an unofficial alternative. The full source decision is recorded in
+[`JQUANTS_MIGRATION.md`](JQUANTS_MIGRATION.md).
 
 ### 6.3 The differences it introduces, and how they are contained
 
 This is the one place where the meaning of the data can shift, so it is handled
 in the adapter and not allowed to reach the analysis code.
 
-| Aspect | Legacy | yfinance | Handling |
+| Aspect | Legacy | J-Quants | Handling |
 |---|---|---|---|
-| Column set | `Open, High, Low, Close, Volume, Adj Close` | adds `Dividends`, `Stock Splits`, sometimes `Capital Gains` | extra columns dropped, the six reordered to the legacy order |
-| Adjusted close | present when `auto_adjust=False` | **absent** under the modern default `auto_adjust=True` | `auto_adjust=False` passed explicitly; a response without `Adj Close` is an error, never silently filled from `Close` |
-| Index | tz-naive dates | tz-aware in the exchange timezone | localized away and normalized to midnight, so a date never shifts by a day |
-| Calendar | trading days | trading days | reindexed to business days, matching what `JpStock` returned |
-| Volume | integer | integer, occasionally `NaN` | left as fetched; the downstream `dropna()` already handles it |
-| Split handling | Yahoo Japan adjusted `Adj Close` for splits only | Yahoo adjusts for splits **and** dividends | **a genuine difference — see below** |
+| Column set | `Open, High, Low, Close, Volume, Adj Close` | abbreviated traded and adjusted fields | adjusted fields mapped to the six canonical columns |
+| Price basis | unadjusted OHLC beside an adjusted close | adjusted OHLC, close and volume | all six columns taken from one adjusted basis |
+| Index | dates parsed from pages or readers | `Date` strings | parsed to a tz-naive midnight index, sorted and deduplicated |
+| Calendar | business-day frame | trading days | reindexed to business days, preserving the downstream contract |
+| Split handling | Yahoo Japan adjusted close for splits only | adjusted fields cover splits and reverse splits | adjusted series used throughout; dividends are not adjusted |
+| Availability | current data and long history | delayed, bounded Free plan window | requests clamped to the published plan window |
 
-The dividend adjustment is the only difference that changes numbers rather than
-shape, and only for Japanese stocks, whose old `Adj Close` was split-adjusted
-only. The effect is confined to `Adj Close`, and therefore to every indicator
-computed from it, on stocks that pay dividends.
-
-It cannot be avoided while using Yahoo, and reconstructing a split-only series
-would mean inventing an adjustment the source does not publish. It is therefore
-accepted, documented, and bounded by the fact that it applies to newly fetched
-history only: the existing `stock_CODE.csv` files are never rewritten
-retroactively, because the incremental update combines new rows onto the stored
-ones with the stored rows winning. A stock's history does not change under the
-operator's feet; only rows fetched from now on come from the new adjustment
-basis. The indices — which is what the committed fixtures cover — are
-unaffected, since they pay no dividends.
+Stored files from the Yahoo-based provider are not combined with J-Quants rows.
+The operator runs `finance-migrate` once to archive them, after which the next
+fetch rebuilds history on one basis. The adjusted J-Quants series supplies every
+canonical price column, so candlesticks and indicators no longer mix bases.
 
 ### 6.4 Testability
 
-`yfinance` is imported inside the adapter, never at module scope elsewhere, and
-the analysis layer depends on a small protocol with a `fetch(code, start, end)`
-method. Tests inject a stub. No test in the ordinary suite performs a network
-request, and the package imports without `yfinance` installed.
+The analysis layer depends on a small protocol with a `fetch(code, start, end)`
+method. Tests inject stub HTTP responses, so no test in the ordinary suite
+performs a network request. The live J-Quants check is an explicitly selected
+integration test.
 
 ---
 
@@ -332,7 +321,7 @@ finance/
   storage.py         every CSV and pickle read and write
   datasources/
     __init__.py      StockDataSource protocol, create_source()
-    yahoo.py         the yfinance adapter
+    jquants.py       the J-Quants API adapter
   analysis.py        the per-stock pipeline
   reporting.py       the summary pipeline
   notification.py    mailing a report
@@ -362,7 +351,7 @@ The rules this encodes:
 - `storage.py` is told where to write; it does not decide.
 - `config.py` is the only module that reads `os.environ`. Settings are resolved
   at the entry point and passed down.
-- `yfinance`, `talib`, `sklearn` and `matplotlib` types and exceptions do not
+- `requests`, `talib`, `sklearn` and `matplotlib` types and exceptions do not
   cross upward out of the layer that owns them; failures become
   `finance.errors` exceptions.
 - No module calls `sys.exit`; `main()` returns an exit code.
@@ -424,8 +413,8 @@ Four groups:
    header, `zip` against the dashboard's own positional column lists.
 3. **CLI** — success, bad arguments, missing input, exit status, output
    location.
-4. **Data source** — the adapter's normalization, driven by stub frames shaped
-   like `yfinance` responses. Networked checks live in `test/integration/`,
+4. **Data source** — the adapter's normalization, driven by stub J-Quants JSON
+   responses. Networked checks live in `test/integration/`,
    deselected by default and excluded from CI.
 
 Old assertions that could not be carried across, and why:
@@ -538,11 +527,12 @@ Contracts first, because they are the hardest to walk back:
 
 | Risk | Mitigation |
 |---|---|
-| Dividend-adjusted `Adj Close` shifts Japanese stock indicators | Documented in 6.3; stored history is never rewritten; indices unaffected |
+| The J-Quants series differs from stored Yahoo-based history | `finance-migrate` archives the old files before history is rebuilt; providers are never merged |
+| The Free plan is delayed and retains bounded history | Fetch and staleness windows use the plan's published date and configured retention |
 | Charts cannot be pixel-identical | Series, colours, labels, caption, figure size and file names preserved; the caption is asserted by test |
 | Existing pickles in `clf/` were written by scikit-learn 0.17 and cannot be loaded | An unreadable model file is logged and a fresh model trained in its place, which is what the first run of any new stock already does |
 | A summary column shifting would corrupt the dashboard silently | Contract tests parse the files exactly as the dashboard does |
-| `yfinance` is an unofficial client and may break | Confined to one adapter behind a protocol; a replacement touches one file |
+| The provider API or its limits may change | Confined to one adapter and plan settings behind a protocol; a replacement does not reach the analysis layer |
 | pandas 3 changed `Series.__getitem__` and copy semantics | Positional access is now explicit `.iloc` everywhere; the fixture comparison would catch a regression |
 
 ---

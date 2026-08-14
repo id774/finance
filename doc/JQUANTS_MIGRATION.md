@@ -5,9 +5,8 @@ deliberately not done when this pipeline stopped fetching from Yahoo Finance and
 started fetching from the J-Quants API.
 
 It is a companion to [`MODERNIZATION_PLAN.md`](MODERNIZATION_PLAN.md), which
-covers the earlier restructuring into a Python package. That document assumed
-Yahoo would remain the provider and said so; this one supersedes it on that
-point only.
+covers the restructuring into a Python package and summarizes the resulting
+architecture. This document records the later provider decision in detail.
 
 The normative descriptions live elsewhere: what the system is for is
 [`REQUIREMENTS.md`](REQUIREMENTS.md), what it writes is

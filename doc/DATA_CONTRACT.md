@@ -71,11 +71,11 @@ The list of stocks the pipeline covers, and the index page's company listing.
 - Field 1 is the code, field 2 the short name. Both are required.
 - Further fields are optional. `finance` uses field 3 as the long name in a
   chart caption; the dashboard ignores everything past field 2.
-- A code is either one of the four index codes `N225`, `GSPC`, `IXIC`, `DJI`, or
-  a Tokyo listing number.
+- A code is the four character form of a Tokyo listing code. The data source
+  appends the trailing zero required by the J-Quants API; market index codes are
+  not accepted.
 
 ```text
-N225,日経平均株価
 7203,トヨタ,トヨタ自動車(株),自動車,CORE30
 ```
 
