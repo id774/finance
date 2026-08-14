@@ -17,15 +17,30 @@ market data, and the indicators, models and charts are how it is examined.
 
 ## 3. Purpose
 
-One person follows a set of Japanese shares and four market indices. They want
-to open a page in the evening and see, for each of them, a chart with the usual
-technical overlays, the current values of the usual oscillators, and a table
-ranking the set by how it moved today.
+One person follows a set of Japanese shares. They want to open a page in the
+evening and see, for each of them, a chart with the usual technical overlays,
+the current values of the usual oscillators, and a table ranking the set by how
+it moved.
 
 Producing that is this repository's job. Displaying it is not.
 
 The system exists to turn daily price data into a fixed set of files, on a fixed
 schedule, without anybody present.
+
+**It is software for one person's private analysis of their own investments.**
+That is a design premise rather than a description of current usage, and the
+following four statements are binding on every change:
+
+- The market data it obtains is not redistributed to anyone.
+- No continuing analysis service built on that data is provided to anyone.
+- The consumer of its output, `finance-dashboard`, is a private dashboard read
+  by the same person, not a public web service.
+- The terms and licence of the external market data are followed, and are a
+  separate question from the licence of this source code.
+
+Section 4 says what follows from that, section 7.2 says where the data comes
+from and under what conditions, and [`POLICY.md`](POLICY.md) section 1.1 states
+the rules a change is judged against.
 
 ## 4. What it is not
 
@@ -34,7 +49,13 @@ schedule, without anybody present.
   the requirements deliberately keep them at that size.
 - Not a web application. It serves nothing and listens on nothing.
 - Not a database. Its state is files in a directory.
-- Not a market data service. It fetches what it needs for itself.
+- Not a market data service. It fetches what it needs for itself, for one
+  person, and republishes none of it. It does not serve data to a third party,
+  does not offer the fetched CSVs as a distribution channel, and does not
+  become one by being open source.
+- Not a scraper. It does not read a web page written for a human and take the
+  numbers out of it. Its input is an API offered for programmatic use, on terms
+  that permit this use.
 
 ## 5. Who uses it
 
@@ -54,26 +75,81 @@ must be assumed that nobody is watching when it fails.
 Comma separated files naming the stocks a run covers: the code, a short name,
 and optionally a longer name for a chart caption.
 
-- `stocks.txt` — the full set, in the repository.
+- `stocks.txt` — the full set, in the repository. It seeds a new deployment and
+  is meant to be replaced by the operator's own watchlist; the version shipped
+  here is the TOPIX Core30 constituents. Every entry names a listing on the
+  Tokyo exchange.
 - `topix_core30.txt` — the TOPIX Core30 constituents, in the repository.
 - `my_stocks.txt` — the operator's holdings. **Not** in the repository: it is a
-  private file that lives in the data directory on the host.
+  private file that lives in the data directory on the host. A portfolio is
+  personal information and is not published with the source code.
 
 ### 7.2 Prices
 
-Daily open, high, low, close, volume and adjusted close, from an external
-provider, for each code in the list.
+Daily open, high, low, close, volume and adjusted close, for each code in the
+list, from the **J-Quants API Free plan**.
+
+The provider is chosen on three conditions, in this order:
+
+1. **Free to an individual**, so that the system's premise of personal,
+   no-cost operation holds without a subscription.
+2. **Offered for machine access**, so that reading it is the intended use of the
+   interface rather than a tolerated one.
+3. **Terms that permit this use.** Personal analysis is permitted;
+   redistribution and providing a continuing analysis service to third parties
+   are not, and the system does neither.
+
+A provider that fails any of the three is not adopted, and a shortfall in the
+data is never made up from one that does. In particular, no page written for a
+human is scraped, and no undocumented endpoint is called.
+
+The plan's limits are requirements, not defects:
+
+- **A publication delay.** The newest available row is weeks behind today. The
+  system fetches no further forward than the plan publishes, and states the last
+  trading day it holds so that the delay is visible to the reader.
+- **A bounded history.** The plan keeps a fixed span behind that point. A
+  request for anything older is raised to the oldest date kept, and every
+  analysis must be computable inside the span.
+- **A rate limit.** Requests are paced and a refusal is retried rather than
+  worked around.
+
+The interfaces the Free plan does not carry are not obtained elsewhere. Market
+index values are the case that matters here; see section 7.4.
 
 ### 7.3 Stored history
 
 What previous runs already fetched. A run reads it, asks the provider only for
 what is newer, and combines the two.
 
+Rows stored under a *different* provider are not combined with these. Where the
+meaning of a series cannot be shown to be the same, mixing it is worse than
+starting again, and retiring the older files is an explicit operation the
+operator performs rather than something a nightly job decides.
+
+### 7.4 Market indices
+
+None. The system previously charted N225, GSPC, IXIC and DJI, fetched from a
+provider it no longer uses. The J-Quants Free plan carries no index values, and
+no free, licensed, machine-readable source for them has been adopted.
+
+The requirement is therefore withdrawn rather than met by other means. The
+analysis of Japanese shares stands without a reference index: no indicator,
+summary, screening or model takes one as an input. "Not obtainable on acceptable
+terms, therefore not provided" is an acceptable outcome, and a better one than
+an index of uncertain provenance.
+
 ## 8. What it produces
 
-For each stock: a raw price file, a technical indicator file, and three chart
+For each stock: a price file, a technical indicator file, and three chart
 images at different window lengths. For each list: a summary table. Once a day:
-a dated copy of the main summary, and two mails.
+a record of where the data came from and how old it is, a dated copy of the main
+summary, and two mails.
+
+None of it is published. The files are written into one directory on the
+operator's host for the operator's dashboard to read, and this repository
+offers no route by which they reach anybody else. They are excluded from version
+control for the same reason.
 
 The exact format of every one of them is
 [`DATA_CONTRACT.md`](DATA_CONTRACT.md), which is normative.
@@ -164,7 +240,8 @@ The job runs unattended, so how it fails is part of what it is.
 ## 15. Networking
 
 - Exactly one component talks to the provider. Nothing else in the system knows
-  a provider exists.
+  a provider exists, and nothing else sees an HTTP response, a provider field
+  name or a credential.
 - Changing provider must not change what the analysis sees. Differences in
   columns, timezone, calendar or adjustment are corrected at the boundary, and a
   difference that cannot be corrected is documented rather than absorbed
@@ -192,9 +269,23 @@ a setting.
 
 ## 18. Secrets
 
-There are none. The provider needs no credential, and the mail path uses a local
-relay. If that ever changes, a credential gets no command line option: a command
-line is readable by every user of the host.
+One: the J-Quants API key.
+
+- It is supplied through the environment, and through nothing else. It gets no
+  command line option, because a command line is readable by every user of the
+  host, and it is not accepted from the configuration file, because a file in
+  the working tree is one careless commit away from being published.
+- It is never committed to this repository, in any form, including as a sample
+  value.
+- It is resolved once, with every other setting, and no module below the entry
+  point reads it.
+- It never appears in a log line, an exception message, a command's output, a
+  generated file, a chart, the dashboard, or a test's output.
+- A run that would fetch without it fails before opening a socket. A run that
+  only draws charts from stored files does not require it at all.
+- It is not given to `finance-dashboard`. That repository does not fetch.
+
+The mail path continues to use a local relay and needs no credential.
 
 ## 19. Independence
 

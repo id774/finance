@@ -30,6 +30,9 @@
 #  - pandas
 #
 #  Version History:
+#  v1.1 2026-08-14
+#       Add data_source.txt, which states where the generated data came
+#       from and how old it is.
 #  v1.0 2026-08-14
 #       Centralize file access and separate model persistence from
 #       fitting.
@@ -57,6 +60,14 @@ SUMMARY_INDEX_LABEL = "Code"
 
 PRICE_PREFIX = "stock_"
 INDICATOR_PREFIX = "ti_"
+
+# Where the generated data came from and how old it is, written so that
+# the dashboard can say so rather than leaving a reader to assume the
+# figures are live. Tab separated key and value, one pair per line, no
+# header: it is read by a consumer that must not have to parse anything
+# to display three facts.
+DATA_SOURCE_FILE = "data_source.txt"
+DATA_SOURCE_KEYS = ("source", "generated", "last_trading_day")
 
 logger = logging.getLogger(__name__)
 
@@ -190,6 +201,43 @@ def read_text(path: str | os.PathLike[str]) -> str:
         raise StorageError("File does not exist: {0}".format(target)) from exc
     except OSError as exc:
         raise StorageError("File could not be read: {0}".format(target)) from exc
+
+
+def write_data_source(
+    path: str | os.PathLike[str],
+    source: str,
+    generated: date,
+    last_trading_day: date | None,
+) -> None:
+    """
+    Record where the generated data came from and how old it is.
+
+    Args:
+        path: Where to write.
+        source: Name of the provider and the plan, as one line.
+        generated: The day the pipeline ran.
+        last_trading_day: The newest trading day the data covers, or
+            None when the run analysed nothing. An unknown date is
+            written as an empty value rather than as today, because a
+            consumer showing today for data that is twelve weeks old is
+            the exact misreading this file exists to prevent.
+
+    Raises:
+        StorageError: The file cannot be written.
+    """
+    values = {
+        "source": source,
+        "generated": generated.isoformat(),
+        "last_trading_day": last_trading_day.isoformat() if last_trading_day else "",
+    }
+    lines = ["{0}\t{1}".format(key, values[key]) for key in DATA_SOURCE_KEYS]
+    target = Path(path)
+    ensure_directory(target.parent)
+    try:
+        target.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    except OSError as exc:
+        raise StorageError("File could not be written: {0}".format(target)) from exc
+    logger.debug("Wrote %s", target)
 
 
 def merge_frames(left: pd.DataFrame, right: pd.DataFrame) -> pd.DataFrame:

@@ -25,6 +25,12 @@
 #    predicted columns. They are a statement about tomorrow, not a
 #    series, and the dashboard reads them from the last row alone.
 #
+#  The dates a fetch may ask for come from Settings.fetch_window, which
+#  is where the subscribed plan's delay and retention are applied. This
+#  layer decides the range and the data source answers it; the source is
+#  not told what plan it is on, and this layer does not know how the
+#  window was arrived at.
+#
 #  Author: id774 (More info: http://id774.net)
 #  Source Code: https://github.com/id774/finance
 #  License: The GPL version 3, or LGPL version 3 (Dual License).
@@ -35,6 +41,9 @@
 #  - NumPy, pandas
 #
 #  Version History:
+#  v1.1 2026-08-14
+#       Fetch within the plan window and report the latest trading day
+#       a run covered.
 #  v1.0 2026-08-14
 #       Separate the pipeline from file paths, the data source and the
 #       command line.
@@ -97,6 +106,19 @@ class AnalysisResult:
     chart_path: Path
     indicator_frame: pd.DataFrame
     wrote_indicators: bool
+
+    @property
+    def last_trading_day(self) -> date | None:
+        """
+        Return the date of the newest row this run analysed.
+
+        It is the date the dashboard shows as the age of the data. The
+        plan publishes with a delay, so it is not today and must not be
+        presented as though it were.
+        """
+        if self.indicator_frame.empty:
+            return None
+        return self.indicator_frame.index[-1].date()
 
 
 class Analysis:
@@ -193,11 +215,16 @@ class Analysis:
         with the stored rows winning. That is what keeps a historical
         adjustment basis from being rewritten under the operator: only
         rows that were not there before come from today's fetch.
+
+        The fetch never asks beyond the newest date the plan publishes.
+        Stored history that already reaches that date is current, and
+        saying so is what keeps the job from making one pointless
+        request per stock per day for the whole of the plan's delay.
         """
+        start, end = self.settings.fetch_window(self.today)
+
         if request.csvfile is None:
-            prices = self._fetch(
-                request.code, self.settings.start_date_as_date(), self.today
-            )
+            prices = self._fetch(request.code, start, end)
             storage.write_price_csv(
                 prices, self.settings.data_file(storage.price_filename(request.code))
             )
@@ -208,10 +235,8 @@ class Analysis:
             path = self.settings.data_file(request.csvfile)
 
         if not path.is_file():
-            logger.info("No stored prices for %s; fetching the full history", request.code)
-            prices = self._fetch(
-                request.code, self.settings.start_date_as_date(), self.today
-            )
+            logger.info("No stored prices for %s; fetching the full window", request.code)
+            prices = self._fetch(request.code, start, end)
             storage.write_price_csv(
                 prices, self.settings.data_file(storage.price_filename(request.code))
             )
@@ -223,11 +248,15 @@ class Analysis:
             return stored, False
 
         next_day = self._next_business_day(stored.index[-1])
-        if next_day > self.today:
-            logger.info("Stored data for %s is already current", request.code)
+        if next_day > end:
+            logger.info(
+                "Stored data for %s already reaches %s, the newest date the plan publishes",
+                request.code,
+                end,
+            )
             return stored, False
 
-        fetched = self._fetch(request.code, next_day, self.today)
+        fetched = self._fetch(request.code, next_day, end)
         fresh = fetched.dropna(how="all")
         logger.info("Fetched %d new rows for %s", len(fresh), request.code)
         if fresh.empty:
@@ -315,17 +344,26 @@ def run_many(
     return results, failures
 
 
-def load_indicator_frames(
-    settings: Settings, entries, skip_indices: bool = True
-) -> dict[tuple[str, str], pd.DataFrame]:
+def latest_trading_day(results: list[AnalysisResult]) -> date | None:
+    """
+    Return the newest date any of the runs analysed.
+
+    It is written beside the generated files so that a reader can see
+    how old the data is. None when nothing was analysed, which is
+    reported as an absent value rather than filled in with today.
+    """
+    days = [result.last_trading_day for result in results]
+    known = [day for day in days if day is not None]
+    return max(known) if known else None
+
+
+def load_indicator_frames(settings: Settings, entries) -> dict[tuple[str, str], pd.DataFrame]:
     """
     Read the stored indicator frames of a stock list, for aggregation.
 
     Args:
         settings: Where the files live.
         entries: StockEntry values naming the stocks to load.
-        skip_indices: Leave market indices out, which is what the
-            summaries have always done.
 
     Returns:
         Frames keyed by (code, name). A stock without a stored file is
@@ -334,8 +372,6 @@ def load_indicator_frames(
     """
     frames: dict[tuple[str, str], pd.DataFrame] = {}
     for entry in entries:
-        if skip_indices and entry.is_index:
-            continue
         path = settings.data_file(storage.indicator_filename(entry.code))
         if not path.is_file():
             logger.debug("No indicator file for %s", entry.code)

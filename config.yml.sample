@@ -6,7 +6,13 @@
 # section of README.md.
 #
 # Nothing in this file is required. With no configuration at all the
-# pipeline writes into ./data and ./clf and sends no mail.
+# pipeline writes into ./data and ./clf, fetches the whole window the
+# subscribed J-Quants plan offers, and sends no mail.
+#
+# The J-Quants API key is NOT configured here and is refused if it is.
+# It is read from the JQUANTS_API_KEY environment variable alone, so
+# that a credential is never written into a file inside the working
+# tree. See the API key section of README.md.
 
 paths:
   # Where the generated CSV, TXT and PNG files go. This is the
@@ -20,8 +26,28 @@ paths:
 pipeline:
   # Default stock list, resolved against the data directory.
   stock_list: stocks.txt
-  # Earliest date fetched for a stock with no stored history.
-  start_date: 2014-10-01
+  # Earliest date to fetch. Leave unset, which is the default, to take
+  # the whole window the plan keeps. A date older than the plan window
+  # is raised to it rather than refused.
+  # start_date: 2024-04-01
+
+jquants:
+  # The published v2 endpoint. Change this only if the endpoint moves.
+  base_url: https://api.jquants.com/v2
+  # Seconds one HTTP request may take before it is abandoned.
+  timeout: 30
+  # Attempts made for a request the API throttles or fails.
+  max_retries: 3
+  # Minimum seconds between two requests. The API answers 429 when a
+  # plan's rate limit is exceeded, and a run over a stock list is in no
+  # hurry, so it paces itself rather than finding the limit.
+  request_interval: 1.0
+  # How many days behind today the newest row of the plan is. The Free
+  # plan publishes twelve weeks in arrears; a paid plan sets this to 0.
+  delay_days: 84
+  # How far back from that newest row the plan keeps data. Two years on
+  # the Free plan.
+  retention_days: 730
 
 charts:
   # TrueType font for the Japanese chart caption. Without a usable font

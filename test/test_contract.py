@@ -36,6 +36,9 @@
 #  - The ten and nine column summary layouts parse positionally into the
 #    dashboard's own column lists.
 #  - stocks.txt parses as code and name.
+#  - data_source.txt states the source and the last trading day, and an
+#    unknown last trading day is left empty rather than filled with
+#    today.
 #  - History files carry the dated double extension.
 #  - Chart file names follow the window length rule.
 #
@@ -49,6 +52,9 @@
 #  - pandas, pytest
 #
 #  Version History:
+#  v1.1 2026-08-14
+#       Pin data_source.txt, which tells the dashboard how old the data
+#       it is showing is.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -319,7 +325,7 @@ def build_frames(indicator_fixture: pd.DataFrame, today: date) -> dict:
 
 def test_portfolio_layout_parses_positionally(settings, indicator_fixture, today):
     frames = build_frames(indicator_fixture, today)
-    table = Aggregator(frames).summarize(span=1, sortkey="Ratio", today=today)
+    table = Aggregator(frames).summarize(span=1, sortkey="Ratio", as_of=today)
     path = settings.data_file("portfolio.csv")
     storage.write_summary_csv(table, path)
 
@@ -351,7 +357,7 @@ def test_portfolio_layout_parses_positionally(settings, indicator_fixture, today
 def test_screening_layout_parses_positionally(settings, indicator_fixture, today):
     frames = build_frames(indicator_fixture, today)
     table = Aggregator(frames).summarize(
-        span=1, sortkey="rsi14", ascending=True, screening_key="rsi14", today=today
+        span=1, sortkey="rsi14", ascending=True, screening_key="rsi14", as_of=today
     )
     path = settings.data_file("screening_rsi14.csv")
     storage.write_summary_csv(table, path)
@@ -380,7 +386,7 @@ def test_screening_layout_parses_positionally(settings, indicator_fixture, today
 def test_core30_layout_uses_the_nine_column_form(settings, indicator_fixture, today):
     frames = build_frames(indicator_fixture, today)
     table = Aggregator(frames).summarize(
-        span=1, sortkey="Ratio", screening_key="rsi9", today=today
+        span=1, sortkey="Ratio", screening_key="rsi9", as_of=today
     )
     path = settings.data_file("topix_core30.csv")
     storage.write_summary_csv(table, path)
@@ -394,7 +400,7 @@ def test_core30_layout_uses_the_nine_column_form(settings, indicator_fixture, to
 
 def test_summary_values_are_truncated_integers(settings, indicator_fixture, today):
     frames = build_frames(indicator_fixture, today)
-    table = Aggregator(frames).summarize(span=1, today=today)
+    table = Aggregator(frames).summarize(span=1, as_of=today)
     path = settings.data_file("summary.csv")
     storage.write_summary_csv(table, path)
 
@@ -406,7 +412,7 @@ def test_summary_values_are_truncated_integers(settings, indicator_fixture, toda
 
 def test_summary_separator_is_a_tab(settings, indicator_fixture, today):
     frames = build_frames(indicator_fixture, today)
-    table = Aggregator(frames).summarize(span=1, today=today)
+    table = Aggregator(frames).summarize(span=1, as_of=today)
     path = settings.data_file("summary.csv")
     storage.write_summary_csv(table, path)
 
@@ -424,11 +430,11 @@ def test_summary_separator_is_a_tab(settings, indicator_fixture, today):
 
 def test_stocks_txt_parses_as_code_and_name(settings):
     path = settings.data_file("stocks.txt")
-    path.write_text("N225,日経平均株価\n7203,トヨタ,トヨタ自動車(株)\n", encoding="utf-8")
+    path.write_text("6758,ソニー\n7203,トヨタ,トヨタ自動車(株)\n", encoding="utf-8")
     entries = read_stock_list(path)
 
     assert [(e.code, e.name) for e in entries] == [
-        ("N225", "日経平均株価"),
+        ("6758", "ソニー"),
         ("7203", "トヨタ"),
     ]
     # The dashboard splits the same line on a comma and takes two fields.
@@ -437,12 +443,73 @@ def test_stocks_txt_parses_as_code_and_name(settings):
         assert len(fields) >= 2 and fields[0]
 
 
+# --------------------------------------------------------------------
+# data_source.txt
+# --------------------------------------------------------------------
+
+# Copied from finance_dashboard/data.py, for the same reason as the
+# summary columns above: the duplication is the contract.
+DASHBOARD_DATA_SOURCE_FILE = "data_source.txt"
+DASHBOARD_DATA_SOURCE_KEYS = ("source", "generated", "last_trading_day")
+
+
+def read_as_the_dashboard_does(path) -> dict:
+    """ Parse data_source.txt the way finance_dashboard/data.py does. """
+    values = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        key, _, value = line.partition("\t")
+        values[key.strip()] = value.strip()
+    return values
+
+
+def test_data_source_states_the_source_and_the_last_trading_day(settings, today):
+    path = settings.data_file(DASHBOARD_DATA_SOURCE_FILE)
+    storage.write_data_source(path, "J-Quants API (Free plan, delayed)", today, date(2015, 3, 20))
+
+    values = read_as_the_dashboard_does(path)
+    assert list(values) == list(DASHBOARD_DATA_SOURCE_KEYS)
+    assert values["source"] == "J-Quants API (Free plan, delayed)"
+    assert values["generated"] == "2015-03-23"
+    assert values["last_trading_day"] == "2015-03-20"
+
+
+def test_the_last_trading_day_is_older_than_the_day_it_was_generated(settings, today):
+    """
+    The two dates differ, and the file is what lets a reader see it.
+
+    A plan that publishes in arrears means the newest row is weeks
+    behind the run. Recording only one date would leave the dashboard
+    presenting delayed figures as though they were today's.
+    """
+    path = settings.data_file(DASHBOARD_DATA_SOURCE_FILE)
+    storage.write_data_source(path, "source", today, date(2015, 3, 20))
+
+    values = read_as_the_dashboard_does(path)
+    assert values["last_trading_day"] < values["generated"]
+
+
+def test_an_unknown_last_trading_day_is_empty_rather_than_today(settings, today):
+    path = settings.data_file(DASHBOARD_DATA_SOURCE_FILE)
+    storage.write_data_source(path, "source", today, None)
+
+    values = read_as_the_dashboard_does(path)
+    assert values["last_trading_day"] == ""
+    assert values["generated"] == "2015-03-23"
+
+
+def test_the_file_name_and_separator_are_what_the_dashboard_expects():
+    assert storage.DATA_SOURCE_FILE == DASHBOARD_DATA_SOURCE_FILE
+    assert storage.DATA_SOURCE_KEYS == DASHBOARD_DATA_SOURCE_KEYS
+
+
 def test_history_file_name_carries_the_date(settings, indicator_fixture, today):
     name = storage.history_filename("summary.csv", today)
     assert name == "summary.csv.20150323.csv"
 
     frames = build_frames(indicator_fixture, today)
-    table = Aggregator(frames).summarize(span=1, today=today)
+    table = Aggregator(frames).summarize(span=1, as_of=today)
     path = settings.history_file(name)
     storage.write_summary_csv(table, path)
     assert path.is_file()

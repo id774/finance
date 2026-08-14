@@ -20,15 +20,36 @@ It creates, if absent, and otherwise leaves alone:
 
 - `/var/stock/data`, `/var/stock/data/history`, `/var/stock/clf`
 - `/var/stock/data/stocks.txt` and `topix_core30.txt`, only when missing
+- `/var/stock/env`, empty, mode 600, root only — the file the API key goes in
 
-It never writes into `data/` or `clf/`. Deploying cannot disturb generated data,
-and updating data never needs a code change.
+It never writes into `data/` or `clf/`, and it never writes a key into `env`.
+Deploying cannot disturb generated data, updating data never needs a code
+change, and rotating the credential never needs either.
+
+Six things are kept apart on purpose, and it is worth naming them because they
+used to be one directory of copied files:
+
+| Concern | Where |
+|---|---|
+| Application code | `/var/stock/.venv`, an installed package |
+| Batch script | `/var/stock/run.sh` |
+| Configuration | `/var/stock/config.yml`, optional |
+| Credential | `/var/stock/env`, root only |
+| Generated data and charts | `/var/stock/data`, readable by the dashboard's group |
+| Models | `/var/stock/clf` |
+| Logs | `/var/log/sysadmin/stock.log` |
+| Schedule | `/etc/cron.d/stock` |
+
+The dashboard's group reaches exactly one of those.
 
 ---
 
 ## Before you begin
 
 - Linux with cron, `sudo`, and Python **3.11 or later**.
+- **A J-Quants API key.** Register at the J-Quants site, subscribe to the Free
+  plan, and issue a key from the dashboard. The pipeline cannot fetch without
+  one, and there is no other way to give it prices.
 - A Japanese TrueType font for the chart captions:
   `sudo apt-get install fonts-vlgothic`.
 - A local mail relay on port 25 if reports are to be sent.
@@ -78,10 +99,74 @@ dashboard runs as.
 
 ---
 
+## The API key
+
+The key is the one secret this system has, and it is kept in one file.
+`deploy.sh` creates it empty, owned by root and readable by nobody else. Fill it
+in by hand:
+
+```bash
+sudo -e /var/stock/env
+```
+
+```text
+# Environment for the finance job, sourced by run.sh.
+# Put the J-Quants API key here and nowhere else.
+JQUANTS_API_KEY=your-key-here
+```
+
+```bash
+sudo chown root:root /var/stock/env
+sudo chmod 600 /var/stock/env
+```
+
+`run.sh` sources it and refuses to start if the key is empty, so a missing
+credential is a message at 18:10 rather than thirty failed fetches.
+
+Four things not to do with it:
+
+- **Do not put it in `config.yml`.** The settings loader refuses a key found
+  there. A file in the working tree is one careless `git add` from being
+  published.
+- **Do not pass it on a command line.** A command line is readable by every user
+  of the host, and there is no option that accepts one.
+- **Do not give it to `finance-dashboard`.** That side does not fetch and has no
+  use for it.
+- **Do not commit it**, in any form, including as a sample value.
+
+The key is never written to the log, an error message, a generated file, a chart
+or the dashboard. If you ever see one in any of those, it is a bug worth
+reporting.
+
+The dashboard host, if it is a different machine, needs read access to the
+generated directory and nothing else.
+
+---
+
 ## Configure
 
 Configuration is optional. Without any, the pipeline writes into the data
-directory `run.sh` exports and sends no mail.
+directory `run.sh` exports, fetches the whole window the Free plan keeps, and
+sends no mail.
+
+The settings worth knowing about are under `jquants`, which describe the plan
+rather than the program:
+
+| Key | Default | What it is |
+|---|---|---|
+| `delay_days` | 84 | How far behind today the plan's newest row is. Twelve weeks on the Free plan; 0 on a paid one |
+| `retention_days` | 730 | How far back from that point the plan keeps data |
+| `request_interval` | 1.0 | Minimum seconds between two requests |
+| `timeout` | 30 | Seconds one request may take |
+| `max_retries` | 3 | Attempts for a throttled or failed request |
+
+`delay_days` and `retention_days` are stated in this one place and nowhere else
+in the system. If the plan's terms change, this is what changes. Everything
+downstream — the dates a fetch asks for, whether stored data counts as current,
+whether a summary treats a stock as stale — follows from them.
+
+`pipeline.start_date` is empty by default, which means the whole window the plan
+keeps. A date older than that is raised to it, and the run says so in the log.
 
 To configure mail, or to move a directory:
 
@@ -126,22 +211,35 @@ Run one stock by hand before trusting the schedule. It writes into the real data
 directory, so use a code that is already in the list:
 
 ```bash
-sudo FINANCE_DATA_DIR=/var/stock/data FINANCE_MODEL_DIR=/var/stock/clf \
-    /var/stock/.venv/bin/finance-charts -c N225 -n 日経平均株価 -y 240 -u
+sudo -i
+. /var/stock/env && export JQUANTS_API_KEY
+FINANCE_DATA_DIR=/var/stock/data FINANCE_MODEL_DIR=/var/stock/clf \
+    /var/stock/.venv/bin/finance-charts -c 7203 -n トヨタ -y 240 -u
 ```
 
-Then check the four things that matter:
+Then check the five things that matter:
 
 ```bash
-ls -l /var/stock/data/stock_N225.csv /var/stock/data/ti_N225.csv \
-      /var/stock/data/chart_N225.png
-head -1 /var/stock/data/ti_N225.csv
-tail -1 /var/stock/data/ti_N225.csv | awk -F, '{print $(NF-1), $NF}'
+ls -l /var/stock/data/stock_7203.csv /var/stock/data/ti_7203.csv \
+      /var/stock/data/chart_7203.png
+head -1 /var/stock/data/ti_7203.csv
+tail -1 /var/stock/data/ti_7203.csv | awk -F, '{print $(NF-1), $NF}'
+cat /var/stock/data/data_source.txt
 ```
 
 The header must begin `Date,Open,High,Low,Close,Volume,Adj Close`, and the last
 two fields of the last row must be the classification and the prediction rather
 than empty.
+
+`data_source.txt` must name the source and carry a `last_trading_day`. **It will
+not be today.** On the Free plan it is about twelve weeks back, and that is
+correct rather than a fault; it is the figure the dashboard shows so that nobody
+reads these pages as live market data. If it is empty, the run analysed nothing.
+
+If the command fails with a message about `JQUANTS_API_KEY`, the environment
+file is empty or was not sourced. If it fails with an authentication error, the
+key is wrong or the subscription has lapsed — the Free plan is cancelled
+automatically after a year and can be registered again.
 
 Then run the whole job once:
 
@@ -162,8 +260,13 @@ on stderr, which is what cron will mail.
 10 18  * * 1-5 root test -x /var/stock/run.sh && /var/stock/run.sh
 ```
 
-18:10 on weekdays, after the Tokyo close and late enough for the day's prices to
-have settled at the source. `deploy.sh` installs it.
+18:10 on weekdays, after the Tokyo close. `deploy.sh` installs it.
+
+The hour no longer matters as much as it did. The Free plan publishes weeks in
+arrears, so a run at 18:10 collects what was published long before it, and an
+occasional missed evening costs nothing that the next run does not pick up. The
+schedule is kept because it works and the operator relies on it, not because the
+data requires it.
 
 It is cron rather than a systemd timer because a plain daily batch has no
 ordering, activation or resource requirement that a timer would serve. Changing
@@ -190,6 +293,15 @@ or point it there directly with `FINANCE_DASHBOARD_DATA_DIR=/var/stock/data`.
 
 The dashboard's user must be able to read `/var/stock/data`, which is what
 `DATA_GROUP` arranges. It needs no write access: it generates nothing.
+
+It gets nothing else. Not the virtual environment, not `config.yml`, and above
+all not `/var/stock/env`: the dashboard does not fetch market data and must not
+hold the credential that does. It also does not import the `finance` package —
+the two sides share a directory of files and nothing else.
+
+The data in that directory came from the J-Quants API under terms permitting
+personal analysis and prohibiting redistribution. Whatever the dashboard is
+published behind, that is the constraint it inherits; see its README.
 
 ---
 
@@ -257,17 +369,38 @@ Set `PYTHON` to a newer one.
 code and the reason. A delisted or renamed code needs removing from the list; a
 transient fetch failure resolves itself the next evening.
 
+**Every stock fails with `JQUANTS_API_KEY is not set`** — `/var/stock/env` is
+empty or unreadable. `run.sh` checks before it starts, so nothing was fetched.
+
+**Every stock fails to authenticate** — the key is wrong, was revoked, or the
+subscription lapsed. The Free plan is cancelled automatically after a year;
+re-registering and issuing a new key is the fix.
+
+**Every stock fails with a rate limit** — the job is asking too quickly.
+Raise `jquants.request_interval`.
+
 **Every stock fails to fetch** — the provider or the network. Confirm with the
 integration checks, which are the only tests that touch it:
 
 ```bash
-cd /path/to/finance && .venv/bin/pytest -m integration
+cd /path/to/finance && JQUANTS_API_KEY=... .venv/bin/pytest -m integration
 ```
 
+**A fetch succeeds but returns nothing new, every evening** — expected. The plan
+publishes in arrears; once the stored history reaches the newest published date,
+there is nothing to add until the window moves. The log says so by name.
+
 **Charts appear, summaries are empty** — the summaries drop any stock whose
-newest indicator row is more than ten days old. After a long outage, run the
-chart step with `-u` first and then the summaries, which is what `run.sh` does
-in that order anyway.
+newest indicator row is more than ten days older than the newest date the plan
+publishes. After a long outage, run the chart step with `-u` first and then the
+summaries, which is what `run.sh` does in that order anyway. If `jquants.
+delay_days` is wrong for the subscription, this is the symptom: the reference
+date moves and everything looks stale.
+
+**The dashboard says the data is twelve weeks old** — it is, and it is meant to
+say so. That is the Free plan's publication delay, not a stalled pipeline.
+Compare `last_trading_day` in `/var/stock/data/data_source.txt` with what the
+plan currently publishes.
 
 **Captions render as boxes** — the caption font is missing. Install one and set
 `charts.font_path`.
@@ -278,3 +411,36 @@ so and a fresh model is trained in its place.
 **The dashboard shows nothing** — check from the dashboard's side that it can
 read the directory, then that the files are there. The dashboard caches by
 modification time, so a regenerated file appears without a restart.
+
+---
+
+## Migrating data written by a previous provider
+
+Run this once, when upgrading a deployment whose stored files were produced
+before the data source changed, and never again.
+
+```bash
+sudo -i
+/var/stock/.venv/bin/finance-migrate --data-dir /var/stock/data --dry-run
+/var/stock/.venv/bin/finance-migrate --data-dir /var/stock/data
+```
+
+It moves every `stock_CODE.csv` and `ti_CODE.csv` into
+`/var/stock/data/legacy.YYYYMMDD/` and deletes nothing. The stock lists, the
+summaries and the charts are left where they are; the next run with `-u`
+rebuilds the per-stock files from the current source.
+
+Why it is a separate command rather than part of the upgrade: the previous
+provider's prices and the current one's are not the same series, and the daily
+job merges stored rows with fetched ones. Merged, the older and newer halves of
+a file would mean different things — a difference no indicator would report and
+no chart would show. Since the meaning cannot be reconciled, the honest move is
+to set the old files aside, and deciding to do that with the operator's own
+archive is the operator's call rather than a cron job's.
+
+Expect the rebuilt history to be **shorter**. The Free plan keeps about two
+years, and files that went back to 2014 will not. That is the plan's constraint
+working as intended; every indicator the pipeline computes fits inside the
+window, and a test asserts it.
+
+Keep or delete `legacy.YYYYMMDD/` as you see fit. Nothing reads it.

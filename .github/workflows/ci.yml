@@ -25,6 +25,14 @@ jobs:
         run: ruff check .
       - name: Test
         # The default run excludes the integration marker, so nothing
-        # here reaches Yahoo Finance. Those checks depend on a third
+        # here reaches the J-Quants API. Those checks depend on a third
         # party and must not decide whether a commit is green.
+        #
+        # No J-Quants API key is configured for this workflow and none
+        # may be: CI has no reason to hold a credential it cannot use,
+        # and the suite is built so that it does not need one. The empty
+        # value below makes a key leaking in from anywhere else visible
+        # as a failure rather than as a silent live request.
+        env:
+          JQUANTS_API_KEY: ""
         run: pytest

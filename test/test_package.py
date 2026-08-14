@@ -15,6 +15,12 @@
 #  library module, and a private pandas API relied on until it was
 #  deleted.
 #
+#  Two of them guard a decision rather than a shape. The provider this
+#  repository fetches from is a licensing decision, and the API key is a
+#  secret; a test that no module names the withdrawn provider, and a
+#  test that no module outside config.py reads or logs the key, are what
+#  keep either from being undone by a convenient import or a debug line.
+#
 #  Test Cases:
 #  - The package imports without touching sys.path.
 #  - No module mutates sys.path or calls sys.exit outside an entry point.
@@ -23,7 +29,9 @@
 #  - No module uses a removed or private pandas or NumPy API.
 #  - No wildcard imports.
 #  - The domain layer does not import the I/O or CLI layers.
-#  - The package imports without yfinance installed.
+#  - The package imports without an HTTP client installed.
+#  - No module names the withdrawn data source.
+#  - No module outside config.py reads the API key, and none logs it.
 #  - Console scripts resolve.
 #
 #  Author: id774 (More info: http://id774.net)
@@ -36,6 +44,8 @@
 #  - pytest
 #
 #  Version History:
+#  v1.1 2026-08-14
+#       Guard the data source decision and the API key.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -54,7 +64,7 @@ import pytest
 PACKAGE_ROOT = Path(__file__).parent.parent / "finance"
 
 # Modules that are entry points and may therefore end the process.
-ENTRY_POINTS = {"charts.py", "summary.py", "notify.py"}
+ENTRY_POINTS = {"charts.py", "summary.py", "notify.py", "migrate.py"}
 
 # The domain layer: calculation only. It may not reach for a file, the
 # network, the environment or the command line.
@@ -221,12 +231,12 @@ def test_the_domain_layer_does_no_file_access():
         assert "read_csv" not in source, "{0} reads a file".format(module_name)
 
 
-def test_the_price_client_is_not_imported_at_module_scope():
+def test_the_http_client_is_not_imported_at_module_scope():
     """
-    The package must import without yfinance installed.
+    The package must import without an HTTP client installed.
 
-    A workstation reading stored CSVs and drawing a chart needs no price
-    client, and a test must never be able to reach one by accident.
+    A workstation reading stored CSVs and drawing a chart makes no
+    request, and a test must never be able to reach one by accident.
     """
     for path in python_files():
         tree = parse(path)
@@ -238,17 +248,57 @@ def test_the_price_client_is_not_imported_at_module_scope():
                 if isinstance(node, ast.Import)
                 else [node.module or ""]
             )
-            if not any(name.startswith("yfinance") for name in names):
+            if not any(name.startswith("requests") for name in names):
                 continue
-            assert node.col_offset > 0, "{0} imports yfinance at module scope".format(path)
+            assert node.col_offset > 0, "{0} imports requests at module scope".format(path)
+
+
+# Names of the provider this repository no longer fetches from, in every
+# spelling a reintroduction would arrive under. A market data source is
+# a licensing decision as much as a technical one, and this is what
+# keeps the decision from being undone by a convenient import.
+WITHDRAWN_SOURCES = ("yfinance", "yahoo", "pandas_datareader", "pandas-datareader", "read_html")
+
+
+@pytest.mark.parametrize("path", python_files(), ids=lambda p: p.name)
+def test_no_module_reaches_for_a_withdrawn_source(path: Path):
+    source = code_only(path).lower()
+    for name in WITHDRAWN_SOURCES:
+        assert name not in source, "{0} names {1}".format(path, name)
+
+
+@pytest.mark.parametrize("path", python_files(), ids=lambda p: p.name)
+def test_no_module_reads_the_api_key_outside_config(path: Path):
+    """
+    The credential is resolved once, in config.py, like every setting.
+
+    A module reading it for itself would also be a module able to log
+    it, and there would be no single place left to assert that none of
+    them do.
+    """
+    if path.name == "config.py":
+        return
+    source = code_only(path)
+    assert "JQUANTS_API_KEY" not in source, "{0} reads the API key".format(path)
+
+
+def test_no_module_logs_the_api_key():
+    """ No log or message call is handed the key field. """
+    for path in python_files():
+        source = code_only(path)
+        for call in ("logger.debug", "logger.info", "logger.warning", "logger.error"):
+            for fragment in source.split(call)[1:]:
+                head = fragment[:200]
+                assert "api_key" not in head, "{0} may log the API key".format(path)
 
 
 def test_console_scripts_resolve():
     from finance.cli.charts import run as charts_run
+    from finance.cli.migrate import run as migrate_run
     from finance.cli.notify import run as notify_run
     from finance.cli.summary import run as summary_run
 
-    for entry in (charts_run, summary_run, notify_run):
+    for entry in (charts_run, summary_run, notify_run, migrate_run):
         assert callable(entry)
 
 

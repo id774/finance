@@ -17,6 +17,29 @@ The Invariants below decide over the rest of it.
 
 ### 1.1 Purpose and Scope
 
+- **This system is for one person's private analysis of their own investments.**
+  It is not a market data service, not a publication, and not a way of giving
+  anyone else access to what it fetches. That premise decides several rules
+  below that would otherwise look arbitrary.
+- **The data it fetches is licensed; this source code is not the data.** Market
+  data is obtained from the J-Quants API under terms permitting personal
+  analysis and prohibiting redistribution and the provision of a continuing
+  analysis service to third parties. This repository is published under the GPL
+  or the LGPL, which covers the source code and grants nothing whatever over the
+  data put through it. Never write anything implying the second follows from the
+  first.
+- **Binding consequences.** No market data is committed to this repository, in
+  any form, including as a test fixture. No API key is committed, and none
+  appears in a sample configuration. No feature exists whose purpose is to hand
+  the fetched data to a third party. The consumer, `finance-dashboard`, is a
+  private dashboard and is documented as one.
+- **The input must be free, legitimate and machine-readable.** A source is
+  adopted only if an individual may use it at no cost, it is offered for
+  programmatic access, and its terms permit this use. No web page written for a
+  human is scraped, no undocumented endpoint is called, and a gap in what a free
+  plan offers is never filled from a source that fails those conditions. A
+  capability that cannot be obtained on acceptable terms is withdrawn instead;
+  see `REQUIREMENTS.md` section 7.4.
 - This document applies to everything committed here: the package, the batch and
   deployment scripts, the cron entry, the tests and the documents.
 - What the system is for belongs to [`REQUIREMENTS.md`](REQUIREMENTS.md); how it
@@ -43,8 +66,17 @@ general policy would otherwise ask for.
    failure, continues, and reports a non-zero status at the end.
 5. **A failure is never silent.** No bare `except` that returns an empty value,
    and no run that exits zero after something went wrong.
-6. **The ordinary test suite reaches no network.**
+6. **The ordinary test suite reaches no network.** No API key is needed to run
+   it, and none is configured in CI.
 7. **No other repository is a runtime dependency.**
+8. **The API key is never disclosed.** Not to a log, an exception message, a
+   command's output, a generated file, a chart, the dashboard, or a test's
+   output. It is read in one place and passed as a field excluded from the
+   dataclass repr.
+9. **The plan's limits are the specification.** A publication delay, a bounded
+   history and a rate limit are what the system is built on, not defects to be
+   routed around. Nothing is fetched from elsewhere to make up the difference,
+   and no paid plan is assumed.
 
 ### 1.3 Design Philosophy
 
@@ -95,7 +127,10 @@ the filesystem, the price provider
 
 ### 1.5 The Data Source
 
-- Exactly one module talks to the provider.
+- Exactly one module talks to the provider. Authentication, the endpoint, query
+  parameters, pagination, the request interval, retries, timeouts, HTTP status
+  handling, the provider's field names and its stock code form all live in it
+  and leave it in no direction.
 - Every difference between what the provider returns and what the pipeline
   expects is corrected there: columns, order, timezone, calendar, duplicates.
   A difference that reaches the analysis layer is a defect in the adapter.
@@ -103,9 +138,22 @@ the filesystem, the price provider
   documented in `DATA_CONTRACT.md` rather than absorbed silently.
 - Prices are requested explicitly rather than by default. A response missing a
   column the pipeline needs is refused, never substituted from a column that
-  happens to be present.
-- The client library is imported inside the adapter, so the package imports
-  without it.
+  happens to be present. The adjusted series is never filled in from the
+  unadjusted one.
+- The adapter knows nothing about what is on disk, and nothing about data a
+  previous provider wrote. Retiring that is a separate, explicit command.
+- The dates a fetch may ask for are decided above the adapter, by the settings
+  that describe the plan. The adapter answers the range it is given.
+- Errors are distinguished by what the operator would do about them:
+  authentication, rate limit, a dataset outside the plan, an invalid stock
+  code, and everything else.
+- The HTTP client is imported inside the adapter, so the package imports without
+  it and a run that only draws charts needs neither the client nor a key.
+- A third-party SDK is judged on whether it earns its place. The official
+  J-Quants client was considered and not adopted: it reads configuration from
+  several implicit locations, which conflicts with resolving every setting in
+  one place, and this pipeline uses one endpoint. A direct REST call over
+  `requests` is smaller, and the whole adapter is one readable file.
 
 ### 1.6 Configuration
 
@@ -197,10 +245,16 @@ A change is judged by:
   major, so that a future release cannot break a running job overnight.
 - Never pin a decade-old version, and never leave a dependency unbounded.
 - Add a dependency only when it earns its place. Prefer the standard library.
+  A large framework is not introduced to call one HTTP endpoint; before adopting
+  a provider SDK, establish that it is needed, maintained, appropriately
+  licensed, current with the API, and more maintainable than a direct call.
 - Some dependencies are refused by what this system is rather than by their
   quality: a database driver or object mapper, a web framework, a task queue, a
   Node.js toolchain, an error-reporting agent. Each would be the first half of
   something the requirements rule out.
+- A client for a market data provider whose terms this system does not meet is
+  refused on those grounds alone, whatever its quality. That includes any
+  library that reads Yahoo Finance.
 - Always pass `encoding="utf-8"` for a text file operation.
 
 ### 2.4 pandas and NumPy
@@ -226,12 +280,28 @@ This repository was left behind by exactly the practices this section forbids.
 - `pytest` and `ruff check .` must both pass.
 - A test never reaches the network, never writes outside a temporary directory,
   and never sends mail. The price source is a protocol and tests inject a stub;
-  the mail transport is a parameter.
+  the mail transport is a parameter. The default suite needs no API key, and CI
+  is given none.
 - Tests that need a real endpoint live in `test/integration/`, carry the
-  `integration` marker, and are excluded from the default run and from CI.
+  `integration` marker, and are excluded from the default run and from CI. They
+  discard what they fetch.
+- **No market data obtained from the provider is committed as a fixture.** An
+  API response is reproduced with invented values in the shape the adapter
+  expects. A test that saved a real response would be how the rule against
+  redistributing the data got broken.
 - The committed fixtures are load bearing and are not regenerated. An expected
   value carried over from an older suite is not adjusted to match new output
-  without establishing why the output moved.
+  without establishing why the output moved. `test/stock_N225.csv` and
+  `test/ti_N225.csv` are the exception that proves the rule: they are Nikkei 225
+  index data committed in 2015, when the source was a different provider, and
+  every regression expectation in the suite derives from them. They are kept
+  because deleting them would delete the evidence that the arithmetic has not
+  moved across three library generations, they are not refreshed, and nothing
+  from the current provider joins them.
+- A test that exists because of a rule states the rule. The structural suite
+  asserts that no module names the withdrawn provider and that none outside
+  `config.py` reads or logs the API key, because a decision nobody can undo by
+  accident is worth more than a decision written down.
 - A test asserts behaviour that is specified. Where a behaviour is a quirk kept
   on purpose — the ratio formula, the truncation, the ten day window — the test
   says so in a comment, so that a later reader does not "fix" it.

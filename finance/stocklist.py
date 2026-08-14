@@ -15,6 +15,14 @@
 #  stocks.txt. The rest are optional and are kept because the longer
 #  name appears in a chart caption.
 #
+#  Every entry names a listing on the Tokyo exchange. Market indices
+#  used to be listed here too, under codes such as N225, and were
+#  fetched from a provider this pipeline no longer uses. The J-Quants
+#  Free plan does not carry index values, so there is nothing to fetch
+#  them from and no special case left to make for them: a code in a
+#  stock list is a listing, and the data source refuses anything that
+#  cannot be one.
+#
 #  Author: id774 (More info: http://id774.net)
 #  Source Code: https://github.com/id774/finance
 #  License: The GPL version 3, or LGPL version 3 (Dual License).
@@ -25,6 +33,8 @@
 #  - Standard library only
 #
 #  Version History:
+#  v1.1 2026-08-14
+#       Drop the market index codes along with the index data source.
 #  v1.0 2026-08-14
 #       Replace the pandas based reader with a plain CSV reader.
 #
@@ -40,12 +50,6 @@ from pathlib import Path
 
 from finance.errors import DataFormatError, StorageError
 
-# Codes that name a market index rather than a listed company. They are
-# excluded from the summaries, because a change ratio against an index
-# is not comparable with one against a share price, and they are fetched
-# through a different symbol form.
-INDEX_CODES = frozenset({"N225", "GSPC", "IXIC", "DJI"})
-
 logger = logging.getLogger(__name__)
 
 
@@ -56,11 +60,6 @@ class StockEntry:
     code: str
     name: str
     fullname: str = ""
-
-    @property
-    def is_index(self) -> bool:
-        """ Report whether this entry names a market index. """
-        return self.code in INDEX_CODES
 
     @property
     def display_name(self) -> str:

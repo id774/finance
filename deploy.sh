@@ -19,6 +19,13 @@
 #  them. Updating the pipeline cannot disturb generated data, and
 #  generated data cannot require a code change.
 #
+#  The credential is separated from both. This script creates an empty
+#  environment file readable only by root, for the operator to write
+#  JQUANTS_API_KEY into by hand, and never writes a key itself: a
+#  deployment script that took a secret as an argument would put it in
+#  the shell history of every host it ran on. An existing file is left
+#  exactly as it is.
+#
 #  Author: id774 (More info: http://id774.net)
 #  Source Code: https://github.com/id774/finance
 #  License: The GPL version 3, or LGPL version 3 (Dual License).
@@ -42,7 +49,9 @@
 #      /opt/python/current/bin/python; set PYTHON to that path if the
 #      host still keeps its interpreter there.
 #  - DATA_GROUP: Group given read access to the generated data, which is
-#      how the dashboard reads it. Defaults to www-data.
+#      how the dashboard reads it. Defaults to www-data. The credential
+#      file is not in that group: the dashboard reads generated files
+#      and has no business holding the key that produced them.
 #
 #  Exit Codes:
 #  - 0: The deployment finished.
@@ -50,6 +59,8 @@
 #  - 127: A required command is missing.
 #
 #  Version History:
+#  v1.1 2026-08-14
+#       Create the environment file the API key is kept in.
 #  v1.0 2026-08-14
 #       Install a package into a virtual environment instead of copying
 #       bin/ and lib/.
@@ -105,6 +116,22 @@ create_directories() {
     sudo install -d -m 770 "$TARGET_DIR/clf" || exit 1
 }
 
+# Create the environment file the API key is kept in, without a key
+create_environment_file() {
+    if [ -f "$TARGET_DIR/env" ]; then
+        echo "[INFO] Keeping the existing $TARGET_DIR/env"
+        return 0
+    fi
+    echo "[INFO] Creating $TARGET_DIR/env"
+    printf '%s\n' \
+        "# Environment for the finance job, sourced by run.sh." \
+        "# Put the J-Quants API key here and nowhere else." \
+        "JQUANTS_API_KEY=" \
+        | sudo tee "$TARGET_DIR/env" >/dev/null || exit 1
+    sudo chown root:root "$TARGET_DIR/env" || exit 1
+    sudo chmod 600 "$TARGET_DIR/env" || exit 1
+}
+
 # Build or refresh the virtual environment and install the package
 install_package() {
     if [ ! -d "$VENV_DIR" ]; then
@@ -143,16 +170,26 @@ set_ownership() {
     sudo chown -R "root:$DATA_GROUP" "$TARGET_DIR/data" || exit 1
     sudo chown -R "root:adm" "$TARGET_DIR/clf" || exit 1
     sudo chmod -R g+r,o-rwx "$TARGET_DIR" || exit 1
+    # Restored after the recursive chmod above, which would otherwise
+    # have widened the one file that must stay readable by root alone.
+    sudo chown root:root "$TARGET_DIR/env" || exit 1
+    sudo chmod 600 "$TARGET_DIR/env" || exit 1
 }
 
 # Report where the pieces landed
 report() {
     echo "[INFO] Deployment finished"
-    echo "[INFO] Commands:   $VENV_DIR/bin/finance-charts, finance-summary, finance-notify"
+    echo "[INFO] Commands:   $VENV_DIR/bin/finance-charts, finance-summary, finance-notify," \
+         "finance-migrate"
     echo "[INFO] Batch:      $TARGET_DIR/run.sh"
     echo "[INFO] Data:       $TARGET_DIR/data"
     echo "[INFO] Models:     $TARGET_DIR/clf"
     echo "[INFO] Schedule:   /etc/cron.d/stock"
+    echo "[INFO] Credential: $TARGET_DIR/env"
+    if ! sudo grep -q '^JQUANTS_API_KEY=.' "$TARGET_DIR/env" 2>/dev/null; then
+        echo "[WARN] $TARGET_DIR/env carries no API key;" \
+             "the fetching step will fail until it does."
+    fi
     if [ ! -f "$TARGET_DIR/data/my_stocks.txt" ]; then
         echo "[WARN] $TARGET_DIR/data/my_stocks.txt is absent;" \
              "the portfolio summary will fail until it exists."
@@ -167,6 +204,7 @@ main() {
     check_commands
     check_python
     create_directories
+    create_environment_file
     install_package
     install_scripts
     install_cron

@@ -19,7 +19,7 @@ not restate them.
   open a file, make a request or read the environment, so that it can be tested
   by passing it values.
 - **A foreign type stops at its boundary.** No exception, client object or
-  library-specific value from `yfinance`, TA-Lib, scikit-learn or matplotlib
+  library-specific value from `requests`, TA-Lib, scikit-learn or matplotlib
   travels above the module that owns it.
 - **Settings are resolved once.** At the entry point, and passed down.
 - **One implementation.** The command line and the batch script drive the same
@@ -28,10 +28,10 @@ not restate them.
 ## 3. Composition
 
 ```text
-finance/cli/charts.py   summary.py   notify.py            entry points
+finance/cli/charts.py  summary.py  notify.py  migrate.py  entry points
         |   parse arguments, resolve settings, return an exit code
         v
-analysis.py   reporting.py   notification.py              application
+analysis.py  reporting.py  notification.py  migration.py  application
         |   the order of the steps, and the paths
         v
 indicators.py  features.py  models.py                     domain
@@ -41,7 +41,7 @@ aggregation.py charts.py    stocklist.py                  pure computation
 storage.py    datasources/                                I/O
         |
         v
-the filesystem                Yahoo Finance
+the filesystem                the J-Quants API
 ```
 
 `config.py` and `errors.py` sit beside all of it: every layer may use them, and
@@ -148,16 +148,41 @@ would stop the whole job the first time the library is upgraded.
 ### 4.11 `finance/datasources/`
 
 `__init__.py` declares the `StockDataSource` protocol — one method, `fetch(code,
-start, end)`, returning a frame in canonical shape — and `create_source()`.
+start, end)`, returning a frame in canonical shape — plus `create_source()` and
+`LazySource`.
 
-`yahoo.py` is the only implementation. It maps a code to a Yahoo symbol and
-normalizes the response: unadjusted prices requested explicitly, the timezone
-localized away and the index normalized to midnight, action columns dropped, the
-six canonical columns put in order, duplicates resolved, and the frame reindexed
-to business days. A response without `Adj Close` is refused rather than filled
-from `Close`.
+`jquants.py` is the only implementation, and everything peculiar to the provider
+is inside it: the `x-api-key` header, the base URL, `/equities/bars/daily`, its
+`code`, `from` and `to` parameters, the `data` and `pagination_key` members of
+the response, the minimum interval between requests, the retry of a throttled or
+failed one, the timeout, the HTTP status vocabulary, the abbreviated v2 field
+names, and the five character code form. None of it leaves the module.
 
-`yfinance` is imported inside the adapter, so the package imports without it.
+Normalization is what the module is for. The response rows become a frame
+carrying the six canonical columns, on a tz-naive midnight index, sorted,
+deduplicated and reindexed to business days. All six columns are taken from the
+adjusted series — `AdjO`, `AdjH`, `AdjL`, `AdjC`, `AdjVo` — so that the
+candlesticks and the indicators are on one basis; `DATA_CONTRACT.md` section 11
+records that decision and the reasoning behind it. A response without the
+adjusted fields is refused rather than filled from the unadjusted ones.
+
+Failures are separated by what an operator would do about them:
+`AuthenticationError` for a rejected or absent key, `RateLimitError` for a
+throttle the retries did not clear, `DataUnavailableError` for a range or a
+dataset the plan does not carry, `InvalidStockCodeError` for a code that cannot
+name a listing, and `DataSourceError` for the rest.
+
+A source refuses to be built without an API key, before a socket is opened.
+`LazySource` defers that construction to the first fetch, which is what lets the
+chart-only runs — the long and short passes of `run.sh`, and a workstation
+redrawing from a stored CSV — work with no credential at all while a fetching
+run still fails before it reaches the network.
+
+`requests` is imported inside the adapter, so the package imports without it.
+
+The adapter does not know what is on disk, does not know which provider wrote
+it, and does not know what plan it is on. The dates it may ask for are decided
+above it, by `Settings.fetch_window`.
 
 ### 4.12 `finance/analysis.py`
 
@@ -172,17 +197,37 @@ continue, and returning both the results and the failures.
 The summary pipeline: read the stock list, load the stored indicator frames,
 aggregate, write, and optionally keep a dated copy.
 
+It is where the plan's delay enters the summaries. Staleness is measured against
+the newest date the plan publishes, not against today; compared with today, a
+source publishing weeks in arrears would drop every stock as stale and write an
+empty table every evening.
+
 ### 4.14 `finance/notification.py`
 
 Builds and sends the report mail. The transport is a parameter, so a test
 asserts the message without opening a connection. Sending is refused unless mail
 is enabled and the host name matches the configured suffix.
 
+### 4.14a `finance/migration.py`
+
+Moves the stored per-stock price and indicator files into a dated archive, so
+that the next run rebuilds them from the current source. Nothing is deleted, the
+stock lists and summaries are left alone, and no daily path calls it.
+
+It exists because the previous provider's series and the current one's do not
+mean the same thing, and the update path merges stored rows with fetched ones.
+Merging two bases would produce a file whose halves disagree in a way no
+indicator would report. Deciding to retire the older half is the operator's
+call, and the data source layer is deliberately kept ignorant of it.
+
 ### 4.15 `finance/cli/`
 
-Three entry points and their shared helpers. Each parses arguments, resolves
+Four entry points and their shared helpers. Each parses arguments, resolves
 settings, calls one function in the application layer and reports what happened.
 No analysis is written here.
+
+`charts.py`, `summary.py` and `notify.py` are the daily commands. `migrate.py`
+is run once by hand and is not in `run.sh`.
 
 ## 5. The flow of one stock
 
@@ -237,6 +282,17 @@ Resolved into a frozen `Settings` dataclass at the entry point and passed down.
 A command line override is applied with `dataclasses.replace`, so a module below
 never sees a mutable object it could change.
 
+`Settings.jquants` holds the endpoint, the credential and the plan's published
+properties — how far behind today its newest row is, and how far back it keeps
+data. `fetch_window(today)` turns those into the range a fetch may ask for, and
+raises a configured start date that predates the plan rather than refusing it.
+Both numbers live here and nowhere else, because they are properties of a
+subscription that can change.
+
+The API key is read from `JQUANTS_API_KEY` and from nothing else. It is refused
+if it appears in the configuration file, and its field is excluded from the
+dataclass repr so that logging a `Settings` cannot disclose it.
+
 `--data-dir` moves the history directory with it unless the history directory
 was configured on its own, so that the option moves the whole output of a run
 rather than half of it.
@@ -247,7 +303,7 @@ Each layer converts what it catches:
 
 | Layer | Catches | Raises |
 |---|---|---|
-| `datasources/yahoo` | any client exception | `DataSourceError` |
+| `datasources/jquants` | any HTTP client exception, any refused status | `DataSourceError` and its four subtypes |
 | `indicators` | any TA-Lib exception | `IndicatorError` |
 | `models` | any scikit-learn exception | `ModelError` |
 | `storage` | `OSError`, parser errors | `StorageError`, `DataFormatError` |

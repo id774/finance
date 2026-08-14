@@ -82,7 +82,7 @@ def make_frame(closes, last_date=RUN_DATE, classified=1, predicted=2500, rsi=55.
 
 def test_trend_summary_carries_the_contract_columns():
     frames = {("7203", "トヨタ"): make_frame([2000.0, 2050.0, 2100.0])}
-    table = Aggregator(frames).summarize(span=1, today=RUN_DATE)
+    table = Aggregator(frames).summarize(span=1, as_of=RUN_DATE)
 
     assert list(table.columns) == [
         "Open",
@@ -101,7 +101,7 @@ def test_trend_summary_carries_the_contract_columns():
 def test_screening_summary_substitutes_its_key():
     frames = {("7203", "トヨタ"): make_frame([2000.0, 2050.0, 2100.0], rsi=68.4)}
     table = Aggregator(frames).summarize(
-        span=1, sortkey="rsi14", screening_key="rsi14", today=RUN_DATE
+        span=1, sortkey="rsi14", screening_key="rsi14", as_of=RUN_DATE
     )
 
     assert list(table.columns) == [
@@ -125,7 +125,7 @@ def test_summary_columns_helper_matches_the_layouts():
 
 def test_row_values_are_truncated_not_rounded():
     frames = {("7203", "トヨタ"): make_frame([2000.9, 2050.9, 2100.9])}
-    table = Aggregator(frames).summarize(span=1, today=RUN_DATE)
+    table = Aggregator(frames).summarize(span=1, as_of=RUN_DATE)
 
     assert table.loc["7203", "Close"] == 2100
     assert table.loc["7203", "High"] == 2110
@@ -136,10 +136,10 @@ def test_change_spans_the_requested_rows():
     closes = [1000.0, 1100.0, 1200.0, 1300.0, 1400.0]
     frames = {("7203", "トヨタ"): make_frame(closes)}
 
-    one = Aggregator(frames).summarize(span=1, today=RUN_DATE)
+    one = Aggregator(frames).summarize(span=1, as_of=RUN_DATE)
     assert one.loc["7203", "Change"] == 100
 
-    three = Aggregator(frames).summarize(span=3, today=RUN_DATE)
+    three = Aggregator(frames).summarize(span=3, as_of=RUN_DATE)
     assert three.loc["7203", "Change"] == 300
 
 
@@ -150,7 +150,7 @@ def test_ratio_keeps_its_historical_formula():
     assert change_ratio(-50, 1000) == round(-49 / 1000 * 100, 2)
 
     frames = {("7203", "トヨタ"): make_frame([2000.0, 2100.0])}
-    table = Aggregator(frames).summarize(span=1, today=RUN_DATE)
+    table = Aggregator(frames).summarize(span=1, as_of=RUN_DATE)
     assert table.loc["7203", "Ratio"] == change_ratio(100, 2100)
 
 
@@ -159,19 +159,19 @@ def test_a_stale_stock_is_dropped():
     fresh = make_frame([200.0, 220.0])
     frames = {("1111", "古い"): stale, ("2222", "新しい"): fresh}
 
-    table = Aggregator(frames).summarize(span=1, today=RUN_DATE)
+    table = Aggregator(frames).summarize(span=1, as_of=RUN_DATE)
     assert list(table.index) == ["2222"]
 
 
 def test_a_stock_just_inside_the_cutoff_is_kept():
     recent = make_frame([100.0, 110.0], last_date=RUN_DATE - timedelta(days=9))
-    table = Aggregator({("1111", "ぎりぎり"): recent}).summarize(span=1, today=RUN_DATE)
+    table = Aggregator({("1111", "ぎりぎり"): recent}).summarize(span=1, as_of=RUN_DATE)
     assert list(table.index) == ["1111"]
 
 
 def test_no_current_stock_yields_an_empty_frame():
     stale = make_frame([100.0, 110.0], last_date=RUN_DATE - timedelta(days=90))
-    table = Aggregator({("1111", "古い"): stale}).summarize(span=1, today=RUN_DATE)
+    table = Aggregator({("1111", "古い"): stale}).summarize(span=1, as_of=RUN_DATE)
     assert table.empty
 
 
@@ -181,11 +181,11 @@ def test_sorting_honours_key_and_direction():
         ("2222", "高い"): make_frame([1000.0, 1500.0]),
     }
 
-    descending = Aggregator(frames).summarize(span=1, sortkey="Ratio", today=RUN_DATE)
+    descending = Aggregator(frames).summarize(span=1, sortkey="Ratio", as_of=RUN_DATE)
     assert list(descending.index) == ["2222", "1111"]
 
     ascending = Aggregator(frames).summarize(
-        span=1, sortkey="Ratio", ascending=True, today=RUN_DATE
+        span=1, sortkey="Ratio", ascending=True, as_of=RUN_DATE
     )
     assert list(ascending.index) == ["1111", "2222"]
 
@@ -193,7 +193,7 @@ def test_sorting_honours_key_and_direction():
 def test_unknown_sort_key_is_refused():
     frames = {("7203", "トヨタ"): make_frame([2000.0, 2100.0])}
     with pytest.raises(DataFormatError, match="Cannot sort by"):
-        Aggregator(frames).summarize(span=1, sortkey="nonexistent", today=RUN_DATE)
+        Aggregator(frames).summarize(span=1, sortkey="nonexistent", as_of=RUN_DATE)
 
 
 def test_a_stock_with_too_few_rows_is_skipped_not_fatal():
@@ -201,31 +201,32 @@ def test_a_stock_with_too_few_rows_is_skipped_not_fatal():
         ("1111", "短い"): make_frame([1000.0, 1010.0]),
         ("2222", "十分"): make_frame([1000.0 + i for i in range(20)]),
     }
-    table = Aggregator(frames).summarize(span=10, today=RUN_DATE)
+    table = Aggregator(frames).summarize(span=10, as_of=RUN_DATE)
     assert list(table.index) == ["2222"]
 
 
 def test_a_missing_screening_column_skips_the_stock():
     frame = make_frame([1000.0, 1010.0]).drop(columns=["rsi14"])
     table = Aggregator({("1111", "欠落"): frame}).summarize(
-        span=1, sortkey=None, screening_key="rsi14", today=RUN_DATE
+        span=1, sortkey=None, screening_key="rsi14", as_of=RUN_DATE
     )
     assert table.empty
 
 
 def test_a_directory_without_indicator_files_aggregates_to_nothing(settings):
     """ The expectation the legacy test_aggregate.py asserted. """
-    entries = [StockEntry("N225", "日経平均株価"), StockEntry("7203", "トヨタ")]
+    entries = [StockEntry("6758", "ソニー"), StockEntry("7203", "トヨタ")]
     frames = load_indicator_frames(settings, entries)
     assert frames == {}
-    assert Aggregator(frames).summarize(today=RUN_DATE).empty
+    assert Aggregator(frames).summarize(as_of=RUN_DATE).empty
 
 
-def test_indices_are_left_out_of_a_summary(settings, indicator_fixture):
-    for code in ("N225", "7203"):
-        path = settings.data_file("ti_{0}.csv".format(code))
-        indicator_fixture.to_csv(path, index_label="Date")
+def test_a_stock_without_a_stored_file_is_left_out_rather_than_raised_on(
+    settings, indicator_fixture
+):
+    path = settings.data_file("ti_7203.csv")
+    indicator_fixture.to_csv(path, index_label="Date")
 
-    entries = [StockEntry("N225", "日経平均株価"), StockEntry("7203", "トヨタ")]
+    entries = [StockEntry("6758", "ソニー"), StockEntry("7203", "トヨタ")]
     frames = load_indicator_frames(settings, entries)
     assert list(frames) == [("7203", "トヨタ")]

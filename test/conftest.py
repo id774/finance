@@ -10,8 +10,13 @@
 #  the real data directory and none of them reach the network.
 #
 #  The price fixture is test/stock_N225.csv, which has been in this
-#  repository since it was written and is the series every expected
-#  value in the suite was derived from. It is not regenerated.
+#  repository since it was written in 2015 and is the series every
+#  expected value in the suite was derived from. It is Nikkei 225 index
+#  data from a provider this pipeline no longer uses, and it is not
+#  regenerated: refreshing it would discard the evidence that the
+#  arithmetic has not moved across three library generations. Nothing
+#  fetched from the current provider joins it, here or anywhere else in
+#  the suite.
 #
 #  Author: id774 (More info: http://id774.net)
 #  Source Code: https://github.com/id774/finance
@@ -23,6 +28,9 @@
 #  - pandas, pytest
 #
 #  Version History:
+#  v1.1 2026-08-14
+#       Give the settings fixture a plan window and record where the
+#       price fixture came from.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -36,7 +44,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from finance.config import MailSettings, Settings
+from finance.config import JQuantsSettings, MailSettings, Settings
 
 FIXTURE_DIR = Path(__file__).parent
 RAW_PRICES = FIXTURE_DIR / "stock_N225.csv"
@@ -81,6 +89,18 @@ def data_dir(tmp_path: Path) -> Path:
     return directory
 
 
+# The committed fixture ends in March 2015, so the plan window the
+# tests run against is one with no delay. The window itself has its own
+# tests; every other test would otherwise be asserting arithmetic on
+# today's date rather than the behaviour it is about.
+FIXTURE_PLAN = JQuantsSettings(
+    api_key="test-key-not-a-real-credential",
+    request_interval=0.0,
+    delay_days=0,
+    retention_days=3650,
+)
+
+
 @pytest.fixture()
 def settings(tmp_path: Path, data_dir: Path) -> Settings:
     """ Return settings bound to temporary directories, with mail disabled. """
@@ -93,6 +113,7 @@ def settings(tmp_path: Path, data_dir: Path) -> Settings:
         font_path="",
         log_level="INFO",
         mail=MailSettings(),
+        jquants=FIXTURE_PLAN,
     )
 
 
@@ -107,8 +128,8 @@ class StubSource:
     A price source that answers from a frame instead of the network.
 
     Every test that needs prices uses this. Nothing in the default suite
-    constructs the real Yahoo source, so a run without connectivity
-    behaves the same as one with it.
+    constructs the real J-Quants source, so a run without connectivity
+    or an API key behaves the same as one with both.
     """
 
     def __init__(self, frame: pd.DataFrame | None = None) -> None:

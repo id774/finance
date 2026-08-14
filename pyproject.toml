@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "finance"
-version = "1.0.0"
-description = "Batch pipeline producing technical analysis data and charts for finance-dashboard"
+version = "1.1.0"
+description = "Personal batch pipeline producing technical analysis data and charts for finance-dashboard"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "GPL-3.0-or-later OR LGPL-3.0-or-later" }
@@ -24,8 +24,8 @@ dependencies = [
     "PyYAML>=6.0,<7",
     "scikit-learn>=1.4,<2",
     "scipy>=1.11,<2",
+    "requests>=2.32,<3",
     "TA-Lib>=0.6,<1",
-    "yfinance>=0.2.40,<2",
 ]
 
 [project.optional-dependencies]
@@ -38,6 +38,7 @@ Homepage = "https://github.com/id774/finance"
 finance-charts = "finance.cli.charts:run"
 finance-summary = "finance.cli.summary:run"
 finance-notify = "finance.cli.notify:run"
+finance-migrate = "finance.cli.migrate:run"
 
 [tool.setuptools.packages.find]
 include = ["finance*"]
