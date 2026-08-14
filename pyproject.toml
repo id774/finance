@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "finance"
-version = "1.1.0"
+version = "1.0.1"
 description = "Personal batch pipeline producing technical analysis data and charts for finance-dashboard"
 readme = "README.md"
 requires-python = ">=3.11"

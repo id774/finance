@@ -1,8 +1,8 @@
 finance Repository Version History
 ==================================
 
-v1.1 (Release Date: TBD)
-------------------------
+v1.0.1 (Release Date: TBD)
+--------------------------
 - Replace Yahoo Finance with the J-Quants API v2 Free plan as the price source.
   finance/datasources/yahoo.py and the yfinance dependency are removed, and
   nothing in the package reaches an unofficial endpoint or parses a web page for

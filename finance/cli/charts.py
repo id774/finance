@@ -64,10 +64,9 @@
 #  - See pyproject.toml
 #
 #  Version History:
-#  v1.1 2026-08-14
+#  v1.0 2026-08-14
 #       Build the J-Quants source from the settings and record where the
 #       data came from.
-#  v1.0 2026-08-14
 #       Replace optparse, honour -u, and call the shared pipeline.
 #
 ########################################################################

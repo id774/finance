@@ -30,10 +30,9 @@
 #  - pandas
 #
 #  Version History:
-#  v1.1 2026-08-14
+#  v1.0 2026-08-14
 #       Add data_source.txt, which states where the generated data came
 #       from and how old it is.
-#  v1.0 2026-08-14
 #       Centralize file access and separate model persistence from
 #       fitting.
 #

@@ -40,9 +40,8 @@
 #  - pandas, pytest
 #
 #  Version History:
-#  v1.1 2026-08-14
-#       Cover the recorded data source and the API key requirement.
 #  v1.0 2026-08-14
+#       Cover the recorded data source and the API key requirement.
 #       Initial release.
 #
 ########################################################################

@@ -33,9 +33,8 @@
 #  - Standard library only
 #
 #  Version History:
-#  v1.1 2026-08-14
-#       Drop the market index codes along with the index data source.
 #  v1.0 2026-08-14
+#       Drop the market index codes along with the index data source.
 #       Replace the pandas based reader with a plain CSV reader.
 #
 ########################################################################

@@ -25,16 +25,15 @@
 #  - Standard library only
 #
 #  Version History:
-#  v1.1 2026-08-14
-#       Quiet the HTTP client's own loggers along with the rest.
 #  v1.0 2026-08-14
+#       Quiet the HTTP client's own loggers along with the rest.
 #       Restructure the repository as an installable package.
 #
 ########################################################################
 
 import logging
 
-__version__ = "1.1.0"
+__version__ = "1.0.1"
 
 LOG_FORMAT = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
 LOG_DATE_FORMAT = "%Y-%m-%dT%H:%M:%S%z"

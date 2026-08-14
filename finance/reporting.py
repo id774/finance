@@ -24,9 +24,8 @@
 #  - pandas
 #
 #  Version History:
-#  v1.1 2026-08-14
-#       Measure staleness against the newest date the plan publishes.
 #  v1.0 2026-08-14
+#       Measure staleness against the newest date the plan publishes.
 #       Separate the summary pipeline from the command line.
 #
 ########################################################################
