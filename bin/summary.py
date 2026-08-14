@@ -1,100 +1,43 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+########################################################################
+# bin/summary.py: Compatibility wrapper for finance-summary
+#
+#  Description:
+#  Forward to the finance-summary command, for the same reason as
+#  bin/charts.py: run.sh and the operator's crontab name this path, and
+#  a deployment should not have to change both at the same moment.
+#
+#  It holds no logic. Every option is parsed by the command it forwards
+#  to.
+#
+#  Author: id774 (More info: http://id774.net)
+#  Source Code: https://github.com/id774/finance
+#  Contact: idnanashi@gmail.com
+#
+#  Usage:
+#      python bin/summary.py -o summary.csv -y -r 1 -k Ratio
+#
+#      Prefer the installed command:
+#      finance-summary -o summary.csv -y -r 1 -k Ratio
+#
+#  Exit Codes:
+#  - Whatever finance-summary returns.
+#
+#  Requirements:
+#  - Python Version: 3.11 or later
+#  - The finance package must be installed.
+#
+#  Version History:
+#  v2.0 2026-08-14
+#       Reduce to a wrapper around finance.cli.summary.
+#
+########################################################################
+
 import sys
-import os
-import datetime
-p = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), '..', 'lib')
-if p not in sys.path:
-    sys.path.append(p)
-from aggregate import Aggregator
 
-class Summary():
+from finance.cli.summary import main
 
-    def __init__(self, filename='stocks.txt', **kwargs):
-        self.c_dir = os.path.dirname(os.path.abspath(__file__))
-        self.base_dir = os.path.join(self.c_dir, '..')
-        self.data_dir = os.path.join(self.base_dir, 'data')
-        self.stock_list = os.path.join(self.data_dir,
-                                       filename)
-        self.aggregator = Aggregator(self.stock_list, self.data_dir)
-
-    def aggregate(self,
-                  filename="stocks.txt",
-                  range=1,
-                  sortkey='Ratio',
-                  screening_key=None,
-                  ascending=False,
-                  history=False):
-        result = self.aggregator.summarize(range=range,
-                                           screening_key=screening_key,
-                                           sortkey=sortkey,
-                                           ascending=ascending)
-        p = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), '..', 'data',
-            filename)
-        result.to_csv(p, sep="\t", index_label="Code")
-
-        if history:
-            today = datetime.datetime.now().strftime('%Y%m%d')
-            p = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)), '..', 'data',
-                'history', "".join([filename, '.', today, '.csv']))
-            result.to_csv(p, sep="\t", index_label="Code")
-
-def main():
-    from optparse import OptionParser
-    usage = "usage: %prog [options] arg"
-    parser = OptionParser(usage)
-    parser.add_option("-s", "--stock", dest="stocktxt",
-                      help="read scraping stock names from text file")
-    parser.add_option("-o", "--output", dest="output",
-                      help="output file name")
-    parser.add_option("-r", "--range", dest="range",
-                      help="range for summary")
-    parser.add_option("-k", "--sortkey", dest="sortkey",
-                      help="sort key")
-    parser.add_option("-a", "--ascending",
-                      help="sort by ascending (default: descending)",
-                      action="store_true", dest="ascending")
-    parser.add_option("-c", "--screening_key", dest="screening_key",
-                      help="screening key")
-    parser.add_option("-y", "--history",
-                      help="save for history file",
-                      action="store_true", dest="history")
-    (options, args) = parser.parse_args()
-
-    if len(args) != 0:
-        parser.error("incorrect number of arguments")
-
-    if options.output is None:
-        options.output = "out.csv"
-
-    if options.range is None:
-        options.range = 1
-
-    if options.stocktxt:
-        summary = Summary(filename=options.stocktxt)
-    else:
-        summary = Summary()
-
-    summary.aggregate(options.output,
-                      range=int(options.range),
-                      sortkey=options.sortkey,
-                      ascending=options.ascending,
-                      screening_key=options.screening_key,
-                      history=options.history)
-
-if __name__ == '__main__':
-    argsmin = 0
-    version = (3, 0)
-    if sys.version_info > (version):
-        if len(sys.argv) > argsmin:
-            result = main()
-            if result:
-                sys.exit(0)
-            else:
-                sys.exit(1)
-        else:
-            print("This program needs at least %(argsmin)s arguments" %
-                  locals())
-    else:
-        print("This program requires python > %(version)s" % locals())
+if __name__ == "__main__":
+    sys.exit(main())

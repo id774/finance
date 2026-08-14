@@ -1,6 +1,25 @@
 .DS_Store
 .svn
+
+# Generated data. The stock lists under data/ are tracked; everything
+# the pipeline writes into it is not.
 data/*.csv
 data/*.png
+data/history/
+clf/*.pickle
 log/*.log
 *.pickle
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Local configuration
+config.yml
