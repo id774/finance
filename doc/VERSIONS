@@ -1,8 +1,8 @@
 finance Repository Version History
 ==================================
 
-v2.0.1 (Release Date: TBD)
---------------------------
+v1.0 (2026-08-14)
+-----------------
 - Declare the repository dual licensed under the GPL version 3 or the LGPL
   version 3, adding doc/LICENSE.md, doc/COPYING and doc/COPYING.LESSER, the
   license field of pyproject.toml, and the license line of every module header.
@@ -10,13 +10,11 @@ v2.0.1 (Release Date: TBD)
   of doc/MODERNIZATION_PLAN.md resolved, keeping the earlier text as the record
   of why the modernization added none.
 - Start file level version management at v1.0 for every module, renumbering the
-  single v2.0 entry each header carried and leaving its description unchanged.
+  single modernization entry each header carried and leaving its description
+  unchanged.
 - State the module header order in doc/POLICY.md section 2.7, including the
   license line and what a Description is required to establish.
 - Add this file, and link the license and history documents from README.md.
-
-v2.0 (2026-08-14)
------------------
 - Restructure the repository as an installable Python package with a one-way
   dependency direction, replacing the sys.path manipulation that let bin/
   import lib/. test/test_package.py asserts the direction against the source.
@@ -47,10 +45,10 @@ v2.0 (2026-08-14)
 - Add doc/REQUIREMENTS.md, doc/BASIC_DESIGN.md, doc/DATA_CONTRACT.md,
   doc/POLICY.md, doc/DEPLOYMENT.md and doc/MODERNIZATION_PLAN.md.
 
-Before v2.0
+Before v1.0
 -----------
 - The repository carries no release tag and no version file for any revision
-  before v2.0, so no earlier version number is recorded here. The work of that
+  before v1.0, so no earlier version number is recorded here. The work of that
   period survives as a numbered commit series ending at "323 Correspond to 10
   days off", and the commit log is its only history. Nothing has been
   reconstructed from it into a version entry.

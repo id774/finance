@@ -32,7 +32,7 @@
 
 import logging
 
-__version__ = "2.0.0"
+__version__ = "1.0.0"
 
 LOG_FORMAT = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
 LOG_DATE_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
