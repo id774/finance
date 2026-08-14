@@ -146,8 +146,8 @@ the response carries none. The v1 refresh-token exchange was withdrawn on
 
 ### Market indices are gone
 
-Earlier versions charted N225, GSPC, IXIC and DJI. The Free plan carries no
-index values, and no free, licensed, machine-readable alternative has been
+Earlier versions charted four market indices. The Free plan carries no index
+values, and no free, licensed, machine-readable alternative has been
 adopted, so the capability is withdrawn rather than replaced. Nothing in the
 analysis of Japanese equities depends on a reference index: no indicator,
 summary, screening or model takes one as an input.
@@ -707,8 +707,8 @@ This is the change that needs action on both sides.
 4. **Expect delayed data.** The newest row is weeks old, and
    `data_source.txt` says by how much. This is the plan working as intended, not
    a stalled pipeline.
-5. **Drop the market indices from your stock lists.** N225, GSPC, IXIC and DJI
-   cannot be fetched on this plan and are refused as codes. The shipped
+5. **Drop the market indices from your stock lists.** They cannot be fetched on
+   this plan and are refused as codes. The shipped
    `stocks.txt` now holds listed equities.
 6. **`START_DATE` in `run.sh` is empty by default**, meaning the whole plan
    window. An explicit older date is raised rather than refused, so an existing

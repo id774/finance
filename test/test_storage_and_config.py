@@ -42,6 +42,7 @@
 from __future__ import annotations
 
 from datetime import date
+from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -163,6 +164,15 @@ def test_stock_list_reads_optional_columns(tmp_path):
     assert entries[1].display_name == "トヨタ自動車(株)"
 
 
+def test_shipped_stock_lists_name_the_same_core30_constituents():
+    root = Path(__file__).parent.parent
+    stocks = read_stock_list(root / "data" / "stocks.txt")
+    core30 = read_stock_list(root / "data" / "topix_core30.txt")
+
+    assert [entry.code for entry in stocks] == [entry.code for entry in core30]
+    assert len(core30) == 31
+
+
 def test_a_missing_stock_list_is_reported(tmp_path):
     with pytest.raises(StorageError, match="does not exist"):
         read_stock_list(tmp_path / "absent.txt")
@@ -170,7 +180,7 @@ def test_a_missing_stock_list_is_reported(tmp_path):
 
 def test_a_one_column_line_is_refused(tmp_path):
     path = tmp_path / "stocks.txt"
-    path.write_text("N225\n", encoding="utf-8")
+    path.write_text("7203\n", encoding="utf-8")
     with pytest.raises(DataFormatError, match="at least a code and a name"):
         read_stock_list(path)
 

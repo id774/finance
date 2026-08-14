@@ -129,8 +129,8 @@ operator performs rather than something a nightly job decides.
 
 ### 7.4 Market indices
 
-None. The system previously charted N225, GSPC, IXIC and DJI, fetched from a
-provider it no longer uses. The J-Quants Free plan carries no index values, and
+None. The system previously charted four market indices fetched from a provider
+it no longer uses. The J-Quants Free plan carries no index values, and
 no free, licensed, machine-readable source for them has been adopted.
 
 The requirement is therefore withdrawn rather than met by other means. The
