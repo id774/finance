@@ -320,7 +320,7 @@ This repository was left behind by exactly the practices this section forbids.
 - An interpreter path is a default that can be overridden, not a constant
   compiled into the script.
 
-### 2.7 Documentation
+### 2.7 Documentation and Versioning
 
 Every module carries a header block in this order: `Description`, the standard
 `Author`, `Source Code`, `License`, `Contact` block, `Usage` and `Options`
@@ -337,14 +337,140 @@ not a list of the functions below it, which the code already carries.
 - A change to a generated file updates `DATA_CONTRACT.md` and
   `test/test_contract.py` in the same change. A contract change with no test
   change has not been made.
-- Module versions use a two-level `major.minor` scheme. Do not bump for a
-  comment, formatting or documentation-only change; do bump for anything that
-  changes behaviour.
 - Documents named `.md` are Markdown and may assume a renderer. Prose is wrapped
   near the width the document already uses; a URL, a table row or a code block
   may run long.
 - Comments, docstrings and documents are in English. Japanese appears only where
   it is data: a company name, a chart caption, a stock list.
+
+#### 2.7.1 When to Bump a Module Version
+
+- These rules apply to the `Version History` in each module header. Repository
+  release versions and Git tags follow the separate rules below.
+- Do not bump the version mechanically every time a file is touched. Decide
+  based on the nature of the change:
+  - Documentation-only, comment-only and formatting-only changes (help text,
+    README/POLICY/VERSIONS wording, whitespace and layout, with no effect on
+    behaviour) do not bump the version.
+  - Any change that affects code behaviour (bug fixes, new options, and
+    refactors that change observable behaviour) bumps the version.
+  - Multiple updates on the same date are consolidated into a single version
+    entry; do not increment the version multiple times on the same date.
+  - Finalizing only the release date of an entry that already exists, such as
+    changing `TBD` to the actual date, is not by itself a new change. Classify
+    that entry as version-only or as containing real changes based on what it
+    actually contains, not on the date edit.
+- A `Version History` entry is written as `vX.Y YYYY-MM-DD`, newest first, and
+  the date is the date of the change.
+
+#### 2.7.2 Module Version Numbering
+
+- Versions use a two-level `major.minor` scheme.
+- When incrementing `minor` would reach `10`, roll over instead: increment
+  `major` by 1 and reset `minor` to `0` (for example `v0.9` -> `v1.0`,
+  `v1.9` -> `v2.0`, `v2.9` -> `v3.0`).
+- Do not continue `minor` past `9` as in standard semantic versioning
+  (do not use `v1.10`, `v1.11`, ...).
+- Raising `major` for a reason other than the rollover is a decision the
+  maintainer makes, not one this document derives from the change.
+- Removing or renaming an option, changing what an existing argument means,
+  changing a default so that an unchanged invocation does something else, and
+  changing how a path or a configuration value is resolved are all incompatible
+  changes. Say so in the `Version History` entry, so that the number the change
+  is released under can be chosen knowing that.
+
+#### 2.7.3 Repository Versioning
+
+- Repository release versions are independent of individual module versions.
+- Record repository release versions in [`VERSIONS`](VERSIONS) and use the same
+  versions for Git tags.
+- Repository release versions may use a three-level `major.minor.patch` scheme.
+- Work that is not released yet takes no version of its own: it belongs to the
+  entry already standing at the top of `doc/VERSIONS`.
+- An unreleased entry carries `(Release Date: TBD)`, and its version number
+  stays provisional until it ships. An entry opened as
+  `v1.0.1 (Release Date: TBD)` may be released under a different number once
+  what accumulated in it is known; which number it takes is decided then.
+- Replacing `TBD` with the actual release date is the release itself, not a
+  change to record in the entry.
+- A documentation-only change takes no `doc/VERSIONS` entry, unless its scale
+  makes it worth one line saying so.
+- The version declared in `pyproject.toml`, the one exposed as
+  `finance.__version__`, and the one the `finance-*` commands print for
+  `--version` are the repository release version. They are one number and are
+  changed together.
+- File level `Version History` and the repository level `doc/VERSIONS` are kept
+  apart. A release entry does not raise a module version, and a module version
+  does not become a release entry unless the change is observable from outside.
+
+#### 2.7.4 doc/VERSIONS Structure
+
+- `doc/VERSIONS` must read as a version-level summary of overall changes, not a
+  raw commit log. It tells a reader what a release changed. It is not the place
+  to transcribe how that work happened to be committed.
+- Each entry opens with a heading of the form `vX.Y.Z (YYYY-MM-DD)`, or
+  `vX.Y.Z (Release Date: TBD)` while it is unreleased, underlined with `-`
+  characters, followed by one `-` bullet per change.
+- Use UTF-8.
+
+##### 2.7.4.1 One Change per Line
+
+- One coherent change is one bullet, written on one physical line. That is the
+  rule, and the one case standing outside it closes this section. The entry is a
+  list meant to be scanned, and a wrapped bullet costs it that: the eye no
+  longer finds the changes by counting lines, and a diff no longer shows one
+  added line per added change.
+- This is a deliberate exception to the line length the other plain text
+  documents follow, not an oversight in this file. Do not rewrap `doc/VERSIONS`
+  to 80 columns, and do not report a long bullet here as a violation of that
+  guidance.
+- Aim for about 100 columns. A bullet that has to carry file names, command
+  names, function names, option names or configuration names may run to about
+  120 columns, or past that when the names it needs are that long.
+- Those figures are a prompt to reread the bullet, not a limit to enforce. They
+  ask whether the sentence has grown past what a reader of the version history
+  needs. A bullet that is long because the change is long is correct.
+- Bullets written before this rule are left wrapped as they stand. The rule
+  applies to what is written from now on.
+- `doc/VERSIONS` carries these guidelines again at its foot, and an entry
+  written into it follows the reasons recorded there.
+- The case standing outside the rule is a version history that has already
+  settled on a width and a layout of its own. There a new bullet is wrapped to
+  that width and balanced against the lines already standing, so that the
+  version history stays of a piece, and that consistency comes before the one
+  physical line asked for above. Wrapping to hold an established form does not
+  overturn the rule; where a file has settled on no such form, one change is
+  still one physical line.
+
+##### 2.7.4.2 Shortening a Long Entry
+
+- When a bullet runs long, the first move is to abstract it, never to break it
+  across lines. Drop the implementation detail, the examples, the reason and the
+  secondary effects, and state what the change is.
+- Keep what a reader of the release cannot reconstruct without it: what was
+  changed, what is now observably different from outside, what it does to
+  compatibility, what it does to safety, and the identifiers someone would
+  search for.
+- A bullet that is long because it names what it must name stays long. Do not
+  cut a file name, an option name or a configuration key to reach a column
+  count.
+
+##### 2.7.4.3 Grouping and Order
+
+- When multiple changes to the same file within one version are really one
+  coherent change, merge them into a single bullet instead of listing them
+  separately. Changes that serve one purpose are described together even when
+  they touch several files.
+- Changes to one file that carry independent meaning are not forced together.
+  Coherence decides, not the file name.
+- When changes are independent, still place entries that touch the same file or
+  the same feature near each other, so that each version's entry reads as a
+  coherent, reviewable whole rather than an unordered sequence of unrelated
+  lines.
+- An independent change that belongs with nothing already listed is appended to
+  the end of the current version's entry.
+- Order within a version serves the reader, not the commit history. Do not
+  preserve commit order at the cost of the entry reading as a whole.
 
 ### 2.8 License
 
