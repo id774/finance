@@ -564,10 +564,8 @@ the record of why the plan itself added no license.
 
 The repository has never contained a `LICENSE`, `COPYING` or any license header,
 in any commit reachable in its history. `README.md` states none, and
-`pyproject.toml` did not exist. The sibling repositories `finance-dashboard` and
-`reply-writer` are both dual licensed GPL-3.0-or-later or LGPL-3.0-or-later and
-carry the texts under `doc/`, which suggests the same intent here — but that is
-an inference about the author's wishes, not a fact recorded in this repository.
+`pyproject.toml` did not exist. No license intent was therefore recorded in this
+repository.
 
 Choosing a license is the copyright holder's decision and is out of scope for a
 modernization. `pyproject.toml` therefore carries **no** `license` field, and no

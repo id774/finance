@@ -790,10 +790,8 @@ For full details, please refer to [`doc/LICENSE.md`](doc/LICENSE.md). See also
 [`doc/COPYING`](doc/COPYING) and [`doc/COPYING.LESSER`](doc/COPYING.LESSER) for
 the complete license texts.
 
-The same terms apply to the sibling repositories `finance-dashboard` and
-`reply-writer`, so the three are consistent. `pyproject.toml` carries the
-matching `license` field, and every source module repeats the terms in its
-header block.
+`pyproject.toml` carries the matching `license` field, and every source module
+repeats the terms in its header block.
 
 Third-party components keep their own licenses. This repository bundles none;
 its dependencies are installed from PyPI and are listed in `pyproject.toml`.

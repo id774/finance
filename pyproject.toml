@@ -51,7 +51,7 @@ target-version = "py311"
 select = ["E", "F", "I", "W", "UP", "B"]
 ignore = [
     # The encoding declaration and str.format() over f-strings are the
-    # house style shared with the sibling repositories, not oversights.
+    # repository's established style, not oversights.
     "UP009",
     "UP030",
     "UP032",
