@@ -11,7 +11,8 @@ v1.0.1 (Release Date: TBD)
   URL, /equities/bars/daily, pagination, the request interval, retries,
   timeouts, HTTP status handling, the abbreviated v2 field names and the five
   character stock code form, and lets none of them out. The analysis layer
-  receives the same six column frame it always did.
+  receives the same six column frame it always did. Refuse a response when any
+  row is missing a required field, reporting the provider error consistently.
 - Take all six canonical columns from the adjusted series, so that candlesticks
   and indicators sit on one basis for the first time. No formula changed; the
   contract test still regenerates all 42 computed columns of the committed

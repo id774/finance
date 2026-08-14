@@ -62,7 +62,8 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Initial release, replacing the Yahoo Finance adapter.
+#       Initial release, replacing the Yahoo Finance adapter. Refuse a
+#       missing required field in any response row.
 #
 ########################################################################
 
@@ -203,12 +204,15 @@ def normalize(rows: list[dict[str, Any]], code: str) -> pd.DataFrame:
         return pd.DataFrame(columns=list(CANONICAL_COLUMNS))
 
     required = {DATE_FIELD, *FIELD_MAP.values()}
-    missing = sorted(required.difference(rows[0]))
-    if missing:
-        raise DataSourceError(
-            "Response for {0} is missing {1}. Adjusted prices are required and are "
-            "not substituted from the unadjusted fields.".format(code, ", ".join(missing))
-        )
+    for row_number, row in enumerate(rows, start=1):
+        missing = sorted(required.difference(row))
+        if missing:
+            raise DataSourceError(
+                "Response row {0} for {1} is missing {2}. Adjusted prices are required and "
+                "are not substituted from the unadjusted fields.".format(
+                    row_number, code, ", ".join(missing)
+                )
+            )
 
     index = pd.to_datetime([row[DATE_FIELD] for row in rows], errors="coerce")
     if index.hasnans:
