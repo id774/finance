@@ -8,10 +8,9 @@ version = "2.0.0"
 description = "Batch pipeline producing technical analysis data and charts for finance-dashboard"
 readme = "README.md"
 requires-python = ">=3.11"
+license = { text = "GPL-3.0-or-later OR LGPL-3.0-or-later" }
 authors = [{ name = "id774", email = "idnanashi@gmail.com" }]
 keywords = ["finance", "technical-analysis", "stocks", "batch"]
-# No license field: this repository has never declared one. See
-# doc/MODERNIZATION_PLAN.md section 15.
 classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",

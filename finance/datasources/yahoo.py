@@ -42,6 +42,7 @@
 #
 #  Author: id774 (More info: http://id774.net)
 #  Source Code: https://github.com/id774/finance
+#  License: The GPL version 3, or LGPL version 3 (Dual License).
 #  Contact: idnanashi@gmail.com
 #
 #  Requirements:
@@ -49,7 +50,7 @@
 #  - pandas, yfinance
 #
 #  Version History:
-#  v2.0 2026-08-14
+#  v1.0 2026-08-14
 #       Initial release.
 #
 ########################################################################

@@ -1,0 +1,79 @@
+finance Repository Version History
+==================================
+
+v2.0.1 (Release Date: TBD)
+--------------------------
+- Declare the repository dual licensed under the GPL version 3 or the LGPL
+  version 3, adding doc/LICENSE.md, doc/COPYING and doc/COPYING.LESSER, the
+  license field of pyproject.toml, and the license line of every module header.
+- Record the license decision in doc/POLICY.md section 2.8 and mark section 15
+  of doc/MODERNIZATION_PLAN.md resolved, keeping the earlier text as the record
+  of why the modernization added none.
+- Start file level version management at v1.0 for every module, renumbering the
+  single v2.0 entry each header carried and leaving its description unchanged.
+- State the module header order in doc/POLICY.md section 2.7, including the
+  license line and what a Description is required to establish.
+- Add this file, and link the license and history documents from README.md.
+
+v2.0 (2026-08-14)
+-----------------
+- Restructure the repository as an installable Python package with a one-way
+  dependency direction, replacing the sys.path manipulation that let bin/
+  import lib/. test/test_package.py asserts the direction against the source.
+- Migrate the calculations to pandas 3, NumPy 2.4, TA-Lib 0.7 and
+  scikit-learn 1.9 without changing a formula, asserting every expected value
+  the 2015 suite asserted on the same committed fixture.
+- Replace the removed APIs: pandas.stats.moments.ewma, pandas.core.datetools,
+  the private pandas plotting registries, matplotlib.finance.candlestick_ochl,
+  pd.rolling_*, DataFrame.ix, DataFrame.sort, Timestamp.to_datetime, optparse
+  and cPickle. Charts are drawn with matplotlib primitives against row
+  positions, preserving the series, colours, legends, figure size and caption.
+- Replace the dead price sources with one yfinance adapter behind a protocol,
+  normalizing everything that differs from the old readers.
+- Replace bin/email.rb with the finance-notify command, removing the Ruby
+  runtime and the mail gem from the deployment.
+- Rewrite run.sh and deploy.sh as POSIX sh that report a failed step instead of
+  always exiting zero; deploy.sh installs a package into a virtual environment
+  instead of copying bin/ and lib/. The cron schedule is unchanged.
+- Honour -u on the stock-list path of the chart command, which was accepted and
+  then ignored, so only the run that passes it fetches, retrains and rewrites
+  ti_CODE.csv. The file keeps its 240-row window; its name, separator, index
+  and columns are unchanged.
+- Raise the minimum Python to 3.11 and move the dependencies from 2015-2016
+  pins to bounded current ranges.
+- Keep the data contract with finance-dashboard unchanged and pin it with tests
+  that parse the generated files exactly as finance_dashboard/data.py does.
+  doc/DATA_CONTRACT.md is the normative description.
+- Add doc/REQUIREMENTS.md, doc/BASIC_DESIGN.md, doc/DATA_CONTRACT.md,
+  doc/POLICY.md, doc/DEPLOYMENT.md and doc/MODERNIZATION_PLAN.md.
+
+Before v2.0
+-----------
+- The repository carries no release tag and no version file for any revision
+  before v2.0, so no earlier version number is recorded here. The work of that
+  period survives as a numbered commit series ending at "323 Correspond to 10
+  days off", and the commit log is its only history. Nothing has been
+  reconstructed from it into a version entry.
+
+Version History Guidelines
+==========================
+- Write one coherent change per physical line, as a rule.
+- Keep entries near 100 columns where practical. Necessary file names,
+  command names, option names, and configuration names may extend an entry
+  to approximately 120 columns.
+- When a version history already exists, balance a new entry against the
+  length of the existing lines, so that the whole file stays consistent.
+- When an entry becomes substantially longer, omit or abstract implementation
+  details, examples, reasons, and secondary effects where possible.
+- Preserve the changed target, externally observable behavior, compatibility
+  or security impact, and important option or configuration names.
+- Combine related changes within the same version, especially changes to the
+  same file or feature.
+- Place closely related entries near each other.
+- Append an independent new change to the end of the current version entry.
+- This file records the history of the repository. The Version History block in
+  a module header records the history of that file, and the two are kept apart:
+  a release entry here does not raise a module version, and a module version
+  does not become an entry here unless the change is observable from outside.
+- A change to a generated file is recorded here and in doc/DATA_CONTRACT.md in
+  the same commit, because finance-dashboard reads those files positionally.
