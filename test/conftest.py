@@ -28,10 +28,9 @@
 #  - pandas, pytest
 #
 #  Version History:
-#  v1.1 2026-08-14
+#  v1.0 2026-08-14
 #       Give the settings fixture a plan window and record where the
 #       price fixture came from.
-#  v1.0 2026-08-14
 #       Initial release.
 #
 ########################################################################

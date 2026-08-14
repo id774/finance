@@ -64,10 +64,9 @@
 #  - 1: At least one step failed.
 #
 #  Version History:
-#  v1.1 2026-08-14
+#  v1.0 2026-08-14
 #       Read the API key from an environment file and check that step 1
 #       has one before the job starts.
-#  v1.0 2026-08-14
 #       Rewrite for POSIX sh, report failures, and drop the Ruby mailer.
 #
 ########################################################################

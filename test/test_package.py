@@ -44,9 +44,8 @@
 #  - pytest
 #
 #  Version History:
-#  v1.1 2026-08-14
-#       Guard the data source decision and the API key.
 #  v1.0 2026-08-14
+#       Guard the data source decision and the API key.
 #       Initial release.
 #
 ########################################################################

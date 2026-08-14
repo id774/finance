@@ -52,10 +52,9 @@
 #  - pandas, pytest
 #
 #  Version History:
-#  v1.1 2026-08-14
+#  v1.0 2026-08-14
 #       Pin data_source.txt, which tells the dashboard how old the data
 #       it is showing is.
-#  v1.0 2026-08-14
 #       Initial release.
 #
 ########################################################################

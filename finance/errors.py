@@ -32,10 +32,9 @@
 #  - Standard library only
 #
 #  Version History:
-#  v1.1 2026-08-14
+#  v1.0 2026-08-14
 #       Add the authentication, rate limit, unavailable dataset and
 #       invalid code errors the J-Quants adapter distinguishes.
-#  v1.0 2026-08-14
 #       Initial release.
 #
 ########################################################################
