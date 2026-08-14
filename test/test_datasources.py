@@ -24,6 +24,7 @@
 #  - Every column is taken from the adjusted series.
 #  - A response without the adjusted fields is refused, not filled from
 #    the unadjusted ones.
+#  - A required field missing from a later response row is refused.
 #  - Dates are parsed, sorted, deduplicated and reindexed to business
 #    days, and carry no timezone.
 #  - A null figure becomes a gap rather than a zero.
@@ -52,7 +53,8 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Initial release, replacing the Yahoo adapter tests.
+#       Initial release, replacing the Yahoo adapter tests. Cover a
+#       required field missing from a later response row.
 #
 ########################################################################
 
@@ -215,6 +217,14 @@ def test_a_response_without_the_adjusted_fields_is_refused():
             if not key.startswith("Adj")}
     with pytest.raises(DataSourceError, match="AdjC"):
         normalize([bare], "7203")
+
+
+def test_a_required_field_missing_from_a_later_row_is_refused():
+    response_rows = rows()
+    del response_rows[1]["AdjC"]
+
+    with pytest.raises(DataSourceError, match=r"row 2.*AdjC"):
+        normalize(response_rows, "7203")
 
 
 def test_the_index_is_sorted_naive_and_on_business_days():
