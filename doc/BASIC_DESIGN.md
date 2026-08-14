@@ -80,8 +80,8 @@ continue or stop on that difference.
 
 ### 4.4 `finance/stocklist.py`
 
-Parses the comma separated stock lists into `StockEntry` values, and knows which
-codes name a market index rather than a company.
+Parses the comma separated stock lists into `StockEntry` values. Every entry
+names a listing on the Tokyo exchange; market indices are not accepted.
 
 ### 4.5 `finance/indicators.py`
 
@@ -239,7 +239,7 @@ finance-charts -s stocks.txt -y 240 -u
 for each entry:
     |
     | read stock_CODE.csv                     storage
-    | fetch from the next business day        datasources/yahoo
+    | fetch from the next business day        datasources/jquants
     | combine, stored rows winning            analysis
     | write stock_CODE.csv                    storage
     v
@@ -265,8 +265,8 @@ keeps showing the last real trading day.
 finance-summary -o portfolio.csv -s my_stocks.txt -r 1 -k Ratio
     |
     | read_stock_list()                       stocklist
-    | load each ti_CODE.csv, skipping indices
-    |   and stocks with no file               analysis + storage
+    | load each ti_CODE.csv, skipping stocks
+    |   with no file                          analysis + storage
     v
     | reduce each to one row, dropping the
     |   stale and the too-short               aggregation
