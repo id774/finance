@@ -1,1 +1,16 @@
+# Daily technical analysis run for the finance pipeline.
+#
+# The schedule is unchanged from the original deployment: 18:10 on
+# weekdays, after the Tokyo close at 15:00 and late enough for the day's
+# prices to have settled at the source. It is kept as it is because it
+# works and the operator relies on it; nothing about the modernization
+# calls for moving it, and there is no reason to prefer a systemd timer
+# for a plain daily batch.
+#
+# run.sh exits non-zero when a step fails, so cron mails root on a
+# partial run instead of the failure going unnoticed.
+
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
 10 18  * * 1-5 root test -x /var/stock/run.sh && /var/stock/run.sh

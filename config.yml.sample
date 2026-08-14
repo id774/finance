@@ -1,0 +1,44 @@
+# Sample configuration for the finance pipeline.
+#
+# Copy to config.yml, or point FINANCE_CONFIG at it. Every key here has
+# an equivalent environment variable, which takes precedence, and a
+# command line option takes precedence over both. See the Configuration
+# section of README.md.
+#
+# Nothing in this file is required. With no configuration at all the
+# pipeline writes into ./data and ./clf and sends no mail.
+
+paths:
+  # Where the generated CSV, TXT and PNG files go. This is the
+  # directory finance-dashboard reads.
+  data_dir: /var/stock/data
+  # Dated copies of the summaries. Defaults to <data_dir>/history.
+  history_dir: /var/stock/data/history
+  # Pickled models, one pair per stock code.
+  model_dir: /var/stock/clf
+
+pipeline:
+  # Default stock list, resolved against the data directory.
+  stock_list: stocks.txt
+  # Earliest date fetched for a stock with no stored history.
+  start_date: 2014-10-01
+
+charts:
+  # TrueType font for the Japanese chart caption. Without a usable font
+  # the chart is still drawn, but the caption renders as boxes.
+  font_path: /usr/share/fonts/truetype/fonts-japanese-gothic.ttf
+
+logging:
+  level: INFO
+
+mail:
+  # Reports are only sent when this is true and both addresses are set.
+  enabled: false
+  host: localhost
+  port: 25
+  sender: finance@example.net
+  recipient: finance@example.net
+  # Only send when the host name ends with this suffix. It keeps a copy
+  # of the tree on a workstation from mailing anyone. Leave empty to
+  # send from any host.
+  hostname_suffix: example.net

@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "finance"
+version = "2.0.0"
+description = "Batch pipeline producing technical analysis data and charts for finance-dashboard"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "id774", email = "idnanashi@gmail.com" }]
+keywords = ["finance", "technical-analysis", "stocks", "batch"]
+# No license field: this repository has never declared one. See
+# doc/MODERNIZATION_PLAN.md section 15.
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
+dependencies = [
+    "matplotlib>=3.8,<4",
+    "numpy>=1.26,<3",
+    "pandas>=2.2,<4",
+    "PyYAML>=6.0,<7",
+    "scikit-learn>=1.4,<2",
+    "scipy>=1.11,<2",
+    "TA-Lib>=0.6,<1",
+    "yfinance>=0.2.40,<2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.5"]
+
+[project.urls]
+Homepage = "https://github.com/id774/finance"
+
+[project.scripts]
+finance-charts = "finance.cli.charts:run"
+finance-summary = "finance.cli.summary:run"
+finance-notify = "finance.cli.notify:run"
+
+[tool.setuptools.packages.find]
+include = ["finance*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
+ignore = [
+    # The encoding declaration and str.format() over f-strings are the
+    # house style shared with the sibling repositories, not oversights.
+    "UP009",
+    "UP030",
+    "UP032",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+python_files = ["test_*.py"]
+addopts = "--strict-markers -m 'not integration'"
+markers = [
+    "integration: tests that reach the network; excluded from the default run",
+]
+# A FutureWarning from pandas or NumPy is how the next API removal
+# announces itself. This repository was left behind by exactly that, so
+# one fails the suite rather than scrolling past in a nightly log.
+filterwarnings = [
+    "error::FutureWarning",
+    # Charts are drawn during tests without the Japanese caption font
+    # installed, so matplotlib reports a missing glyph per character.
+    "ignore:Glyph .* missing from font.*:UserWarning",
+]
