@@ -503,7 +503,7 @@ it. What changes is how this side is installed and driven.
 | [`doc/DATA_CONTRACT.md`](doc/DATA_CONTRACT.md) | Normative format of every generated file |
 | [`doc/POLICY.md`](doc/POLICY.md) | Implementation rules a change is judged against |
 | [`doc/DEPLOYMENT.md`](doc/DEPLOYMENT.md) | Installing, operating and diagnosing the pipeline |
-| [`doc/MODERNIZATION_PLAN.md`](doc/MODERNIZATION_PLAN.md) | The survey and plan behind the 2.0 rewrite |
+| [`doc/MODERNIZATION_PLAN.md`](doc/MODERNIZATION_PLAN.md) | The survey and plan behind the modernization |
 | [`doc/VERSIONS`](doc/VERSIONS) | Release history of the repository |
 | [`doc/LICENSE.md`](doc/LICENSE.md) | The license, with the full texts beside it |
 
