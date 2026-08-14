@@ -23,6 +23,7 @@
 #
 #  Author: id774 (More info: http://id774.net)
 #  Source Code: https://github.com/id774/finance
+#  License: The GPL version 3, or LGPL version 3 (Dual License).
 #  Contact: idnanashi@gmail.com
 #
 #  Requirements:
@@ -30,7 +31,7 @@
 #  - NumPy, pandas, TA-Lib
 #
 #  Version History:
-#  v2.0 2026-08-14
+#  v1.0 2026-08-14
 #       Port to modern NumPy, pandas and TA-Lib without changing a
 #       formula.
 #

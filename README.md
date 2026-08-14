@@ -448,7 +448,7 @@ first install and what to check afterwards.
 │   └── integration/       # networked checks, excluded by default
 ├── data/                  # stock lists; generated files are gitignored
 ├── clf/                   # pickled models, gitignored
-├── doc/                   # requirements, design, contract, deployment
+├── doc/                   # requirements, design, contract, deployment, license
 ├── cron.d/stock           # the schedule
 ├── run.sh                 # the daily pipeline
 ├── deploy.sh              # installation
@@ -502,23 +502,33 @@ it. What changes is how this side is installed and driven.
 | [`doc/BASIC_DESIGN.md`](doc/BASIC_DESIGN.md) | Composition, modules, data flow, error handling |
 | [`doc/DATA_CONTRACT.md`](doc/DATA_CONTRACT.md) | Normative format of every generated file |
 | [`doc/POLICY.md`](doc/POLICY.md) | Implementation rules a change is judged against |
-| [`doc/DEPLOYMENT.md`](doc/DEPLOYMENT.md) | Installing and operating the pipeline |
+| [`doc/DEPLOYMENT.md`](doc/DEPLOYMENT.md) | Installing, operating and diagnosing the pipeline |
 | [`doc/MODERNIZATION_PLAN.md`](doc/MODERNIZATION_PLAN.md) | The survey and plan behind the 2.0 rewrite |
+| [`doc/VERSIONS`](doc/VERSIONS) | Release history of the repository |
+| [`doc/LICENSE.md`](doc/LICENSE.md) | The license, with the full texts beside it |
 
 Every one of them stands on its own. Nothing here requires reading another
 repository to understand what this one does or how it is operated.
+
+Routine operations, the log, and what to check when a step fails are in
+[`doc/DEPLOYMENT.md`](doc/DEPLOYMENT.md) rather than here; this README is the
+entrance, and the details live under `doc/`.
 
 ---
 
 ## 13. License
 
-**This repository does not currently declare a license.**
+This repository is dual licensed under the
+[GPL version 3](https://www.gnu.org/licenses/gpl-3.0.html) or the
+[LGPL version 3](https://www.gnu.org/licenses/lgpl-3.0.html), at your option.
+For full details, please refer to [`doc/LICENSE.md`](doc/LICENSE.md). See also
+[`doc/COPYING`](doc/COPYING) and [`doc/COPYING.LESSER`](doc/COPYING.LESSER) for
+the complete license texts.
 
-No `LICENSE`, `COPYING` or license header appears in any commit reachable in its
-history, and the modernization did not add one. Choosing a license is the
-copyright holder's decision, not something a refactor should settle, so
-`pyproject.toml` carries no `license` field.
+The same terms apply to the sibling repositories `finance-dashboard` and
+`reply-writer`, so the three are consistent. `pyproject.toml` carries the
+matching `license` field, and every source module repeats the terms in its
+header block.
 
-Until one is declared, no permission to use, copy, modify or distribute this
-code should be assumed. This is recorded as an open item for the maintainer; see
-[section 15 of the modernization plan](doc/MODERNIZATION_PLAN.md#15-license).
+Third-party components keep their own licenses. This repository bundles none;
+its dependencies are installed from PyPI and are listed in `pyproject.toml`.

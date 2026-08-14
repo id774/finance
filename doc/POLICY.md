@@ -253,10 +253,15 @@ This repository was left behind by exactly the practices this section forbids.
 ### 2.7 Documentation
 
 Every module carries a header block in this order: `Description`, the standard
-`Author`, `Source Code`, `Contact` block, `Usage` and `Options` (executables
-only), `Exit Codes` (where more than one status is possible), `Environment
-Variables` (`config.py` only), `Version History`. Test modules carry
-`Test Cases` after `Description`.
+`Author`, `Source Code`, `License`, `Contact` block, `Usage` and `Options`
+(executables only), `Exit Codes` (where more than one status is possible),
+`Environment Variables` (`config.py` only), `Requirements`, `Version History`.
+Test modules carry `Test Cases` after `Description`.
+
+The `Description` is what makes the file readable on its own. It states why the
+module exists, which responsibility of the pipeline it holds, what it consumes
+and what it produces, and which modules or external systems it touches. It is
+not a list of the functions below it, which the code already carries.
 
 - Documentation is updated in the same change as the behaviour it describes.
 - A change to a generated file updates `DATA_CONTRACT.md` and
@@ -273,7 +278,21 @@ Variables` (`config.py` only), `Version History`. Test modules carry
 
 ### 2.8 License
 
-This repository declares no license, and no commit in its history has. That is
-recorded in the README and the modernization plan as an open item for the
-copyright holder. Do not add, infer or copy one from a sibling repository as
-part of unrelated work.
+This repository is dual licensed: GPL version 3 or LGPL version 3, at the
+recipient's option. The texts are [`COPYING`](COPYING) and
+[`COPYING.LESSER`](COPYING.LESSER), and [`LICENSE.md`](LICENSE.md) states the
+choice. This settles what earlier revisions of this document and of
+[`MODERNIZATION_PLAN.md`](MODERNIZATION_PLAN.md) recorded as an open item for the
+copyright holder; the decision came from the copyright holder, not from an
+inference drawn across the sibling repositories.
+
+- Every source module carries the line
+  `License: The GPL version 3, or LGPL version 3 (Dual License).` in its header
+  block, between `Source Code` and `Contact`.
+- `pyproject.toml` carries the matching
+  `license = { text = "GPL-3.0-or-later OR LGPL-3.0-or-later" }`.
+- The README, `LICENSE.md` and the module headers state one thing. A change to
+  the license is a change to all four places in the same commit.
+- Do not vendor third-party code into this repository. Dependencies are declared
+  in `pyproject.toml` and installed from PyPI, which keeps their licenses theirs
+  and this file short.

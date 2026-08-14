@@ -536,6 +536,17 @@ Contracts first, because they are the hardest to walk back:
 
 ## 15. License
 
+**Resolved after this plan was written.** The repository is dual licensed under
+the GPL version 3 or the LGPL version 3, at the recipient's option. The decision
+was made by the copyright holder; `doc/LICENSE.md`, `doc/COPYING` and
+`doc/COPYING.LESSER` carry it, `pyproject.toml` declares it and every source
+module repeats it in its header. See section 2.8 of `doc/POLICY.md`.
+
+The rest of this section is the state at the time of the modernization, kept as
+the record of why the plan itself added no license.
+
+---
+
 **Unresolved, and deliberately not decided here.**
 
 The repository has never contained a `LICENSE`, `COPYING` or any license header,
