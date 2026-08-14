@@ -3,118 +3,86 @@ finance Repository Version History
 
 v1.0.1 (Release Date: TBD)
 --------------------------
-- Replace Yahoo Finance with the J-Quants API v2 Free plan as the price source.
-  finance/datasources/yahoo.py and the yfinance dependency are removed, and
-  nothing in the package reaches an unofficial endpoint or parses a web page for
-  prices. A structural test asserts that no module names the withdrawn provider.
-- Add finance/datasources/jquants.py, which holds the x-api-key header, the base
-  URL, /equities/bars/daily, pagination, the request interval, retries,
-  timeouts, HTTP status handling, the abbreviated v2 field names and the five
-  character stock code form, and lets none of them out. The analysis layer
-  receives the same six column frame it always did. Refuse a response when any
-  row is missing a required field, reporting the provider error consistently.
+- Replace Yahoo Finance with the J-Quants API v2 Free plan as the price source,
+  so that nothing reaches an unofficial endpoint or scrapes a page for prices.
+- Add a J-Quants data source that keeps the provider's authentication, paging,
+  retries and field names to itself and hands the analysis layer the frame it
+  always received, refusing an incomplete response as a provider error.
 - Take all six canonical columns from the adjusted series, so that candlesticks
-  and indicators sit on one basis for the first time. No formula changed; the
-  contract test still regenerates all 42 computed columns of the committed
-  fixture and compares them column by column. The decision and its reasoning are
-  in doc/DATA_CONTRACT.md section 11.
+  and indicators sit on one basis for the first time. No formula changed.
 - Treat the Free plan's publication delay, bounded history and rate limit as the
-  specification. A fetch never asks beyond what the plan publishes, a start date
-  older than the plan is raised to it, stored data that already reaches the
-  newest published date is not re-requested, and summary staleness is measured
-  against that date rather than against today. doc/POLICY.md and
-  test/test_plan_window.py hold the rules and the assertions.
+  specification, measuring what is fetched and how stale a summary is against
+  the newest published date rather than against today.
 - Drop the 2014-10-01 default start date and the 600 row long chart window in
-  favour of values that fit the plan, and assert that the longest indicator
-  lookback fits inside the retained history.
-- Read the J-Quants API key from JQUANTS_API_KEY alone, refusing it in the
-  configuration file, excluding it from the Settings repr, and failing a
-  fetching run before it opens a socket when it is absent. A chart-only run
-  needs no key at all. Structural tests assert that no module outside config.py
-  reads it and that no logging call is handed it.
-- Add finance-migrate, which moves per-stock files written under the previous
-  provider into a dated archive so that the next run rebuilds them. It is run
-  once by hand, is not in run.sh, and the data source layer knows nothing about
-  it. The two providers' series do not mean the same thing and are not merged.
-- Withdraw the market indices. The Free plan carries no index values and no
-  free, licensed, machine-readable alternative was adopted, so N225, GSPC, IXIC
-  and DJI are removed along with INDEX_CODES and the is_index special case
-  rather than obtained from an unofficial source. Seed data/stocks.txt with
-  listed equities.
+  favour of values that fit the plan.
+- Read the API key from JQUANTS_API_KEY alone, keeping it out of the
+  configuration file and the logs, and fail a fetching run before it opens a
+  socket when it is absent. A chart-only run needs no key at all.
+- Add finance-migrate, which archives the per-stock files written under the
+  previous provider so that the next run rebuilds them. The two providers'
+  series do not mean the same thing and are not merged.
+- Withdraw the market indices, which the Free plan does not carry, rather than
+  obtain them from an unofficial source, and seed data/stocks.txt with listed
+  equities.
 - Refresh the shipped TOPIX Core30 constituents and keep the default stock list
   in sync with them.
 - Write data_source.txt beside the generated files, recording the source, the
   generation date and the last trading day, so that finance-dashboard can show
-  how old its figures are. An unknown last trading day is left empty rather than
-  filled in with today.
-- State in README.md, doc/REQUIREMENTS.md and doc/POLICY.md that this is
-  software for one person's private analysis: the market data is not
-  redistributed, no continuing analysis service is provided to third parties,
-  the consumer is a private dashboard, and the licence of this source code is a
-  separate question from the terms of the data put through it.
+  how old its figures are.
+- State in the documents that this is software for one person's private
+  analysis, and that the licence of this source code is a separate question
+  from the terms of the market data put through it.
 - Add doc/JQUANTS_MIGRATION.md with the survey and the decisions, and mark
-  section 6 of doc/MODERNIZATION_PLAN.md superseded without editing its text.
-- Expand section 2.7 of doc/POLICY.md into Documentation and Versioning, stating
-  when a module version is bumped, how module versions are numbered and roll
-  over, how repository release versions and Git tags stand apart from them, and
-  how an entry in this file is written, grouped and shortened. The rules were
-  already followed here but recorded nowhere in this repository, and they are
-  written out here rather than referred to in another one.
-- Source the API key from an environment file in run.sh and check it before the
-  job starts; create that file empty and root-only in deploy.sh, which never
-  writes a key. Set JQUANTS_API_KEY to empty in CI, which reaches no API.
+  section 6 of doc/MODERNIZATION_PLAN.md superseded.
+- State the documentation and versioning rules in doc/POLICY.md, covering module
+  headers and versions, repository releases and how an entry in this file is
+  written.
+- Source the API key from a root-only environment file created by deploy.sh and
+  checked by run.sh before the job starts, and leave it empty in CI.
 
 v1.0 (2026-08-14)
 -----------------
 - Declare the repository dual licensed under the GPL version 3 or the LGPL
-  version 3, adding doc/LICENSE.md, doc/COPYING and doc/COPYING.LESSER, the
-  license field of pyproject.toml, and the license line of every module header.
-- Record the license decision in doc/POLICY.md section 2.8 and mark section 15
-  of doc/MODERNIZATION_PLAN.md resolved, keeping the earlier text as the record
-  of why the modernization added none.
+  version 3, in the license documents, pyproject.toml and every module header,
+  and record the decision in doc/POLICY.md.
 - Start file level version management at v1.0 for every module, renumbering the
-  single modernization entry each header carried and leaving its description
-  unchanged.
-- State the module header order in doc/POLICY.md section 2.7, including the
-  license line and what a Description is required to establish.
+  single modernization entry each header carried.
+- State the module header order and what a Description must establish in
+  doc/POLICY.md.
 - Add this file, and link the license and history documents from README.md.
 - Restructure the repository as an installable Python package with a one-way
   dependency direction, replacing the sys.path manipulation that let bin/
-  import lib/. test/test_package.py asserts the direction against the source.
+  import lib/.
 - Migrate the calculations to pandas 3, NumPy 2.4, TA-Lib 0.7 and
-  scikit-learn 1.9 without changing a formula, asserting every expected value
-  the 2015 suite asserted on the same committed fixture.
-- Replace the removed APIs: pandas.stats.moments.ewma, pandas.core.datetools,
-  the private pandas plotting registries, matplotlib.finance.candlestick_ochl,
-  pd.rolling_*, DataFrame.ix, DataFrame.sort, Timestamp.to_datetime, optparse
-  and cPickle. Charts are drawn with matplotlib primitives against row
-  positions, preserving the series, colours, legends, figure size and caption.
+  scikit-learn 1.9 without changing a formula, and assert every expected value
+  the 2015 suite asserted on the same fixture.
+- Replace the pandas, matplotlib and standard library APIs the upgrade removed.
+  Charts are drawn with matplotlib primitives, preserving the series, colours,
+  legends, figure size and caption.
 - Replace the dead price sources with one yfinance adapter behind a protocol,
   normalizing everything that differs from the old readers.
 - Replace bin/email.rb with the finance-notify command, removing the Ruby
   runtime and the mail gem from the deployment.
 - Rewrite run.sh and deploy.sh as POSIX sh that report a failed step instead of
-  always exiting zero; deploy.sh installs a package into a virtual environment
-  instead of copying bin/ and lib/. The cron schedule is unchanged.
+  always exiting zero, and install a package into a virtual environment instead
+  of copying bin/ and lib/. The cron schedule is unchanged.
 - Honour -u on the stock-list path of the chart command, which was accepted and
-  then ignored, so only the run that passes it fetches, retrains and rewrites
-  ti_CODE.csv. The file keeps its 240-row window; its name, separator, index
-  and columns are unchanged.
+  then ignored, so that only the run that passes it fetches, retrains and
+  rewrites ti_CODE.csv. That file's format is unchanged.
 - Raise the minimum Python to 3.11 and move the dependencies from 2015-2016
   pins to bounded current ranges.
-- Keep the data contract with finance-dashboard unchanged and pin it with tests
-  that parse the generated files exactly as finance_dashboard/data.py does.
-  doc/DATA_CONTRACT.md is the normative description.
+- Keep the data contract with finance-dashboard unchanged, describe it in
+  doc/DATA_CONTRACT.md and pin it with tests that parse the generated files as
+  the dashboard does.
 - Add doc/REQUIREMENTS.md, doc/BASIC_DESIGN.md, doc/DATA_CONTRACT.md,
   doc/POLICY.md, doc/DEPLOYMENT.md and doc/MODERNIZATION_PLAN.md.
 
 Before v1.0
 -----------
-- The repository carries no release tag and no version file for any revision
-  before v1.0, so no earlier version number is recorded here. The work of that
-  period survives as a numbered commit series ending at "323 Correspond to 10
-  days off", and the commit log is its only history. Nothing has been
-  reconstructed from it into a version entry.
+- No release tag or version file exists for any revision before v1.0, so no
+  earlier version number is recorded here. That period survives as a numbered
+  commit series ending at "323 Correspond to 10 days off", and the commit log
+  is its only history.
 
 Version History Guidelines
 ==========================
