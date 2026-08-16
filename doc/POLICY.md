@@ -393,6 +393,13 @@ not a list of the functions below it, which the code already carries.
   what accumulated in it is known; which number it takes is decided then.
 - Replacing `TBD` with the actual release date is the release itself, not a
   change to record in the entry.
+- A repository that has not yet made its first release is in its initial
+  construction stage, and that stage takes no entry here. Typically this is the
+  state while `v1.0` is the first release and the repository still stands below
+  it, or `v1.0` itself is unreleased. The changes made while building up to that
+  release are not accumulated in `doc/VERSIONS` one by one: the file is the
+  record of released versions, not of the construction that precedes the first
+  of them, and its first entry is written when that release is made.
 - A documentation-only change takes no `doc/VERSIONS` entry, unless its scale
   makes it worth one line saying so.
 - The version declared in `pyproject.toml`, the one exposed as
