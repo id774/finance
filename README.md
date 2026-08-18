@@ -515,20 +515,15 @@ contract and a divergence is what the test is for.
 Dependency points one way. A layer never imports one above it.
 
 ```text
-finance/cli/charts.py  summary.py  notify.py     entry points
-        |     argparse, exit codes, settings
-        v
-analysis.py  reporting.py  notification.py       application
-        |     the order of the steps, and the paths
-        v
-indicators  features  models  aggregation        domain
-charts      stocklist                             pure computation
-        |
-        v
-storage.py   datasources/                        I/O
-        |
-        v
-the filesystem, the J-Quants API
+entry points   cli/charts  cli/summary  cli/notify  cli/migrate
+                   v
+application    analysis  reporting  notification
+                   v
+domain         indicators  features  models  aggregation  charts  stocklist
+                   v
+I/O            storage  datasources/
+                   v
+               the filesystem, the J-Quants API
 ```
 
 The rules this encodes:
