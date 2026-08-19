@@ -24,6 +24,8 @@
 #  - pandas
 #
 #  Version History:
+#  v1.1 2026-08-19
+#       Preserve the last valid summary when no stock can be aggregated.
 #  v1.0 2026-08-14
 #       Measure staleness against the newest date the plan publishes.
 #       Separate the summary pipeline from the command line.
@@ -41,6 +43,7 @@ from finance import storage
 from finance.aggregation import DEFAULT_SORT_KEY, Aggregator
 from finance.analysis import load_indicator_frames
 from finance.config import Settings
+from finance.errors import DataFormatError
 from finance.stocklist import read_stock_list
 
 logger = logging.getLogger(__name__)
@@ -87,8 +90,9 @@ def build_summary(
     Raises:
         StorageError: The stock list or the output cannot be read or
             written.
-        DataFormatError: The stock list is malformed, or the sort key
-            names a column the layout has not got.
+        DataFormatError: The stock list is malformed, the sort key
+            names a column the layout has not got, or no stock can be
+            summarized.
     """
     when = today or date.today()
     list_path = settings.data_file(request.stock_list)
@@ -109,6 +113,8 @@ def build_summary(
         screening_key=request.screening_key,
         as_of=as_of,
     )
+    if table.empty:
+        raise DataFormatError("No stock had data recent enough to summarize")
 
     output_path = settings.data_file(request.output)
     storage.write_summary_csv(table, output_path)
