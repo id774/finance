@@ -255,6 +255,22 @@ def test_summary_history_writes_a_dated_copy(tmp_path, monkeypatch, indicator_fi
     assert len(copies) == 1
 
 
+def test_empty_summary_preserves_the_last_output(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    data_dir = tmp_path / "out"
+    data_dir.mkdir()
+    (data_dir / "stocks.txt").write_text("7203,トヨタ\n", encoding="utf-8")
+    output = data_dir / "summary.csv"
+    previous = "Code\tName\n7203\tトヨタ\n"
+    output.write_text(previous, encoding="utf-8")
+
+    status = summary_cli.main(["-o", "summary.csv", "-y", "--data-dir", str(data_dir)])
+
+    assert status == EXIT_FAILURE
+    assert output.read_text(encoding="utf-8") == previous
+    assert not (data_dir / "history").exists()
+
+
 def test_charts_records_the_data_source_when_it_updates(tmp_path, monkeypatch, raw_prices):
     monkeypatch.chdir(tmp_path)
     data_dir = tmp_path / "out"

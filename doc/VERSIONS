@@ -39,6 +39,7 @@ v1.0.1 (Release Date: TBD)
   written.
 - Source the API key from a root-only environment file created by deploy.sh and
   checked by run.sh before the job starts, and leave it empty in CI.
+- Preserve the last valid summary and fail when no stock can be aggregated.
 
 v1.0 (2026-08-14)
 -----------------
