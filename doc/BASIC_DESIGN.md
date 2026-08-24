@@ -121,8 +121,9 @@ historical ratio formula. It is handed frames; it reads nothing.
 
 ### 4.9 `finance/charts.py`
 
-`ChartRenderer` draws the two panels and writes the PNG, and `chart_prefix()`
-maps a window length to a file name prefix.
+`ChartRenderer` draws the price panel and, when `axis=2`, adds the oscillator
+panel, then writes the PNG. `chart_prefix()` maps a window length to a file name
+prefix.
 
 This is the one module that could not be ported by changing API calls. The
 previous implementation registered a subclass of a private pandas plotting class
@@ -198,10 +199,10 @@ continue, and returning both the results and the failures.
 The summary pipeline: read the stock list, load the stored indicator frames,
 aggregate, write, and optionally keep a dated copy.
 
-It is where the plan's delay enters the summaries. Staleness is measured against
-the newest date the plan publishes, not against today; compared with today, a
-source publishing weeks in arrears would drop every stock as stale and write an
-empty table every evening.
+It is where the configured publication window enters the summaries. Staleness is
+measured against the newest date permitted by that configured window, not
+against today. Otherwise a configured delay could make data that is current for
+the configured subscription look stale.
 
 ### 4.14 `finance/notification.py`
 

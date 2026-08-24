@@ -7,9 +7,9 @@
 #  Description:
 #  Draw the PNG charts finance-dashboard displays: a candlestick price
 #  panel with moving averages, Bollinger bands and the parabolic SAR,
-#  and below it an oscillator panel carrying RSI, MFI, stochastics and
-#  the rest, captioned with the closing figures and the two model
-#  outputs.
+#  captioned with the closing figures and the two model outputs. When
+#  axis=2 an oscillator panel carrying RSI, MFI, stochastics and the
+#  rest is added below it; axis=1 draws the price panel alone.
 #
 #  This is the one module that could not be ported by changing API
 #  calls. The old implementation registered a subclass of a private
