@@ -52,13 +52,13 @@
 #  - pandas, pytest
 #
 #  Version History:
+#  v1.1 2026-08-24
+#       Keep provenance text independent from data age and verify the
+#       generation and trading dates as separate facts.
 #  v1.0 2026-08-14
 #       Pin data_source.txt, which tells the dashboard how old the data
 #       it is showing is.
 #       Initial release.
-#  v1.1 2026-08-24
-#       Keep provenance text independent from data age and verify the
-#       generation and trading dates as separate facts.
 #
 ########################################################################
 
