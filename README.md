@@ -16,7 +16,7 @@ share no code and no process; they share a directory of files, and the format of
 those files is the whole of the interface between them.
 
 ```text
-J-Quants API (Free plan, delayed)
+J-Quants API (Free plan)
      |
      v
 finance  (cron, 18:10 on weekdays)

@@ -5,10 +5,10 @@
 # finance/stocklist.py: Stock list parsing
 #
 #  Description:
-#  Read the comma separated listings that decide which stocks a run
+#  Read the comma separated stock lists that decide which stocks a run
 #  covers: stocks.txt, topix_core30.txt and the operator's private
-#  holdings file. All three share one format and differ only in how many
-#  columns they carry.
+#  holdings file. These stock lists share one format and differ only in
+#  how many columns they carry.
 #
 #  The first two columns, the code and the short name, are the ones
 #  every file has and the only two finance-dashboard reads out of
@@ -17,11 +17,10 @@
 #
 #  Every entry names a listing on the Tokyo exchange. Market indices
 #  used to be listed here too and were fetched from a provider this
-#  pipeline no longer uses. The J-Quants
-#  Free plan does not carry index values, so there is nothing to fetch
-#  them from and no special case left to make for them: a code in a
-#  stock list is a listing, and the data source refuses anything that
-#  cannot be one.
+#  pipeline no longer uses. No index dataset has been adopted for the
+#  current pipeline, so there is no special case left to make for market
+#  indices: a code in a stock list is a listing, and the data source
+#  refuses anything that cannot be one.
 #
 #  Author: id774 (More info: http://id774.net)
 #  Source Code: https://github.com/id774/finance

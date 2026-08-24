@@ -112,8 +112,8 @@ class AnalysisResult:
         Return the date of the newest row this run analysed.
 
         It is the date the dashboard shows as the age of the data. The
-        plan publishes with a delay, so it is not today and must not be
-        presented as though it were.
+        configured publication window may place that date before today,
+        so it must not be filled in with today.
         """
         if self.indicator_frame.empty:
             return None
@@ -317,10 +317,10 @@ def run_many(
     """
     Run several stocks, continuing past one that fails.
 
-    A nightly job covering thirty stocks must not lose twenty-nine of
-    them because one delisted code cannot be fetched. Each failure is
-    logged with its code and returned, so the caller can report a
-    partial run through its exit status rather than exiting zero.
+    A nightly list run must not lose every other stock because one code
+    cannot be fetched. Each failure is logged with its code and
+    returned, so the caller can report a partial run through its exit
+    status rather than exiting zero.
 
     Returns:
         The results that succeeded and the (code, error) pairs that did

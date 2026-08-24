@@ -91,9 +91,9 @@ CORE30_LIST=${CORE30_LIST:-topix_core30.txt}
 # a run wants unless the operator is deliberately shortening it.
 START_DATE=${START_DATE:-}
 
-# The chart windows. LONG_DAYS is inside the two years the Free plan
-# keeps, and above the 300 rows that select the long_ file name; a
-# larger value would draw the same chart under the same name.
+# The chart windows. LONG_DAYS is above the 300 rows that select the
+# long_ file name; a larger value would draw the same chart under the
+# same name.
 DAYS=${DAYS:-240}
 LONG_DAYS=${LONG_DAYS:-480}
 SHORT_DAYS=${SHORT_DAYS:-60}

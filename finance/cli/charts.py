@@ -68,6 +68,9 @@
 #       Build the J-Quants source from the settings and record where the
 #       data came from.
 #       Replace optparse, honour -u, and call the shared pipeline.
+#  v1.1 2026-08-24
+#       Record provider and plan provenance without embedding a mutable
+#       publication-delay claim.
 #
 ########################################################################
 
@@ -105,7 +108,7 @@ from finance.storage import DATA_SOURCE_FILE, price_filename, write_data_source
 # that a reader knows the figures are not live. The plan's delay is not
 # repeated here: it is a published property that can change, and the
 # last trading day beside this line is the fact that matters.
-SOURCE_DESCRIPTION = "J-Quants API (Free plan, delayed)"
+SOURCE_DESCRIPTION = "J-Quants API (Free plan)"
 
 logger = logging.getLogger(__name__)
 

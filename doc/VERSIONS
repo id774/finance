@@ -40,6 +40,8 @@ v1.0.1 (Release Date: TBD)
 - Source the API key from a root-only environment file created by deploy.sh and
   checked by run.sh before the job starts, and leave it empty in CI.
 - Preserve the last valid summary and fail when no stock can be aggregated.
+- Keep data_source.txt provenance to the provider and plan, leaving data age
+  to last_trading_day instead of a mutable delay label.
 
 v1.0 (2026-08-14)
 -----------------

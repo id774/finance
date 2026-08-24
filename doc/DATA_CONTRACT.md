@@ -17,7 +17,7 @@ is a change to a published interface and needs the consumer considered first.
 ## 1. The boundary
 
 ```text
-J-Quants API (Free plan, delayed)
+J-Quants API (Free plan)
      |
      v
 finance  (batch, cron, 18:10 on weekdays)
@@ -301,10 +301,10 @@ drawn and the caption renders as boxes.
 
 ## 9. `data_source.txt`
 
-Where the generated data came from and how old it is. It exists because the
-source publishes in arrears: the newest figure in this directory is weeks
-behind the run that produced it, and a dashboard showing it without saying so
-would read as live market information.
+Where the generated data came from and how old it is. `generated` records when
+the job ran; `last_trading_day` records the newest trading day the run actually
+analysed. Keeping both lets the dashboard show data age without encoding a
+subscription's current publication delay in the contract.
 
 - Tab separated, one key and value per line, no header, UTF-8.
 - Three keys, in this order: `source`, `generated`, `last_trading_day`.
@@ -319,7 +319,7 @@ would read as live market information.
 | `last_trading_day` | The newest trading day the run analysed, `YYYY-MM-DD` |
 
 ```text
-source	J-Quants API (Free plan, delayed)
+source	J-Quants API (Free plan)
 generated	2026-07-21
 last_trading_day	2026-04-24
 ```
@@ -345,9 +345,9 @@ that no longer exists.
 Nothing replaces it. Restoring it would mean choosing a new source for
 fundamentals; no free source licensed for this use and offered for machine
 access has been adopted. Scraping one is not an option here. The link has been
-removed from the dashboard so that nothing dangles, and neither repository
-refers to the
-file.
+removed from the dashboard so that nothing dangles. No runtime code in either
+repository consumes `ref_index.csv`, and the dashboard no longer links it from
+the user interface.
 
 The four market indices the pipeline used to chart are withdrawn on the same
 grounds and by the same reasoning. See
@@ -383,9 +383,9 @@ splits, and **not** for dividends.
   the old inconsistency deliberately, and there is no reading of the data under
   which that is the more correct answer.
 
-No formula changed. `test/test_contract.py` regenerates all 42 computed columns
-of the committed fixture and compares them column by column, which is the
-evidence that the calculations are the same ones.
+No formula changed. `test/test_contract.py` regenerates the computed indicator
+columns of the committed fixture and compares them column by column, which is
+the evidence that the calculations are the same ones.
 
 **Other differences of meaning, and how each is handled:**
 
@@ -400,7 +400,7 @@ evidence that the calculations are the same ones.
 | Delisting | The provider stops returning rows; the summary drops the stock as stale |
 | Stock code | Four characters in the stock lists and in every generated file name; five, with a trailing zero, only inside the adapter |
 | Dates | `YYYY-MM-DD`, parsed to a tz-naive midnight index. No timezone is involved: these are trading dates, not timestamps |
-| Delay | The plan publishes in arrears. Recorded in `data_source.txt`, never hidden |
+| Delay | The configured publication window limits the newest date a fetch may request; `data_source.txt` records the actual `last_trading_day` rather than a copied provider delay. |
 
 **Legacy rows.** Data stored under the previous provider is not merged with
 this. Where the meaning of a series cannot be shown to be the same, mixing it is
