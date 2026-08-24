@@ -221,12 +221,12 @@ sends no mail.
 | `FINANCE_MAIL_HOSTNAME_SUFFIX` | `mail.hostname_suffix` | - | Only send from a host whose name ends with this |
 
 `delay_days` and `retention_days` describe the subscription assumptions used
-by the program. Their runtime defaults are defined in `finance/config.py` and
-exposed in this Configuration table; current user-facing documentation does
-not duplicate those numeric defaults elsewhere. Current provider terms
-belong to the official J-Quants documentation. They are settings because a
-plan's published terms can change, and because a paid subscription sets
-`delay_days` to `0`. Everything downstream follows from them:
+by the program. Their runtime defaults are defined in `finance/config.py`.
+The Configuration table, `config.yml.sample`, and `doc/DEPLOYMENT.md` expose
+those defaults for operators; they document this program's configuration
+rather than current provider terms. Current provider terms belong to the
+official J-Quants documentation. These values are settings because a plan's
+published terms can change. Everything downstream follows from them:
 which dates a fetch asks for, whether stored data counts as current, and whether
 a summary treats a stock as stale.
 
@@ -318,16 +318,15 @@ and records the provenance; steps 9 and 10 draw from what it already stored. The
 job therefore makes one pass over the network per stock per day, and only step 1
 needs the API key.
 
-That pass is often empty, and that is correct. The plan publishes weeks in
-arrears, so once the stored history reaches the newest published date there is
-nothing to add until the window moves. The run says so by name and rewrites
-nothing.
+That pass is often empty, and that is correct. Once the stored history reaches
+the newest date allowed by the configured publication window, there is nothing
+to add until that window moves. The run says so by name and rewrites nothing.
 
 A step that fails is reported and the job carries on to the next, because a
 broken summary is no reason to skip the charts. The exit status is non-zero if
 any step failed, so cron mails the operator rather than the failure passing
 unnoticed. Within step 1 the same rule applies per stock: one delisted code does
-not cost the other thirty their charts.
+not cost the remaining stocks their charts.
 
 The schedule lives in `cron.d/stock` and is unchanged:
 
