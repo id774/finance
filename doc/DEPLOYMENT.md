@@ -26,8 +26,8 @@ It never writes into `data/` or `clf/`, and it never writes a key into `env`.
 Deploying cannot disturb generated data, updating data never needs a code
 change, and rotating the credential never needs either.
 
-Six things are kept apart on purpose, and it is worth naming them because they
-used to be one directory of copied files:
+These concerns are kept apart on purpose, and it is worth naming them because
+they used to be one directory of copied files:
 
 | Concern | Where |
 |---|---|
@@ -47,9 +47,9 @@ The dashboard's group reaches exactly one of those.
 ## Before you begin
 
 - Linux with cron, `sudo`, and Python **3.11 or later**.
-- **A J-Quants API key.** Register at the J-Quants site, subscribe to the Free
-  plan, and issue a key from the dashboard. The pipeline cannot fetch without
-  one, and there is no other way to give it prices.
+- **A J-Quants API key.** Obtain a key for the J-Quants subscription used by
+  this deployment. The pipeline cannot fetch without one, and there is no
+  other way to give it prices.
 - A Japanese TrueType font for the chart captions:
   `sudo apt-get install fonts-vlgothic`.
 - A local mail relay on port 25 if reports are to be sent.
@@ -146,7 +146,7 @@ generated directory and nothing else.
 ## Configure
 
 Configuration is optional. Without any, the pipeline writes into the data
-directory `run.sh` exports, fetches the whole window the Free plan keeps, and
+directory `run.sh` exports, fetches the whole configured plan window, and
 sends no mail.
 
 The settings worth knowing about are under `jquants`, which describe the plan
@@ -154,16 +154,18 @@ rather than the program:
 
 | Key | Default | What it is |
 |---|---|---|
-| `delay_days` | 84 | How far behind today the plan's newest row is. Twelve weeks on the Free plan; 0 on a paid one |
+| `delay_days` | 84 | How far behind today the configured plan's newest row is |
 | `retention_days` | 730 | How far back from that point the plan keeps data |
 | `request_interval` | 1.0 | Minimum seconds between two requests |
 | `timeout` | 30 | Seconds one request may take |
 | `max_retries` | 3 | Attempts for a throttled or failed request |
 
-`delay_days` and `retention_days` are stated in this one place and nowhere else
-in the system. If the plan's terms change, this is what changes. Everything
-downstream — the dates a fetch asks for, whether stored data counts as current,
-whether a summary treats a stock as stale — follows from them.
+The runtime defaults are defined in `finance/config.py`; this table exposes
+them to the operator as configuration defaults. They are not assertions about
+current provider terms. Consult the official J-Quants service information when
+aligning them with the subscription in use. Everything downstream — the dates
+a fetch asks for, whether stored data counts as current, whether a summary
+treats a stock as stale — follows from the configured values.
 
 `pipeline.start_date` is empty by default, which means the whole window the plan
 keeps. A date older than that is raised to it, and the run says so in the log.
@@ -231,15 +233,14 @@ The header must begin `Date,Open,High,Low,Close,Volume,Adj Close`, and the last
 two fields of the last row must be the classification and the prediction rather
 than empty.
 
-`data_source.txt` must name the source and carry a `last_trading_day`. **It will
-not be today.** On the Free plan it is about twelve weeks back, and that is
-correct rather than a fault; it is the figure the dashboard shows so that nobody
-reads these pages as live market data. If it is empty, the run analysed nothing.
+`data_source.txt` must name the source and carry a `last_trading_day`. It may
+be earlier than today by the configured publication delay, and that is correct
+rather than a fault; it is the figure the dashboard shows so that nobody reads
+these pages as live market data. If it is empty, the run analysed nothing.
 
 If the command fails with a message about `JQUANTS_API_KEY`, the environment
 file is empty or was not sourced. If it fails with an authentication error, the
-key is wrong or the subscription has lapsed — the Free plan is cancelled
-automatically after a year and can be registered again.
+key is wrong or the subscription does not currently permit the request.
 
 Then run the whole job once:
 
@@ -262,11 +263,11 @@ on stderr, which is what cron will mail.
 
 18:10 on weekdays, after the Tokyo close. `deploy.sh` installs it.
 
-The hour no longer matters as much as it did. The Free plan publishes weeks in
-arrears, so a run at 18:10 collects what was published long before it, and an
-occasional missed evening costs nothing that the next run does not pick up. The
-schedule is kept because it works and the operator relies on it, not because the
-data requires it.
+The schedule is kept for operational consistency. The configured publication
+window, not the wall-clock hour, determines which dates a fetch may request.
+An occasional missed evening is recovered by the next updating run, which asks
+for data newer than the last stored row. The operator relies on the schedule;
+the data source does not require this particular hour.
 
 It is cron rather than a systemd timer because a plain daily batch has no
 ordering, activation or resource requirement that a timer would serve. Changing
@@ -373,8 +374,7 @@ transient fetch failure resolves itself the next evening.
 empty or unreadable. `run.sh` checks before it starts, so nothing was fetched.
 
 **Every stock fails to authenticate** — the key is wrong, was revoked, or the
-subscription lapsed. The Free plan is cancelled automatically after a year;
-re-registering and issuing a new key is the fix.
+subscription lapsed. Re-registering and issuing a new key is the fix.
 
 **Every stock fails with a rate limit** — the job is asking too quickly.
 Raise `jquants.request_interval`.

@@ -61,8 +61,8 @@
 #  - FINANCE_JQUANTS_BASE_URL: Base URL of the API. Defaults to the
 #      published v2 endpoint.
 #  - FINANCE_JQUANTS_TIMEOUT: Seconds one HTTP request may take.
-#  - FINANCE_JQUANTS_MAX_RETRIES: Retries of a throttled or failed
-#      request.
+#  - FINANCE_JQUANTS_MAX_RETRIES: Maximum attempts for a throttled or
+#      failed request.
 #  - FINANCE_JQUANTS_REQUEST_INTERVAL: Minimum seconds between two
 #      requests.
 #  - FINANCE_JQUANTS_DELAY_DAYS: How many days behind today the newest
@@ -122,10 +122,10 @@ DEFAULT_TIMEOUT = 30.0
 DEFAULT_MAX_RETRIES = 3
 DEFAULT_REQUEST_INTERVAL = 1.0
 
-# The Free plan publishes data up to twelve weeks behind today, and
-# keeps two years of it behind that point. Both are defaults rather than
-# constants: a plan change moves them, and a paid subscription sets
-# delay_days to 0. Nothing else in the package spells either number.
+# Runtime defaults for the configured publication and retention window.
+# They are settings rather than fixed service facts because provider terms
+# can change. Current plan terms belong to the official J-Quants
+# documentation; these values are only the defaults this program uses.
 DEFAULT_DELAY_DAYS = 84
 DEFAULT_RETENTION_DAYS = 730
 
