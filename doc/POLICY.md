@@ -493,8 +493,9 @@ copyright holder; the decision came from the copyright holder.
   block, between `Source Code` and `Contact`.
 - `pyproject.toml` carries the matching
   `license = { text = "GPL-3.0-or-later OR LGPL-3.0-or-later" }`.
-- The README, `LICENSE.md` and the module headers state one thing. A change to
-  the license is a change to all four places in the same commit.
+- The README, `LICENSE.md`, `pyproject.toml`, and the module headers must state
+  the same licence. A licence change updates each of those locations in the same
+  commit.
 - Do not vendor third-party code into this repository. Dependencies are declared
   in `pyproject.toml` and installed from PyPI, which keeps their licenses theirs
   and this file short.

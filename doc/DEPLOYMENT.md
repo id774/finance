@@ -121,9 +121,9 @@ sudo chmod 600 /var/stock/env
 ```
 
 `run.sh` sources it and refuses to start if the key is empty, so a missing
-credential is a message at 18:10 rather than thirty failed fetches.
+credential is a message at 18:10 rather than a failed fetch for every stock.
 
-Four things not to do with it:
+Do not do any of the following with it:
 
 - **Do not put it in `config.yml`.** The settings loader refuses a key found
   there. A file in the working tree is one careless `git add` from being
@@ -219,7 +219,7 @@ FINANCE_DATA_DIR=/var/stock/data FINANCE_MODEL_DIR=/var/stock/clf \
     /var/stock/.venv/bin/finance-charts -c 7203 -n トヨタ -y 240 -u
 ```
 
-Then check the five things that matter:
+Then check the generated files and provenance:
 
 ```bash
 ls -l /var/stock/data/stock_7203.csv /var/stock/data/ti_7203.csv \
@@ -386,9 +386,9 @@ integration checks, which are the only tests that touch it:
 cd /path/to/finance && JQUANTS_API_KEY=... .venv/bin/pytest -m integration
 ```
 
-**A fetch succeeds but returns nothing new, every evening** — expected. The plan
-publishes in arrears; once the stored history reaches the newest published date,
-there is nothing to add until the window moves. The log says so by name.
+**A fetch succeeds but returns nothing new, every evening** — expected. The
+configured publication window can leave no newer date available once the
+stored history reaches the newest permitted date. The log says so by name.
 
 **Charts appear, summaries are empty** — the summaries drop any stock whose
 newest indicator row is more than ten days older than the newest date the plan
@@ -397,10 +397,10 @@ summaries, which is what `run.sh` does in that order anyway. If `jquants.
 delay_days` is wrong for the subscription, this is the symptom: the reference
 date moves and everything looks stale.
 
-**The dashboard says the data is twelve weeks old** — it is, and it is meant to
-say so. That is the Free plan's publication delay, not a stalled pipeline.
-Compare `last_trading_day` in `/var/stock/data/data_source.txt` with what the
-plan currently publishes.
+**The dashboard says the data is older than expected** — the dashboard reports
+the `last_trading_day` recorded by the pipeline. Compare that date with what the
+configured subscription currently publishes and with `jquants.delay_days`.
+Do not infer a provider plan delay from a hard-coded duration in this document.
 
 **Captions render as boxes** — the caption font is missing. Install one and set
 `charts.font_path`.

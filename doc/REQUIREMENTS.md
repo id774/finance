@@ -29,7 +29,7 @@ schedule, without anybody present.
 
 **It is software for one person's private analysis of their own investments.**
 That is a design premise rather than a description of current usage, and the
-following four statements are binding on every change:
+following statements are binding on every change:
 
 - The market data it obtains is not redistributed to anyone.
 - No continuing analysis service built on that data is provided to anyone.
@@ -89,7 +89,7 @@ and optionally a longer name for a chart caption.
 Daily open, high, low, close, volume and adjusted close, for each code in the
 list, from the **J-Quants API Free plan**.
 
-The provider is chosen on three conditions, in this order:
+The provider is chosen under the following conditions, in this order:
 
 1. **Free to an individual**, so that the system's premise of personal,
    no-cost operation holds without a subscription.
@@ -191,7 +191,7 @@ volume ratios.
 
 ## 11. The models
 
-Two, per stock, both trained on the return index:
+The per-stock models are trained on the return index:
 
 - A classifier answering whether the next value rises.
 - A ridge regression estimating the next value, reported as a price.
@@ -206,9 +206,11 @@ and nothing else.
 
 ## 12. Charts
 
-Three per stock, distinguished by window length and by file name prefix. Each
+Per stock, the system produces standard, short, and long chart views,
+distinguished by window length and by file name prefix. Each
 carries a candlestick price panel with trend overlays and, optionally, an
-oscillator panel below it. Two switches control how much is drawn.
+oscillator panel below it. The `-a`/`--axis` switch selects the panel layout, and the `-p`/`--complexity`
+switch selects how many series each panel carries.
 
 The images are for a person to look at. Their content is specified; their pixels
 are not, and no requirement here asks for reproducible rendering.
@@ -269,7 +271,7 @@ a setting.
 
 ## 18. Secrets
 
-One: the J-Quants API key.
+The pipeline credential is the J-Quants API key.
 
 - It is supplied through the environment, and through nothing else. It gets no
   command line option, because a command line is readable by every user of the

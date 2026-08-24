@@ -57,7 +57,8 @@ module opens a file or imports an I/O module, and that no library module prints.
 
 The package version and the one place logging is configured. Imports nothing
 beyond the standard library, so every other module can import it freely. The
-three commands append to the same log file, so the format is decided once.
+command-line entry points append to the same log file, so the format is
+decided once.
 
 ### 4.2 `finance/config.py`
 
@@ -115,7 +116,7 @@ refreshed on the recent window only.
 ### 4.8 `finance/aggregation.py`
 
 `Aggregator` reduces many indicator frames to one summary table. It holds the
-two positional column layouts as constants, the ten day staleness rule, and the
+positional column layouts as constants, the ten day staleness rule, and the
 historical ratio formula. It is handed frames; it reads nothing.
 
 ### 4.9 `finance/charts.py`
@@ -222,7 +223,7 @@ call, and the data source layer is deliberately kept ignorant of it.
 
 ### 4.15 `finance/cli/`
 
-Four entry points and their shared helpers. Each parses arguments, resolves
+The command-line entry points and their shared helpers. Each parses arguments, resolves
 settings, calls one function in the application layer and reports what happened.
 No analysis is written here.
 
@@ -286,8 +287,9 @@ never sees a mutable object it could change.
 properties — how far behind today its newest row is, and how far back it keeps
 data. `fetch_window(today)` turns those into the range a fetch may ask for, and
 raises a configured start date that predates the plan rather than refusing it.
-Both numbers live here and nowhere else, because they are properties of a
-subscription that can change.
+Their runtime defaults are defined in `finance/config.py`. The README,
+`config.yml.sample`, and `doc/DEPLOYMENT.md` expose the same values to
+operators, while current provider terms remain the provider's responsibility.
 
 The API key is read from `JQUANTS_API_KEY` and from nothing else. It is refused
 if it appears in the configuration file, and its field is excluded from the
@@ -333,7 +335,7 @@ something that failed.
 
 ## 10. Testing
 
-Four groups, described in the README. Two structural rules matter to this
+The test groups are described in the README. Two structural rules matter to this
 design:
 
 - No test in the default run reaches the network. The price source is a protocol
@@ -342,5 +344,5 @@ design:
   enforced rather than merely documented.
 
 The committed fixtures `test/stock_N225.csv` and `test/ti_N225.csv` predate the
-rewrite and are load bearing: the contract test regenerates all 42 computed
-columns of the second from the first.
+rewrite and are load bearing: the contract test regenerates the computed
+columns defined by the data contract from the first fixture.
