@@ -46,8 +46,8 @@ party obtains them.
 
 ## 2. How the consumer parses each file
 
-Two parsing styles are in use on the other side, and the difference decides what
-is safe to change.
+The consumer handles the generated files in the distinct ways listed below, and
+the difference decides what is safe to change.
 
 | Style | Files | Safe to reorder? | Safe to rename? |
 |---|---|---|---|
@@ -195,7 +195,7 @@ lookup silently, leaving an empty cell rather than an error.
 
 ## 6. The summary files
 
-All four share one shape and differ only in which columns they carry.
+The summary files share one row shape and differ only in which columns they carry.
 
 - Tab separated, **not** comma separated.
 - One header line beginning `Code`. The dashboard skips it by that literal.
@@ -343,10 +343,10 @@ dividend yield, market capitalisation — scraped from a Yahoo Japan quote page
 that no longer exists.
 
 Nothing replaces it. Restoring it would mean choosing a new source for
-fundamentals; the J-Quants Free plan does not carry them in this form, and no
-other source that is free, licensed for this use and offered for machine access
-has been adopted. Scraping one is not an option here. The link has been removed
-from the dashboard so that nothing dangles, and neither repository refers to the
+fundamentals; no free source licensed for this use and offered for machine
+access has been adopted. Scraping one is not an option here. The link has been
+removed from the dashboard so that nothing dangles, and neither repository
+refers to the
 file.
 
 The four market indices the pipeline used to chart are withdrawn on the same

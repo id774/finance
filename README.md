@@ -154,11 +154,11 @@ The system is built around those configured limits:
 Earlier versions charted reference market indices. The migration history
 and the exact historical set are recorded in
 [`doc/JQUANTS_MIGRATION.md`](doc/JQUANTS_MIGRATION.md#6-what-was-withdrawn-rather-than-replaced).
-The Free plan carries no index
-values, and no free, licensed, machine-readable alternative has been
-adopted, so the capability is withdrawn rather than replaced. Nothing in the
-analysis of Japanese equities depends on a reference index: no indicator,
-summary, screening or model takes one as an input.
+No index dataset has been adopted for the current pipeline, and no free,
+licensed, machine-readable alternative source has been adopted, so the
+capability remains withdrawn. Nothing in the analysis of Japanese equities
+depends on a reference index: no indicator, summary, screening or model takes
+one as an input.
 
 "Not obtainable on acceptable terms, therefore not provided" is a legitimate
 outcome, and a better one than an index of uncertain provenance.
@@ -182,7 +182,7 @@ TA-Lib C library first and let pip build the extension against it.
 
 There is no `requirements.txt`. Dependencies are declared in `pyproject.toml`
 and are installed by `pip install .`; see
-[Migrating from the previous version](#11-migrating-from-the-previous-version).
+[Migrating from the previous version](#14-migrating-from-the-previous-version).
 
 ---
 

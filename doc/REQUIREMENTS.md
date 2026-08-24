@@ -103,18 +103,18 @@ A provider that fails any of the three is not adopted, and a shortfall in the
 data is never made up from one that does. In particular, no page written for a
 human is scraped, and no undocumented endpoint is called.
 
-The plan's limits are requirements, not defects:
+The configured subscription limits are requirements, not defects:
 
-- **A publication delay.** The newest available row is weeks behind today. The
-  system fetches no further forward than the plan publishes, and states the last
-  trading day it holds so that the delay is visible to the reader.
-- **A bounded history.** The plan keeps a fixed span behind that point. A
-  request for anything older is raised to the oldest date kept, and every
-  analysis must be computable inside the span.
+- **A publication window.** The system respects the configured `delay_days`,
+  fetches no further forward than that window permits, and states the last
+  trading day it holds so that the data age is visible to the reader.
+- **A bounded history.** The system respects the configured `retention_days`.
+  A request for anything older is raised to the oldest date in that window, and
+  every analysis must be computable inside the configured span.
 - **A rate limit.** Requests are paced and a refusal is retried rather than
   worked around.
 
-The interfaces the Free plan does not carry are not obtained elsewhere. Market
+Interfaces not adopted by this pipeline are not obtained elsewhere. Market
 index values are the case that matters here; see section 7.4.
 
 ### 7.3 Stored history
@@ -130,8 +130,8 @@ operator performs rather than something a nightly job decides.
 ### 7.4 Market indices
 
 None. The system previously charted four market indices fetched from a provider
-it no longer uses. The J-Quants Free plan carries no index values, and
-no free, licensed, machine-readable source for them has been adopted.
+it no longer uses. No index dataset has been adopted for the current pipeline,
+and no free, licensed, machine-readable alternative source has been adopted.
 
 The requirement is therefore withdrawn rather than met by other means. The
 analysis of Japanese shares stands without a reference index: no indicator,

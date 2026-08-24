@@ -42,11 +42,12 @@ jquants:
   # plan's rate limit is exceeded, and a run over a stock list is in no
   # hurry, so it paces itself rather than finding the limit.
   request_interval: 1.0
-  # How many days behind today the newest row of the plan is. The Free
-  # plan publishes twelve weeks in arrears; a paid plan sets this to 0.
+  # Program defaults for the configured publication and retention window.
+  # Check the official J-Quants service information when aligning them with
+  # the subscription in use.
+  # How many days behind today the newest row of the configured plan is.
   delay_days: 84
-  # How far back from that newest row the plan keeps data. Two years on
-  # the Free plan.
+  # How far back from that newest row the configured plan keeps data.
   retention_days: 730
 
 charts:
