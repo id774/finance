@@ -4,8 +4,9 @@
 
 **finance** is a batch pipeline for technical analysis of Japanese equities,
 written for **one person analysing their own investments**. Once a day it
-fetches prices from the J-Quants API, computes technical indicators, trains two
-small models, writes CSV files and PNG charts into one directory, and mails a
+fetches prices from the J-Quants API, computes technical indicators, trains a
+trend classifier and a price-regression model, writes CSV files and PNG
+charts into one directory, and mails a
 summary to the operator.
 
 It has no server, no database and no user interface of its own. The directory it
@@ -35,9 +36,12 @@ does and does not provide.
 
 - **Prices from the J-Quants API Free plan**, a source an individual may use at
   no cost and read programmatically
-- **Technical indicators through TA-Lib**, thirty-odd series per stock
+- **Technical indicators through TA-Lib**, with the indicator definitions
+  maintained in `finance/indicators.py` and the generated schema documented
+  in [`doc/DATA_CONTRACT.md`](doc/DATA_CONTRACT.md)
 - **A trend classifier and a price regression**, refreshed nightly per stock
-- **Candlestick charts** at three window lengths, drawn without a display
+- **Candlestick charts** for the standard, short-term, and long-term views,
+  drawn without a display
 - **Summary tables** for a portfolio, TOPIX Core30 and an RSI14 screening
 - **Incremental price updates** that never rewrite stored history
 - **A file contract with finance-dashboard**, pinned by regression tests
@@ -49,10 +53,9 @@ does and does not provide.
 - Linux (Debian, Ubuntu) with cron for production use
 - A Japanese TrueType font for the chart captions
 
-Python 3.11 is the minimum because it is the minimum of the scientific stack
-this depends on: NumPy 2.4, pandas 3, SciPy 1.17, scikit-learn 1.9 and
-matplotlib 3.11 all declare `requires-python >= 3.11`. Python 3.10 reaches end
-of life in October 2026, so nothing is gained by holding it back.
+Python 3.11 is the current compatibility floor. The authoritative Python
+requirement and dependency version ranges are declared in `pyproject.toml`;
+this README does not duplicate the currently resolved dependency versions.
 
 ## Contents
 
@@ -121,32 +124,37 @@ and `GET /equities/bars/daily` for daily bars, following `pagination_key` until
 the response carries none. The v1 refresh-token exchange was withdrawn on
 1 June 2026 and is not implemented.
 
-### What the Free plan gives, and what it does not
+### Free-plan assumptions and their source
 
-| | |
-|---|---|
-| Cost | Free to an individual |
-| Delay | Publishes in arrears — twelve weeks at the time of writing |
-| History | About two years behind that point |
-| Datasets | Listed issues, daily bars, financial statements, earnings dates |
-| Not included | Index values, intraday bars, and the other paid datasets |
-| Rate limit | Per plan; requests are paced and a refusal is retried |
+The J-Quants service owns the current plan limits, dataset availability,
+and rate limits. Consult the
+[official J-Quants service information](https://jpx-jquants.com/)
+for current provider terms rather than treating copied values in this
+repository as current service facts.
 
-**These are the specification, not defects.** The system is built on them:
+The values this program actually uses for delay, retention, request pacing,
+timeout, and retries are defined in `finance/config.py` and exposed in the
+[Configuration](#4-configuration) table below. Delay and retention are not
+repeated numerically elsewhere in this current user-facing README.
 
-- It never asks for a date newer than the plan publishes, and reports the last
-  trading day it holds so the delay is visible rather than hidden.
-- A configured start date older than the plan keeps is raised to what the plan
-  has, and the run says so.
-- Every indicator is computable inside the window. The longest lookback is a
-  200-day moving average against roughly 488 trading days of history, and a test
-  asserts the margin.
-- A shortfall is **never** made up from another source. No paid plan is assumed
-  and no unofficial one is used.
+The system is built around those configured limits:
+
+- It never asks for a date newer than the configured publication window, and
+  reports the last trading day it holds so the delay is visible rather than
+  hidden.
+- A configured start date older than the configured retention window is
+  raised to the available window, and the run says so.
+- Every configured indicator must fit inside the configured retention
+  window; `test/test_plan_window.py` enforces that relationship.
+- A shortfall is **never** made up from another source. No paid plan is
+  assumed and no unofficial one is used.
 
 ### Market indices are gone
 
-Earlier versions charted four market indices. The Free plan carries no index
+Earlier versions charted reference market indices. The migration history
+and the exact historical set are recorded in
+[`doc/JQUANTS_MIGRATION.md`](doc/JQUANTS_MIGRATION.md#6-what-was-withdrawn-rather-than-replaced).
+The Free plan carries no index
 values, and no free, licensed, machine-readable alternative has been
 adopted, so the capability is withdrawn rather than replaced. Nothing in the
 analysis of Japanese equities depends on a reference index: no indicator,
@@ -212,10 +220,13 @@ sends no mail.
 | `FINANCE_MAIL_TO` | `mail.recipient` | - | Recipient, required when mail is enabled |
 | `FINANCE_MAIL_HOSTNAME_SUFFIX` | `mail.hostname_suffix` | - | Only send from a host whose name ends with this |
 
-`delay_days` and `retention_days` describe the **subscription**, not the
-program, and this table is the only place either number appears. They are
-settings because a plan's published terms can change, and because a paid
-subscription sets `delay_days` to `0`. Everything downstream follows from them:
+`delay_days` and `retention_days` describe the subscription assumptions used
+by the program. Their runtime defaults are defined in `finance/config.py` and
+exposed in this Configuration table; current user-facing documentation does
+not duplicate those numeric defaults elsewhere. Current provider terms
+belong to the official J-Quants documentation. They are settings because a
+plan's published terms can change, and because a paid subscription sets
+`delay_days` to `0`. Everything downstream follows from them:
 which dates a fetch asks for, whether stored data counts as current, and whether
 a summary treats a stock as stale.
 
