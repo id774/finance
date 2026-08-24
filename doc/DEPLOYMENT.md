@@ -374,7 +374,10 @@ transient fetch failure resolves itself the next evening.
 empty or unreadable. `run.sh` checks before it starts, so nothing was fetched.
 
 **Every stock fails to authenticate** — the key is wrong, was revoked, or the
-subscription lapsed. Re-registering and issuing a new key is the fix.
+configured subscription does not currently permit the request. Check the key
+and subscription status against the
+[official J-Quants service information](https://jpx-jquants.com/), then update
+`JQUANTS_API_KEY` if the credential must be replaced.
 
 **Every stock fails with a rate limit** — the job is asking too quickly.
 Raise `jquants.request_interval`.

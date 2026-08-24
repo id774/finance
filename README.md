@@ -255,8 +255,8 @@ boxes.
 
 ## 5. The API Key
 
-Register at the J-Quants site, subscribe to the Free plan, and issue a key from
-its dashboard. Then export it:
+Obtain an API key by following the current instructions in the
+[official J-Quants service information](https://jpx-jquants.com/). Then export it:
 
 ```bash
 export JQUANTS_API_KEY=your-key-here

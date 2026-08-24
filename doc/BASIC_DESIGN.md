@@ -305,7 +305,7 @@ Each layer converts what it catches:
 
 | Layer | Catches | Raises |
 |---|---|---|
-| `datasources/jquants` | any HTTP client exception, any refused status | `DataSourceError` and its four subtypes |
+| `datasources/jquants` | any HTTP client exception, any refused status | the `DataSourceError` hierarchy |
 | `indicators` | any TA-Lib exception | `IndicatorError` |
 | `models` | any scikit-learn exception | `ModelError` |
 | `storage` | `OSError`, parser errors | `StorageError`, `DataFormatError` |
@@ -320,8 +320,8 @@ Above them:
   defect and its traceback is wanted.
 - A list run with any failure exits 1, so cron reports a partial run.
 
-Two writes are deliberately conservative. An empty frame is never written over
-an existing file, and stored price rows are never recalculated.
+Writes are deliberately conservative. An empty frame is never written over an
+existing file, and stored price rows are never recalculated.
 
 ## 9. Logging
 
@@ -335,8 +335,8 @@ something that failed.
 
 ## 10. Testing
 
-The test groups are described in the README. Two structural rules matter to this
-design:
+The test groups are described in the README. The structural rules that matter to
+this design are:
 
 - No test in the default run reaches the network. The price source is a protocol
   and tests inject a stub.
