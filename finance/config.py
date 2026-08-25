@@ -40,8 +40,8 @@
 #  Contact: idnanashi@gmail.com
 #
 #  Environment Variables:
-#  - JQUANTS_API_KEY: The J-Quants API key, issued from the J-Quants
-#      dashboard. Required for any run that fetches. Read from the
+#  - JQUANTS_API_KEY: The J-Quants API key. Required for any run that
+#      fetches. Read from the
 #      environment only, never from the configuration file. The name
 #      matches the one the official J-Quants client reads, so a host
 #      that already exports it needs nothing added.
