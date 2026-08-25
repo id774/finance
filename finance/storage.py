@@ -5,16 +5,14 @@
 # finance/storage.py: File input and output
 #
 #  Description:
-#  Every read and write of a generated file passes through here: the raw
-#  price CSV, the technical indicator CSV, the summary tables, their
-#  dated copies and the pickled models.
+#  Centralize file I/O for the raw price CSV, technical indicator CSV,
+#  summary tables, dated summary copies, data_source.txt and pickled
+#  models.
 #
-#  The formats are a contract with finance-dashboard, so they are stated
-#  once in this module rather than being spelled out at each call site.
-#  The two that matter are that a price or indicator file is comma
-#  separated with a Date index label, and that a summary file is tab
-#  separated with a Code index label and is read positionally by the
-#  dashboard. doc/DATA_CONTRACT.md is the normative description.
+#  File formats shared with finance-dashboard are described normatively
+#  in doc/DATA_CONTRACT.md. This module keeps the matching separators,
+#  index labels, data_source.txt file name and key order in constants so
+#  call sites do not restate them.
 #
 #  This module decides no path. It is told where to write, so that the
 #  layers above it own the layout and a test can point it at a temporary
@@ -217,9 +215,9 @@ def write_data_source(
         generated: The day the pipeline ran.
         last_trading_day: The newest trading day the data covers, or
             None when the run analysed nothing. An unknown date is
-            written as an empty value rather than as today, because a
-            consumer showing today for data that is twelve weeks old is
-            the exact misreading this file exists to prevent.
+            written as an empty value rather than as today, because
+            substituting the run date would make older or unknown data
+            look more current than it is.
 
     Raises:
         StorageError: The file cannot be written.

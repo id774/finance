@@ -17,10 +17,10 @@
 #
 #  The data source errors are split further than the rest because the
 #  operator's response differs by kind. A rejected API key needs a
-#  configuration change; a rate limit needs a slower schedule; a dataset
-#  the subscribed plan does not carry needs neither, and is not a fault
-#  to be fixed. Collapsing them into one type would leave the nightly
-#  log unable to say which of the three happened.
+#  configuration change; a rate limit needs a slower request pace; an
+#  unavailable dataset or date can be skipped; an invalid stock code
+#  needs its input corrected. Collapsing them into one type would leave
+#  the nightly log unable to distinguish these conditions.
 #
 #  Author: id774 (More info: http://id774.net)
 #  Source Code: https://github.com/id774/finance

@@ -23,8 +23,9 @@
 #  test/test_datasources.py are what the adapter is really tested
 #  against.
 #
-#  The date range asked for is inside the Free plan's published window,
-#  so that a Free subscription can run this as well as a paid one.
+#  The date range is derived from the configured publication window.
+#  The test does not hard-code a provider plan's current delay or compare
+#  subscription tiers.
 #
 #  Test Cases:
 #  - The endpoint answers and the response normalizes to the canonical
