@@ -185,9 +185,9 @@ class JQuantsSettings:
         """
         Return the newest date the plan publishes as of the given day.
 
-        On the Free plan this is twelve weeks back. Asking for anything
-        newer is answered with nothing, so the pipeline stops at this
-        date rather than requesting a window it cannot be given.
+        The configured delay is applied to today. The pipeline stops at
+        that date rather than requesting a window outside the configured
+        publication window.
         """
         return today - timedelta(days=self.delay_days)
 
@@ -238,11 +238,11 @@ class Settings:
         """
         Return the date range a fetch on the given day may ask for.
 
-        The end is the newest date the plan publishes. The start is the
-        configured start date, raised to the oldest date the plan still
-        keeps: a request for 2014 against a plan holding two years is
-        not an error, it is simply answered from where the data begins,
-        and clamping says so in the log instead of implying otherwise.
+        The end is the newest date the configured plan window permits.
+        The start is the configured start date, raised to the oldest
+        date that window keeps. A start date earlier than the window is
+        not an error; it is clamped to the window and the change is
+        recorded in the log.
         """
         end = self.jquants.latest_available(today)
         earliest = self.jquants.earliest_available(today)

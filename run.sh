@@ -9,15 +9,14 @@
 #  indicator files, then the mail that reads the summaries, and last the
 #  long and short charts, which nothing else consumes.
 #
-#  That order is a specification, not a habit. Steps 2 to 6 read the
-#  ti_CODE.csv files step 1 writes, and steps 7 and 8 read the summaries
-#  steps 2 and 4 write.
+#  That order is a specification, not a habit. The summary runs read the
+#  ti_CODE.csv files written by the updating chart run, and the mail runs
+#  read the summaries produced earlier in the job.
 #
-#  Only step 1 passes --update. It is the run that fetches prices,
+#  Only the updating chart run passes --update. It fetches prices,
 #  rewrites stock_CODE.csv and ti_CODE.csv, retrains the models and
-#  records where the data came from. The long and short runs draw their
-#  charts from what step 1 already stored, so the job makes one pass
-#  over the network per stock per day rather than three, and needs no
+#  records where the data came from. The long and short chart runs draw
+#  from the stored data, so they perform no additional fetch and need no
 #  API key of their own.
 #
 #  A step that fails is reported and the job continues to the next one,
@@ -39,10 +38,11 @@
 #      ./run.sh -h | --help
 #
 #  Environment Variables:
-#  - JQUANTS_API_KEY: The J-Quants API key. Required by step 1, which is
-#      the only step that fetches. It is not set here: put it in an
-#      environment file the deployment owns, readable only by the user
-#      the job runs as, and never in this script or in the repository.
+#  - JQUANTS_API_KEY: The J-Quants API key. Required by the updating
+#      chart run, which is the only run that fetches. It is not set here:
+#      put it in an environment file the deployment owns, readable only
+#      by the user the job runs as, and never in this script or in the
+#      repository.
 #  - WORK_DIR: Deployment root. Defaults to /var/stock.
 #  - ENV_FILE: A file of KEY=value lines sourced before the job, holding
 #      JQUANTS_API_KEY. Defaults to $WORK_DIR/env, and is skipped when

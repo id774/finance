@@ -149,8 +149,8 @@ Configuration is optional. Without any, the pipeline writes into the data
 directory `run.sh` exports, fetches the whole configured plan window, and
 sends no mail.
 
-The settings worth knowing about are under `jquants`, which describe the plan
-rather than the program:
+The operational settings below cover the configured publication window and the
+J-Quants client's request behavior:
 
 | Key | Default | What it is |
 |---|---|---|

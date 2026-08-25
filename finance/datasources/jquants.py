@@ -261,8 +261,8 @@ class JQuantsSource:
         """
         if not settings.has_api_key():
             raise AuthenticationError(
-                "No J-Quants API key is configured. Export JQUANTS_API_KEY with the key "
-                "issued from the J-Quants dashboard."
+                "No J-Quants API key is configured. Export JQUANTS_API_KEY with a valid "
+                "key for the configured J-Quants subscription."
             )
         self.settings = settings
         self._session = session
