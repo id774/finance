@@ -40,8 +40,7 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Draw with matplotlib primitives instead of the removed pandas
-#       and matplotlib internals.
+#       Initial release.
 #
 ########################################################################
 
