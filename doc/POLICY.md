@@ -362,6 +362,8 @@ not a list of the functions below it, which the code already carries.
     actually contains, not on the date edit.
 - A `Version History` entry is written as `vX.Y YYYY-MM-DD`, newest first, and
   the date is the date of the change.
+- Each entry's description is at most two lines, and a single line at or
+  under 80 columns is preferred whenever practical.
 
 #### 2.7.2 Module Version Numbering
 
@@ -422,38 +424,36 @@ not a list of the functions below it, which the code already carries.
 
 ##### 2.7.4.1 One Change per Line
 
-- One coherent change is one bullet, written on one physical line. That is the
-  rule, and the one case standing outside it closes this section. The entry is a
-  list meant to be scanned, and a wrapped bullet costs it that: the eye no
-  longer finds the changes by counting lines, and a diff no longer shows one
-  added line per added change.
-- This is a deliberate exception to the line length the other plain text
-  documents follow, not an oversight in this file. Do not rewrap `doc/VERSIONS`
-  to 80 columns, and do not report a long bullet here as a violation of that
-  guidance.
-- Aim for about 100 columns. A bullet that has to carry file names, command
-  names, function names, option names or configuration names may run to about
-  120 columns, or past that when the names it needs are that long.
-- Those figures are a prompt to reread the bullet, not a limit to enforce. They
-  ask whether the sentence has grown past what a reader of the version history
-  needs. A bullet that is long because the change is long is correct.
-- Bullets written before this rule are left wrapped as they stand. The rule
-  applies to what is written from now on.
+- One coherent change is one bullet. A bullet is at most two physical lines,
+  and a single line at or under 80 columns is preferred whenever practical.
+  This is an explicit limit, not a prompt to reread: a bullet that runs past
+  two lines, or a single line that runs past 80 columns without necessity,
+  must be shortened. The entry is a list meant to be scanned, and a bullet
+  that grows past this limit costs it that: the eye no longer finds the
+  changes by counting lines, and a diff no longer shows a small, bounded
+  edit.
+- A bullet that has to carry file names, command names, function names,
+  option names or configuration names may pass 80 columns on its one or two
+  lines when those names cannot be shortened without losing meaning. The
+  two-line ceiling still applies.
+- Bullets written before this rule are left as they stand. The rule applies
+  to what is written from now on.
 - `doc/VERSIONS` carries these guidelines again at its foot, and an entry
-  written into it follows the reasons recorded there.
+  written into it follows the limit recorded there.
 - The case standing outside the rule is a version history that has already
-  settled on a width and a layout of its own. There a new bullet is wrapped to
-  that width and balanced against the lines already standing, so that the
-  version history stays of a piece, and that consistency comes before the one
-  physical line asked for above. Wrapping to hold an established form does not
-  overturn the rule; where a file has settled on no such form, one change is
-  still one physical line.
+  settled on a width and a layout of its own, predating this limit. There a
+  new bullet is wrapped to that width and balanced against the lines already
+  standing, so that the version history stays of a piece. Wrapping to hold an
+  established form does not overturn the two-line, 80-column limit above;
+  where a file has settled on no such form, that limit applies in full.
 
 ##### 2.7.4.2 Shortening a Long Entry
 
-- When a bullet runs long, the first move is to abstract it, never to break it
-  across lines. Drop the implementation detail, the examples, the reason and the
-  secondary effects, and state what the change is.
+- When a bullet runs long, the first move is to abstract it, not to reach for
+  the second line the two-line limit allows. Drop the implementation detail,
+  the examples, the reason and the secondary effects, and state what the
+  change is. Wrap onto the second line only when the abstracted bullet still
+  exceeds 80 columns.
 - Keep what a reader of the release cannot reconstruct without it: what was
   changed, what is now observably different from outside, what it does to
   compatibility, what it does to safety, and the identifiers someone would
