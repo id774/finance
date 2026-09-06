@@ -3,65 +3,65 @@ finance Repository Version History
 
 v1.0.1 (2026-08-26)
 -------------------
-- Replace Yahoo Finance with the J-Quants API v2 Free plan as the price source,
-  so that nothing reaches an unofficial endpoint or scrapes a page for prices.
-- Add a J-Quants data source that keeps the provider's authentication, paging, retries and field names to itself
-  and hands the analysis layer the frame it always received, refusing an incomplete response as a provider error.
+- Replace Yahoo Finance with the J-Quants API v2 Free plan as the price source, so
+  that nothing reaches an unofficial endpoint or scrapes a page for prices.
+- Add a J-Quants data source that keeps the provider's authentication, paging and
+  retries to itself, refusing an incomplete response as a provider error.
 - Take all six canonical columns from the adjusted series, so that candlesticks
   and indicators sit on one basis for the first time. No formula changed.
-- Treat the Free plan's publication delay, bounded history and rate limit as the specification, measuring
-  what is fetched and how stale a summary is against the newest published date rather than against today.
+- Treat the Free plan's publication delay, bounded history and rate limit as the
+  spec, measuring staleness against the newest published date, not today.
 - Drop the 2014-10-01 default start date and the 600 row long chart window in
   favour of values that fit the plan.
-- Read the API key from JQUANTS_API_KEY alone, keeping it out of the configuration file and the logs, and
-  fail a fetching run before it opens a socket when it is absent. A chart-only run needs no key at all.
-- Add finance-migrate, which archives the per-stock files written under the previous provider so that
-  the next run rebuilds them. The two providers' series do not mean the same thing and are not merged.
-- Withdraw the market indices, which the Free plan does not carry, rather than obtain
-  them from an unofficial source, and seed data/stocks.txt with listed equities.
-- Refresh the shipped TOPIX Core30 constituents and keep the default stock list
-  in sync with them.
-- Write data_source.txt beside the generated files, recording the source, the generation
-  date and the last trading day, so that finance-dashboard can show how old its figures are.
-- State in the documents that this is software for one person's private analysis, and that the licence
-  of this source code is a separate question from the terms of the market data put through it.
-- Add doc/JQUANTS_MIGRATION.md with the survey and the decisions, and mark
-  section 6 of doc/MODERNIZATION_PLAN.md superseded.
-- State the documentation and versioning rules in doc/POLICY.md, covering module
-  headers and versions, repository releases and how an entry in this file is written.
+- Read the API key from JQUANTS_API_KEY alone, keeping it out of the config file
+  and logs, and fail before opening a socket when it is absent.
+- Add finance-migrate, archiving the previous provider's per-stock files so the
+  next run rebuilds them instead of merging incompatible series.
+- Withdraw the market indices, which the Free plan does not carry, and seed
+  data/stocks.txt with listed equities instead.
+- Refresh the shipped TOPIX Core30 constituents and keep the default stock list in
+  sync with them.
+- Write data_source.txt beside the generated files, recording the source,
+  generation date and last trading day for finance-dashboard.
+- State that this is software for one person's private analysis, and that this
+  source code's licence is separate from the market data's terms.
+- Add doc/JQUANTS_MIGRATION.md with the survey and the decisions, and mark section
+  6 of doc/MODERNIZATION_PLAN.md superseded.
+- State the documentation and versioning rules in doc/POLICY.md: module headers,
+  versions, releases, and how entries here are written.
 - Source the API key from a root-only environment file created by deploy.sh and
   checked by run.sh before the job starts, and leave it empty in CI.
 - Preserve the last valid summary and fail when no stock can be aggregated.
-- Keep data_source.txt provenance to the provider and plan, leaving data age
-  to last_trading_day instead of a mutable delay label.
+- Keep data_source.txt provenance to the provider and plan, leaving data age to
+  last_trading_day instead of a mutable delay label.
 
 v1.0 (2026-08-14)
 -----------------
-- Declare the repository dual licensed under the GPL version 3 or the LGPL version 3, in the license
-  documents, pyproject.toml and every module header, and record the decision in doc/POLICY.md.
+- Declare the repository dual licensed under GPLv3 or LGPLv3 in the license
+  documents, pyproject.toml, every module header, and doc/POLICY.md.
 - Start file level version management at v1.0 for every module, renumbering the
   single modernization entry each header carried.
 - State the module header order and what a Description must establish in
   doc/POLICY.md.
 - Add this file, and link the license and history documents from README.md.
-- Restructure the repository as an installable Python package with a one-way
-  dependency direction, replacing the sys.path manipulation that let bin/ import lib/.
-- Migrate the calculations to pandas 3, NumPy 2.4, TA-Lib 0.7 and scikit-learn 1.9 without
-  changing a formula, and assert every expected value the 2015 suite asserted on the same fixture.
-- Replace the pandas, matplotlib and standard library APIs the upgrade removed. Charts are drawn
-  with matplotlib primitives, preserving the series, colours, legends, figure size and caption.
+- Restructure the repository as an installable Python package with one-way
+  dependencies, replacing bin/'s sys.path manipulation of lib/.
+- Migrate the calculations to pandas 3, NumPy 2.4, TA-Lib 0.7 and scikit-learn 1.9
+  without changing a formula, keeping every 2015 test assertion.
+- Replace the pandas, matplotlib and standard library APIs the upgrade removed,
+  drawing charts with matplotlib primitives that preserve their appearance.
 - Replace the dead price sources with one yfinance adapter behind a protocol,
   normalizing everything that differs from the old readers.
-- Replace bin/email.rb with the finance-notify command, removing the Ruby
-  runtime and the mail gem from the deployment.
-- Rewrite run.sh and deploy.sh as POSIX sh that report a failed step instead of always exiting zero, and install
-  a package into a virtual environment instead of copying bin/ and lib/. The cron schedule is unchanged.
-- Honour -u on the stock-list path of the chart command, which was accepted and then ignored, so that only
-  the run that passes it fetches, retrains and rewrites ti_CODE.csv. That file's format is unchanged.
-- Raise the minimum Python to 3.11 and move the dependencies from 2015-2016
-  pins to bounded current ranges.
-- Keep the data contract with finance-dashboard unchanged, describe it in doc/DATA_CONTRACT.md
-  and pin it with tests that parse the generated files as the dashboard does.
+- Replace bin/email.rb with the finance-notify command, removing the Ruby runtime
+  and the mail gem from the deployment.
+- Rewrite run.sh and deploy.sh as POSIX sh that report failed steps and install
+  into a virtual environment instead of copying bin/ and lib/.
+- Honour -u on the chart command's stock-list path, previously accepted but
+  ignored, so only that run fetches, retrains and rewrites ti_CODE.csv.
+- Raise the minimum Python to 3.11 and move the dependencies from 2015-2016 pins
+  to bounded current ranges.
+- Keep the data contract with finance-dashboard unchanged, describe it in
+  doc/DATA_CONTRACT.md, and pin it with tests parsing files as the dashboard does.
 - Add doc/REQUIREMENTS.md, doc/BASIC_DESIGN.md, doc/DATA_CONTRACT.md,
   doc/POLICY.md, doc/DEPLOYMENT.md and doc/MODERNIZATION_PLAN.md.
 
