@@ -39,7 +39,7 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Ported from the nose suite and extended.
+#       Initial release.
 #
 ########################################################################
 

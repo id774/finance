@@ -60,8 +60,7 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Create the environment file the API key is kept in. Install a package
-#       into a virtual environment instead of copying bin/ and lib/.
+#       Initial release.
 #
 ########################################################################
 

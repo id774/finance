@@ -29,8 +29,7 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Add data_source.txt, which states where the generated data came from and how
-#       old it is. Centralize file access and separate model persistence from fitting.
+#       Initial release.
 #
 ########################################################################
 

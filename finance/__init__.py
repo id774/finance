@@ -26,8 +26,7 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Quiet the HTTP client's own loggers along with the rest.
-#       Restructure the repository as an installable package.
+#       Initial release.
 #
 ########################################################################
 

@@ -30,8 +30,7 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Separate persistence from fitting and drop the removed
-#       scikit-learn import paths.
+#       Initial release.
 #
 ########################################################################
 

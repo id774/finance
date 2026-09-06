@@ -32,7 +32,7 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Reduce to a wrapper around finance.cli.summary.
+#       Initial release.
 #
 ########################################################################
 

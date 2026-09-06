@@ -31,8 +31,7 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Replace the removed DataFrame.sort and .ix access, preserving
-#       the values and the column order.
+#       Initial release.
 #
 ########################################################################
 

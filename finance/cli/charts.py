@@ -68,8 +68,7 @@
 #       Record provider and plan provenance without embedding a mutable
 #       publication-delay claim.
 #  v1.0 2026-08-14
-#       Build the J-Quants source from the settings and record where the data
-#       came from. Replace optparse, honour -u, and call the shared pipeline.
+#       Initial release.
 #
 ########################################################################
 

@@ -87,6 +87,9 @@ Version History Guidelines
   same file or feature.
 - Place closely related entries near each other.
 - Append an independent new change to the end of the current version entry.
+- Where the record reaches back to a genuine first version, that entry
+  reads only "Initial release." and nothing else. v1.0 here is a
+  modernization release, not that first version, and keeps its own record.
 - This file records the history of the repository. The Version History block in
   a module header records the history of that file, and the two are kept apart:
   a release entry here does not raise a module version, and a module version

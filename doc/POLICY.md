@@ -364,6 +364,8 @@ not a list of the functions below it, which the code already carries.
   the date is the date of the change.
 - Each entry's description is at most two lines, and a single line at or
   under 80 columns is preferred whenever practical.
+- The first entry, at the lowest version the file's own history reaches,
+  reads only `Initial release.` and nothing else.
 
 #### 2.7.2 Module Version Numbering
 
@@ -440,6 +442,9 @@ not a list of the functions below it, which the code already carries.
   to what is written from now on.
 - `doc/VERSIONS` carries these guidelines again at its foot, and an entry
   written into it follows the limit recorded there.
+- Where the record reaches back to a genuine first version, that entry
+  reads only `Initial release.` and nothing else. `v1.0` here is a
+  modernization release, not that first version, and keeps its own record.
 - The case standing outside the rule is a version history that has already
   settled on a width and a layout of its own, predating this limit. There a
   new bullet is wrapped to that width and balanced against the lines already
