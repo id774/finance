@@ -45,7 +45,6 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Guard the data source decision and the API key.
 #       Initial release.
 #
 ########################################################################

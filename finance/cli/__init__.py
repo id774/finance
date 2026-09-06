@@ -31,7 +31,7 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Initial release, replacing the optparse entry points.
+#       Initial release.
 #
 ########################################################################
 
