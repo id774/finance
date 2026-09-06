@@ -29,8 +29,6 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Give the settings fixture a plan window and record where the
-#       price fixture came from.
 #       Initial release.
 #
 ########################################################################

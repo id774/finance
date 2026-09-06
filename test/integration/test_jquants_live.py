@@ -45,7 +45,7 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Initial release, replacing the Yahoo live check.
+#       Initial release.
 #
 ########################################################################
 

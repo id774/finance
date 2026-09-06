@@ -32,10 +32,7 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Replace the Yahoo Finance source with J-Quants and take the
-#       settings the source is built from.
-#       Initial release, replacing the direct pandas-datareader and HTML
-#       scraping calls.
+#       Initial release.
 #
 ########################################################################
 

@@ -42,10 +42,8 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Fetch within the plan window and report the latest trading day
-#       a run covered.
-#       Separate the pipeline from file paths, the data source and the
-#       command line.
+#       Fetch within the plan window and report the latest trading day a run covered.
+#       Separate the pipeline from file paths, the data source and the command line.
 #
 ########################################################################
 

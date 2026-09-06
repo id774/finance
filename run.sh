@@ -65,9 +65,8 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Read the API key from an environment file and check that step 1
-#       has one before the job starts.
-#       Rewrite for POSIX sh, report failures, and drop the Ruby mailer.
+#       Read the API key from an environment file and check that step 1 has one before
+#       the job starts. Rewrite for POSIX sh, report failures, and drop the Ruby mailer.
 #
 ########################################################################
 

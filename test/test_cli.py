@@ -41,7 +41,6 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Cover the recorded data source and the API key requirement.
 #       Initial release.
 #
 ########################################################################

@@ -87,8 +87,6 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Add the J-Quants settings and the plan window, and make the
-#       start date default to what the plan offers.
 #       Initial release.
 #
 ########################################################################

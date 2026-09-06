@@ -53,8 +53,7 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Initial release, replacing the Yahoo adapter tests. Cover a
-#       required field missing from a later response row.
+#       Initial release.
 #
 ########################################################################
 

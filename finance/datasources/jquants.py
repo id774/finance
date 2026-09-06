@@ -62,8 +62,7 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Initial release, replacing the Yahoo Finance adapter. Refuse a
-#       missing required field in any response row.
+#       Initial release.
 #
 ########################################################################
 
