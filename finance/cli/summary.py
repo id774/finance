@@ -56,7 +56,7 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Replace optparse and drop the unused duplicate list parameter.
+#       Initial release.
 #
 ########################################################################
 

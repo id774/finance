@@ -32,8 +32,7 @@
 #
 #  Version History:
 #  v1.0 2026-08-14
-#       Port to modern NumPy, pandas and TA-Lib without changing a
-#       formula.
+#       Initial release.
 #
 ########################################################################
 

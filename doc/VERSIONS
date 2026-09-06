@@ -37,33 +37,7 @@ v1.0.1 (2026-08-26)
 
 v1.0 (2026-08-14)
 -----------------
-- Declare the repository dual licensed under the GPL version 3 or the LGPL version 3, in the license
-  documents, pyproject.toml and every module header, and record the decision in doc/POLICY.md.
-- Start file level version management at v1.0 for every module, renumbering the
-  single modernization entry each header carried.
-- State the module header order and what a Description must establish in
-  doc/POLICY.md.
-- Add this file, and link the license and history documents from README.md.
-- Restructure the repository as an installable Python package with a one-way
-  dependency direction, replacing the sys.path manipulation that let bin/ import lib/.
-- Migrate the calculations to pandas 3, NumPy 2.4, TA-Lib 0.7 and scikit-learn 1.9 without
-  changing a formula, and assert every expected value the 2015 suite asserted on the same fixture.
-- Replace the pandas, matplotlib and standard library APIs the upgrade removed. Charts are drawn
-  with matplotlib primitives, preserving the series, colours, legends, figure size and caption.
-- Replace the dead price sources with one yfinance adapter behind a protocol,
-  normalizing everything that differs from the old readers.
-- Replace bin/email.rb with the finance-notify command, removing the Ruby
-  runtime and the mail gem from the deployment.
-- Rewrite run.sh and deploy.sh as POSIX sh that report a failed step instead of always exiting zero, and install
-  a package into a virtual environment instead of copying bin/ and lib/. The cron schedule is unchanged.
-- Honour -u on the stock-list path of the chart command, which was accepted and then ignored, so that only
-  the run that passes it fetches, retrains and rewrites ti_CODE.csv. That file's format is unchanged.
-- Raise the minimum Python to 3.11 and move the dependencies from 2015-2016
-  pins to bounded current ranges.
-- Keep the data contract with finance-dashboard unchanged, describe it in doc/DATA_CONTRACT.md
-  and pin it with tests that parse the generated files as the dashboard does.
-- Add doc/REQUIREMENTS.md, doc/BASIC_DESIGN.md, doc/DATA_CONTRACT.md,
-  doc/POLICY.md, doc/DEPLOYMENT.md and doc/MODERNIZATION_PLAN.md.
+- Initial release.
 
 Before v1.0
 -----------
@@ -87,6 +61,8 @@ Version History Guidelines
   same file or feature.
 - Place closely related entries near each other.
 - Append an independent new change to the end of the current version entry.
+- The first entry, at the lowest version this file reaches, reads only
+  "Initial release." and nothing else.
 - This file records the history of the repository. The Version History block in
   a module header records the history of that file, and the two are kept apart:
   a release entry here does not raise a module version, and a module version
