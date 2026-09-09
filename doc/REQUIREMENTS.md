@@ -238,6 +238,8 @@ The job runs unattended, so how it fails is part of what it is.
 - **Errors are distinguishable.** A source that could not be reached, a stored
   file that is malformed, an indicator that could not be computed and a file
   that could not be written are different problems and are reported as such.
+- **A chart-only run never becomes a fetching run.** If its stored price file is
+  absent, that stock fails; only a run explicitly given `--update` may fetch.
 
 ## 15. Networking
 

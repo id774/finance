@@ -16,15 +16,19 @@ rather than as `bin/` and `lib/` copied into place.
 - `/var/stock/run.sh` — the batch script
 - `/etc/cron.d/stock` — the schedule
 
-It creates, if absent, and otherwise leaves alone:
+It creates these directories when they are absent:
 
 - `/var/stock/data`, `/var/stock/data/history`, `/var/stock/clf`
-- `/var/stock/data/stocks.txt` and `topix_core30.txt`, only when missing
+
+It seeds these files only when they are missing:
+
+- `/var/stock/data/stocks.txt`
+- `/var/stock/data/topix_core30.txt`
 - `/var/stock/env`, empty, mode 600, root only — the file the API key goes in
 
-It never writes into `data/` or `clf/`, and it never writes a key into `env`.
-Deploying cannot disturb generated data, updating data never needs a code
-change, and rotating the credential never needs either.
+On every deployment it reapplies ownership and permissions under the deployment
+root. It does not overwrite generated data or model contents, existing stock
+lists, or the contents of an existing `env`; it never writes an API key.
 
 These concerns are kept apart on purpose, and it is worth naming them because
 they used to be one directory of copied files:

@@ -5,7 +5,7 @@
 # finance/cli/__init__.py: Shared command line helpers
 #
 #  Description:
-#  Hold what the three commands have in common: the exit codes they
+#  Hold what the four commands have in common: the exit codes they
 #  agree on, the options every one of them accepts, and the wrapper that
 #  turns an expected failure into a message on standard error and a
 #  status, rather than a traceback.
@@ -30,6 +30,8 @@
 #  - Standard library only
 #
 #  Version History:
+#  v1.1 2026-09-09
+#       Validate command-line log levels with the shared configuration rule.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -45,7 +47,7 @@ from dataclasses import replace
 from pathlib import Path
 
 from finance import __version__, configure_logging
-from finance.config import Settings, load_settings
+from finance.config import Settings, load_settings, validate_log_level
 from finance.errors import ConfigurationError, FinanceError
 
 EXIT_SUCCESS = 0
@@ -89,7 +91,7 @@ def resolve_settings(arguments: argparse.Namespace) -> Settings:
         if settings.history_dir == settings.data_dir / "history":
             overrides["history_dir"] = data_dir / "history"
     if getattr(arguments, "log_level", None):
-        overrides["log_level"] = arguments.log_level
+        overrides["log_level"] = validate_log_level(arguments.log_level)
     if not overrides:
         return settings
     return replace(settings, **overrides)

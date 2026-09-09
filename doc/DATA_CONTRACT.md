@@ -91,9 +91,11 @@ incrementally.
 
 - Comma separated, index label `Date`, dates as `YYYY-MM-DD`.
 - Columns, in this order: `Open`, `High`, `Low`, `Close`, `Volume`, `Adj Close`.
-- One row per trading day. Rows are never removed and, once written, never
-  recalculated: an update fetches only dates after the last stored row and
-  combines them with the stored rows winning any overlap.
+- One row per trading day. An all-empty row introduced only by business-day
+  calendar normalization is not a stored row. Stored trading-day rows are never
+  removed and, once written, never recalculated: an update fetches only dates
+  after the last stored row and combines them with the stored rows winning any
+  overlap.
 - Every column is on **one basis**: the share-split adjusted series. `Adj Close`
   and `Close` are both the adjusted close, and `Open`, `High`, `Low` and
   `Volume` are the adjusted open, high, low and volume. Indicators are computed
@@ -216,7 +218,13 @@ predict, name`.
 
 ### 6.2 The nine column layout
 
-`topix_core30.csv` (`rsi9`) and `screening_rsi14.csv` (`rsi14`):
+`topix_core30.csv` (`rsi9`):
+
+```text
+Code	Open	High	Low	Close	Change	Ratio	rsi9	Name
+```
+
+`screening_rsi14.csv` (`rsi14`):
 
 ```text
 Code	Open	High	Low	Close	Change	Ratio	rsi14	Name
@@ -281,7 +289,7 @@ source from the view and the code and never looks inside the file.
 | File | Window | Written by |
 |---|---|---|
 | `chart_CODE.png` | 61 to 300 rows | the 240-row run |
-| `long_CODE.png` | over 300 rows | the 600-row run |
+| `long_CODE.png` | over 300 rows | the 480-row run |
 | `short_CODE.png` | 60 rows or fewer | the 60-row run |
 
 The prefix is chosen by the window length, not by an option:

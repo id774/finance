@@ -32,6 +32,7 @@
 #  - A repeated pagination key is refused rather than looped on.
 #  - The API key travels in the x-api-key header and in nothing else.
 #  - A missing API key fails before a request is made.
+#  - A non-object item in data is refused rather than silently discarded.
 #  - 401 and 403 raise AuthenticationError.
 #  - 429 raises RateLimitError once the retries are spent.
 #  - 400 and 404 raise DataUnavailableError.
@@ -52,6 +53,8 @@
 #  - pandas, pytest
 #
 #  Version History:
+#  v1.1 2026-09-09
+#       Cover rejection of non-object rows in the response data list.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -325,6 +328,13 @@ def test_a_response_without_a_data_member_is_refused():
     session = FakeSession([FakeResponse(body={"rows": []})])
     with pytest.raises(DataSourceError, match="data"):
         source(session).fetch("7203", START, END)
+
+
+def test_a_non_object_data_row_is_refused():
+    session = FakeSession([FakeResponse(body={"data": [row("2024-01-04", 100.0), "not-a-row"]})])
+    with pytest.raises(DataSourceError, match=r"page 1.*position 2"):
+        source(session).fetch("7203", START, END)
+    assert len(session.calls) == 1
 
 
 @pytest.mark.parametrize("status", [401, 403])

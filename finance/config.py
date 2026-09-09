@@ -86,6 +86,8 @@
 #  - PyYAML
 #
 #  Version History:
+#  v1.1 2026-09-09
+#       Reject malformed sections, booleans, log levels and mail ports at load.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -288,8 +290,14 @@ def _load_file(path: Path) -> dict[str, Any]:
 
 def _section(config: dict[str, Any], name: str) -> dict[str, Any]:
     """ Return a mapping section of the configuration. """
-    section = config.get(name)
-    return section if isinstance(section, dict) else {}
+    if name not in config:
+        return {}
+    section = config[name]
+    if not isinstance(section, dict):
+        raise ConfigurationError(
+            "Configuration section {0} must be a mapping".format(name)
+        )
+    return section
 
 
 def _first(*values: Any) -> Any:
@@ -300,11 +308,16 @@ def _first(*values: Any) -> Any:
     return None
 
 
-def _as_bool(value: Any) -> bool:
-    """ Interpret a configuration value as a boolean. """
+def _as_bool(value: Any, name: str) -> bool:
+    """ Interpret a configuration value as a boolean, or refuse it. """
     if isinstance(value, bool):
         return value
-    return str(value).strip().lower() in {"1", "true", "yes", "on"}
+    candidate = str(value).strip().lower()
+    if candidate in {"1", "true", "yes", "on"}:
+        return True
+    if candidate in {"0", "false", "no", "off"}:
+        return False
+    raise ConfigurationError("{0} must be a boolean, got {1!r}".format(name, value))
 
 
 def _as_int(value: Any, name: str) -> int:
@@ -353,6 +366,31 @@ def _as_non_negative_int(value: Any, name: str) -> int:
     if number < 0:
         raise ConfigurationError("{0} must not be negative, got {1}".format(name, number))
     return number
+
+
+def _as_port(value: Any, name: str) -> int:
+    """ Interpret a configuration value as a TCP port, or refuse it. """
+    number = _as_int(value, name)
+    if not 1 <= number <= 65535:
+        raise ConfigurationError(
+            "{0} must be between 1 and 65535, got {1}".format(name, number)
+        )
+    return number
+
+
+def validate_log_level(value: Any) -> str:
+    """
+    Return a logging level name, or refuse an unknown one.
+
+    Shared with finance.cli so that the command-line --log-level override
+    is held to the same rule as an environment or configuration-file value.
+    """
+    candidate = str(value)
+    if candidate.upper() not in logging.getLevelNamesMapping():
+        raise ConfigurationError(
+            "log level must be a standard logging level name, got {0!r}".format(value)
+        )
+    return candidate
 
 
 def _parse_date(value: str, name: str) -> date:
@@ -416,7 +454,9 @@ def load_settings(config_file: str | os.PathLike[str] | None = None) -> Settings
         ),
         start_date=start_date,
         font_path=str(_first(_env("FONT_PATH"), charts.get("font_path"), DEFAULT_FONT_PATH)),
-        log_level=str(_first(_env("LOG_LEVEL"), logging_section.get("level"), "INFO")),
+        log_level=validate_log_level(
+            _first(_env("LOG_LEVEL"), logging_section.get("level"), "INFO")
+        ),
         mail=_load_mail(mail_section),
         jquants=_load_jquants(jquants_section),
     )
@@ -477,7 +517,10 @@ def _load_jquants(section: dict[str, Any]) -> JQuantsSettings:
 
 def _load_mail(section: dict[str, Any]) -> MailSettings:
     """ Resolve the notification settings and refuse an unusable combination. """
-    enabled = _as_bool(_first(_env("MAIL_ENABLED"), section.get("enabled"), False))
+    enabled = _as_bool(
+        _first(_env("MAIL_ENABLED"), section.get("enabled"), False),
+        "mail enabled",
+    )
     sender = str(_first(_env("MAIL_FROM"), section.get("sender"), "") or "")
     recipient = str(_first(_env("MAIL_TO"), section.get("recipient"), "") or "")
     if enabled and not (sender and recipient):
@@ -487,7 +530,7 @@ def _load_mail(section: dict[str, Any]) -> MailSettings:
     return MailSettings(
         enabled=enabled,
         host=str(_first(_env("MAIL_HOST"), section.get("host"), "localhost")),
-        port=_as_int(_first(_env("MAIL_PORT"), section.get("port"), 25), "mail port"),
+        port=_as_port(_first(_env("MAIL_PORT"), section.get("port"), 25), "mail port"),
         sender=sender,
         recipient=recipient,
         hostname_suffix=str(

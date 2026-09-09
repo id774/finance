@@ -14,10 +14,10 @@
 #  position on disk.
 #
 #  Code and data are separated in what this script touches. It replaces
-#  the virtual environment and the batch script, and it creates data/,
-#  data/history/ and clf/ if they are absent, but it never writes into
-#  them. Updating the pipeline cannot disturb generated data, and
-#  generated data cannot require a code change.
+#  the virtual environment and the batch script, creates data/,
+#  data/history/ and clf/ when absent, seeds the shipped stock lists only
+#  when missing, and reapplies ownership and permissions. It does not
+#  overwrite generated data or model contents.
 #
 #  The credential is separated from both. This script creates an empty
 #  environment file readable only by root, for the operator to write

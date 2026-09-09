@@ -241,6 +241,11 @@ that is not a number, mail enabled without addresses — is refused before any
 work begins. This job runs unattended, and a setting rejected at 18:10 is
 cheaper than a wrong file written at 18:11.
 
+A present setting that cannot be interpreted is rejected before work starts.
+Boolean settings accept only `1/0`, `true/false`, `yes/no` and `on/off`
+(case-insensitive); the mail port must be in `1..65535`, and a log level must
+be a standard Python logging level name.
+
 The chart caption is Japanese and needs a font that can render it. On Debian and
 Ubuntu:
 
@@ -373,10 +378,12 @@ finance-charts -c 7203 -n トヨタ -y 60
 | `-a, --axis N` | `1` price panel only, `2` adds the oscillator panel |
 | `-p, --complexity N` | `1` to `3`, how many series each panel carries |
 
-Without `-u` the run draws a chart from stored data and writes nothing else — no
-fetch, no CSV, no model, and **no API key needed**. The window given to `-y`
-also selects the chart file: over 300 rows writes `long_`, 60 or fewer writes
-`short_`, anything between writes `chart_`.
+Without `-u` the run draws a chart from stored data and writes nothing else —
+no fetch, no CSV, no model, and no API key needed. A single-stock run reads
+`stock_CODE.csv` by default, or the file named by `-r`; if that stored file is
+missing, the stock fails rather than turning the chart-only run into a fetch.
+The window given to `-y` also selects the chart file: over 300 rows writes
+`long_`, 60 or fewer writes `short_`, anything between writes `chart_`.
 
 A stock code is four characters as it appears in a stock list. The five
 character form the API uses exists only inside the data source layer. A code
@@ -439,7 +446,7 @@ two years.
 ### Shared options
 
 `--config PATH`, `--data-dir PATH` and `--log-level NAME` are accepted by all
-three.
+four commands.
 
 ### Compatibility
 
@@ -629,8 +636,10 @@ rule against committing market data would get broken.
 ```
 
 The script installs the package into a virtual environment under `/var/stock`,
-puts `run.sh` and the cron entry in place, and creates the directories the job
-writes to. It never writes into `data/` or `clf/`.
+puts `run.sh` and the cron entry in place, creates the directories the job uses,
+and seeds `stocks.txt` and `topix_core30.txt` only when they are missing. It
+does not overwrite generated data or model contents, although deployment does
+reapply their ownership and permissions.
 
 | Concern | Location |
 |---|---|
