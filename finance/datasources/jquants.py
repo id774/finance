@@ -51,6 +51,9 @@
 #  from the unadjusted ones, because substituting a different basis
 #  silently is the failure this module exists to prevent.
 #
+#  A non-object item in the response data list is likewise refused rather than
+#  silently discarded.
+#
 #  Author: id774 (More info: http://id774.net)
 #  Source Code: https://github.com/id774/finance
 #  License: The GPL version 3, or LGPL version 3 (Dual License).
@@ -61,6 +64,8 @@
 #  - pandas, requests
 #
 #  Version History:
+#  v1.1 2026-09-09
+#       Refuse non-object response rows instead of silently discarding them.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -451,7 +456,13 @@ class JQuantsSource:
                 raise DataSourceError(
                     "The {0} member of the response for {1} is not a list".format(DATA_KEY, code)
                 )
-            rows.extend(item for item in batch if isinstance(item, dict))
+            for row_number, item in enumerate(batch, start=1):
+                if not isinstance(item, dict):
+                    raise DataSourceError(
+                        "The data member of response page {0} for {1} has a non-object row at "
+                        "position {2}".format(page, code, row_number)
+                    )
+                rows.append(item)
 
             key = body.get(PAGINATION_KEY)
             if not key:

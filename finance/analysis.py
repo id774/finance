@@ -41,6 +41,8 @@
 #  - NumPy, pandas
 #
 #  Version History:
+#  v1.1 2026-09-09
+#       Keep chart-only runs on stored prices and persist trading-day rows only.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -206,6 +208,10 @@ class Analysis:
         """
         Return the price history and whether this run may write.
 
+        A chart-only request never fetches: it resolves the stored price
+        path and reads it, and a missing file is that stock's failure
+        rather than a reason to reach the source.
+
         A run asked to update reads what is stored, fetches from the
         business day after the last stored row, and combines the two
         with the stored rows winning. That is what keeps a historical
@@ -217,31 +223,38 @@ class Analysis:
         saying so is what keeps the job from making one pointless
         request per stock per day for the whole of the plan's delay.
         """
+        filename = request.csvfile or storage.price_filename(request.code)
+        path = Path(filename)
+        if not path.is_absolute():
+            path = self.settings.data_file(filename)
+
+        if not request.update:
+            stored = storage.read_price_csv(path)
+            logger.info("Read %d stored rows for %s", len(stored), request.code)
+            return stored, False
+
         start, end = self.settings.fetch_window(self.today)
 
-        if request.csvfile is None:
-            prices = self._fetch(request.code, start, end)
-            storage.write_price_csv(
-                prices, self.settings.data_file(storage.price_filename(request.code))
-            )
-            return prices, request.update
-
-        path = Path(request.csvfile)
-        if not path.is_absolute():
-            path = self.settings.data_file(request.csvfile)
-
         if not path.is_file():
-            logger.info("No stored prices for %s; fetching the full window", request.code)
-            prices = self._fetch(request.code, start, end)
+            fresh = self._trading_rows(self._fetch(request.code, start, end))
+            if fresh.empty:
+                return fresh, False
             storage.write_price_csv(
-                prices, self.settings.data_file(storage.price_filename(request.code))
+                fresh, self.settings.data_file(storage.price_filename(request.code))
             )
-            return prices, request.update
+            return fresh, True
 
         stored = storage.read_price_csv(path)
         logger.info("Read %d stored rows for %s", len(stored), request.code)
-        if not request.update or stored.empty:
-            return stored, False
+
+        if stored.empty:
+            fresh = self._trading_rows(self._fetch(request.code, start, end))
+            if fresh.empty:
+                return fresh, False
+            storage.write_price_csv(
+                fresh, self.settings.data_file(storage.price_filename(request.code))
+            )
+            return fresh, True
 
         next_day = self._next_business_day(stored.index[-1])
         if next_day > end:
@@ -252,15 +265,15 @@ class Analysis:
             )
             return stored, False
 
-        fetched = self._fetch(request.code, next_day, end)
-        fresh = fetched.dropna(how="all")
+        fresh = self._trading_rows(self._fetch(request.code, next_day, end))
         logger.info("Fetched %d new rows for %s", len(fresh), request.code)
         if fresh.empty:
             # Nothing new: leave the indicator file and the models as
             # they are, so a holiday does not restamp the dashboard.
             return stored, False
 
-        combined = stored.combine_first(fetched)
+        combined = stored.combine_first(fresh)
+        combined = self._trading_rows(combined)
         storage.write_price_csv(
             combined, self.settings.data_file(storage.price_filename(request.code))
         )
@@ -275,6 +288,11 @@ class Analysis:
         """ Return the business day after the given date. """
         following = pd.date_range(start=timestamp, periods=2, freq="B")
         return following[1].date()
+
+    @staticmethod
+    def _trading_rows(frame: pd.DataFrame) -> pd.DataFrame:
+        """ Return rows carrying at least one price value. """
+        return frame.dropna(how="all")
 
     def _classify(self, code: str, ret_index: pd.Series, remember: bool) -> int:
         """ Train the classifier and return its verdict on the next day. """

@@ -21,7 +21,7 @@
 #  - A missing or malformed file is reported as the right error.
 #  - Models round trip, and a corrupt one reads as absent.
 #  - Defaults, environment, file and precedence between them.
-#  - A malformed date, port or configuration file is refused.
+#  - Malformed dates, booleans, sections, log levels and mail ports are refused.
 #  - The mail host guard.
 #
 #  Author: id774 (More info: http://id774.net)
@@ -34,6 +34,8 @@
 #  - pandas, pytest
 #
 #  Version History:
+#  v1.1 2026-09-09
+#       Cover strict parsing of known configuration values and sections.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -277,6 +279,66 @@ def test_a_malformed_port_is_refused(tmp_path, monkeypatch):
     monkeypatch.setenv("FINANCE_MAIL_PORT", "not-a-port")
     with pytest.raises(ConfigurationError, match="integer"):
         load_settings()
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("1", True),
+        ("true", True),
+        ("yes", True),
+        ("on", True),
+        ("0", False),
+        ("false", False),
+        ("no", False),
+        ("off", False),
+        ("TRUE", True),
+    ],
+)
+def test_boolean_spellings_are_explicit(tmp_path, monkeypatch, value, expected):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("FINANCE_MAIL_ENABLED", value)
+    if expected:
+        monkeypatch.setenv("FINANCE_MAIL_FROM", "sender@example.test")
+        monkeypatch.setenv("FINANCE_MAIL_TO", "recipient@example.test")
+    assert load_settings().mail.enabled is expected
+
+
+def test_an_unknown_boolean_is_refused(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("FINANCE_MAIL_ENABLED", "treu")
+    with pytest.raises(ConfigurationError, match="boolean"):
+        load_settings()
+
+
+@pytest.mark.parametrize("section", ["paths", "pipeline", "charts", "logging", "mail", "jquants"])
+def test_a_known_section_must_be_a_mapping(tmp_path, monkeypatch, section):
+    monkeypatch.chdir(tmp_path)
+    config = tmp_path / "config.yml"
+    config.write_text("{0}: []\n".format(section), encoding="utf-8")
+    with pytest.raises(ConfigurationError, match="{0}.*mapping".format(section)):
+        load_settings(config)
+
+
+def test_an_unknown_log_level_is_refused(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("FINANCE_LOG_LEVEL", "VERBOSEST")
+    with pytest.raises(ConfigurationError, match="log level"):
+        load_settings()
+
+
+@pytest.mark.parametrize("port", ["0", "-1", "65536"])
+def test_a_mail_port_outside_the_tcp_range_is_refused(tmp_path, monkeypatch, port):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("FINANCE_MAIL_PORT", port)
+    with pytest.raises(ConfigurationError, match="1 and 65535"):
+        load_settings()
+
+
+def test_the_highest_tcp_port_is_accepted(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("FINANCE_MAIL_PORT", "65535")
+    assert load_settings().mail.port == 65535
 
 
 def test_mail_without_addresses_is_refused(tmp_path, monkeypatch):

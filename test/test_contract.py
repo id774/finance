@@ -32,7 +32,7 @@
 #  - ti_CODE.csv keeps its name, separator, index label, column order
 #    and header spelling, and normalizes to the keys the dashboard reads.
 #  - classified and predicted appear on the last row only.
-#  - stock_CODE.csv keeps its six columns in canonical order.
+#  - stock_CODE.csv keeps canonical columns and stores trading-day rows only.
 #  - The ten and nine column summary layouts parse positionally into the
 #    dashboard's own column lists.
 #  - stocks.txt parses as code and name.
@@ -52,6 +52,8 @@
 #  - pandas, pytest
 #
 #  Version History:
+#  v1.2 2026-09-09
+#       Verify that stored price history omits empty calendar gaps.
 #  v1.1 2026-08-24
 #       Keep provenance text independent from data age and verify the
 #       generation and trading dates as separate facts.
@@ -73,6 +75,7 @@ import pytest
 
 from finance import storage
 from finance.aggregation import Aggregator
+from finance.analysis import Analysis, AnalysisRequest
 from finance.charts import chart_filename, chart_prefix
 from finance.datasources import CANONICAL_COLUMNS
 from finance.indicators import build_indicator_frame
@@ -304,6 +307,40 @@ def test_committed_fixture_uses_the_canonical_order():
         (Path(__file__).parent / "stock_N225.csv").read_text(encoding="utf-8").splitlines()[0]
     )
     assert header == "Date," + ",".join(PRICE_COLUMNS)
+
+
+def test_price_file_omits_empty_calendar_gaps_but_keeps_partial_rows(settings):
+    index = pd.DatetimeIndex(["2024-01-04", "2024-01-05", "2024-01-08"])
+    frame = pd.DataFrame(
+        {
+            "Open": [100.0, float("nan"), 103.0],
+            "High": [101.0, float("nan"), 104.0],
+            "Low": [99.0, float("nan"), 102.0],
+            "Close": [100.5, float("nan"), 103.5],
+            "Volume": [1000.0, float("nan"), float("nan")],
+            "Adj Close": [100.5, float("nan"), 103.5],
+        },
+        index=index,
+    )
+
+    class Source:
+        """ Answers every fetch with the invented frame above. """
+
+        def fetch(self, code, start, end):
+            return frame.copy()
+
+    # _load_prices is called directly, bypassing run(), to isolate the
+    # price persistence contract from indicators, models and charts.
+    analysis = Analysis(settings, Source(), today=date(2024, 1, 9))
+    analysis._load_prices(AnalysisRequest(code="7203", update=True))
+
+    written = storage.read_price_csv(settings.data_file("stock_7203.csv"))
+    written_dates = set(written.index.strftime("%Y-%m-%d"))
+
+    assert "2024-01-04" in written_dates
+    assert "2024-01-05" not in written_dates
+    assert "2024-01-08" in written_dates
+    assert pd.isna(written.loc["2024-01-08", "Volume"])
 
 
 # --------------------------------------------------------------------

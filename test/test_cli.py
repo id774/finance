@@ -5,7 +5,7 @@
 # test_cli.py: The command line entry points
 #
 #  Description:
-#  Assert that the three commands accept the options the batch scripts
+#  Assert that the four commands accept the options the batch scripts
 #  pass them, that they write where they are told, and that they return
 #  the exit status the operator's cron mail depends on.
 #
@@ -29,6 +29,10 @@
 #  - A run that would fetch without an API key fails before it does.
 #  - A failing stock makes the whole run exit 1.
 #  - The notify command declines quietly when mail is unconfigured.
+#  - A single-stock chart-only run uses the default stored file, with no
+#    API key needed.
+#  - A chart-only list run continues past a stock with no stored file.
+#  - An unknown command-line log level fails as a configuration error.
 #
 #  Author: id774 (More info: http://id774.net)
 #  Source Code: https://github.com/id774/finance
@@ -40,6 +44,8 @@
 #  - pandas, pytest
 #
 #  Version History:
+#  v1.1 2026-09-09
+#       Cover all four commands and chart-only and log-level failure paths.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -52,6 +58,7 @@ import pytest
 
 from finance.cli import EXIT_FAILURE, EXIT_SUCCESS, EXIT_USAGE
 from finance.cli import charts as charts_cli
+from finance.cli import migrate as migrate_cli
 from finance.cli import notify as notify_cli
 from finance.cli import summary as summary_cli
 
@@ -142,7 +149,9 @@ def test_notify_defaults_match_the_ruby_script():
 
 
 @pytest.mark.parametrize(
-    "module", [charts_cli, summary_cli, notify_cli], ids=["charts", "summary", "notify"]
+    "module",
+    [charts_cli, summary_cli, notify_cli, migrate_cli],
+    ids=["charts", "summary", "notify", "migrate"],
 )
 @pytest.mark.parametrize("flag", ["--help", "--version"])
 def test_help_and_version_exit_zero(module, flag):
@@ -152,7 +161,9 @@ def test_help_and_version_exit_zero(module, flag):
 
 
 @pytest.mark.parametrize(
-    "module", [charts_cli, summary_cli, notify_cli], ids=["charts", "summary", "notify"]
+    "module",
+    [charts_cli, summary_cli, notify_cli, migrate_cli],
+    ids=["charts", "summary", "notify", "migrate"],
 )
 def test_an_unknown_option_exits_two(module):
     with pytest.raises(SystemExit) as raised:
@@ -356,6 +367,63 @@ def test_charts_writes_where_data_dir_points(tmp_path, monkeypatch, raw_prices):
     assert (data_dir / "chart_7203.png").is_file()
     # Without -u nothing else is written.
     assert not (data_dir / "ti_7203.csv").exists()
+
+
+def test_single_stock_chart_only_uses_default_stored_data_without_an_api_key(
+    tmp_path, monkeypatch, raw_prices
+):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("JQUANTS_API_KEY", raising=False)
+    data_dir = tmp_path / "out"
+    data_dir.mkdir()
+    raw_prices.to_csv(data_dir / "stock_7203.csv", index_label="Date")
+
+    status = charts_cli.main(
+        ["-c", "7203", "-n", "トヨタ", "-y", "180", "--data-dir", str(data_dir)]
+    )
+
+    assert status == EXIT_SUCCESS
+    assert (data_dir / "chart_7203.png").is_file()
+    assert not (data_dir / "ti_7203.csv").exists()
+    assert not (data_dir / "data_source.txt").exists()
+
+
+def test_chart_only_missing_stock_continues_without_fetching(
+    tmp_path, monkeypatch, raw_prices, capsys
+):
+    monkeypatch.chdir(tmp_path)
+    data_dir = tmp_path / "out"
+    data_dir.mkdir()
+    (data_dir / "stocks.txt").write_text("1111,欠損\n7203,トヨタ\n", encoding="utf-8")
+    raw_prices.to_csv(data_dir / "stock_7203.csv", index_label="Date")
+
+    class ExplodingSource:
+        def __init__(self, settings):
+            self.settings = settings
+
+        def fetch(self, code, start, end):
+            raise AssertionError("chart-only fetched")
+
+    monkeypatch.setattr(charts_cli, "LazySource", ExplodingSource)
+    status = charts_cli.main(["-s", "stocks.txt", "-y", "180", "--data-dir", str(data_dir)])
+
+    assert status == EXIT_FAILURE
+    stderr = capsys.readouterr().err
+    assert "1111" in stderr
+    assert "does not exist" in stderr
+    assert (data_dir / "chart_7203.png").is_file()
+
+
+def test_an_unknown_command_line_log_level_fails_as_configuration(tmp_path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    status = charts_cli.main(
+        ["-c", "7203", "--log-level", "VERBOSEST", "--data-dir", str(tmp_path)]
+    )
+
+    assert status == EXIT_FAILURE
+    stderr = capsys.readouterr().err
+    assert "[ERROR] Configuration:" in stderr
+    assert "log level" in stderr
 
 
 def test_a_failing_stock_makes_the_run_exit_one(tmp_path, monkeypatch, capsys):

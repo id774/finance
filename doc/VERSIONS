@@ -1,6 +1,14 @@
 finance Repository Version History
 ==================================
 
+v1.0.2 (Release Date: TBD)
+--------------------------
+- Keep chart-only runs on stored prices, leaving fetches exclusive to
+  `--update`.
+- Keep `stock_CODE.csv` to trading-day rows by omitting empty calendar gaps.
+- Reject malformed configuration values instead of silently defaulting them.
+- Reject malformed J-Quants data rows instead of silently discarding them.
+
 v1.0.1 (2026-08-26)
 -------------------
 - Replace Yahoo Finance with the J-Quants API v2 Free plan as the price source, so

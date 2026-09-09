@@ -24,6 +24,10 @@
 #  - The window length selects the chart prefix.
 #  - A failing stock is reported and the rest of the list continues.
 #  - An empty price history is refused.
+#  - Chart-only uses the default stored price file and never fetches.
+#  - A chart-only run without stored prices fails without fetching.
+#  - An update without stored history fetches the full window.
+#  - Persisted prices omit all-empty calendar gaps.
 #
 #  Author: id774 (More info: http://id774.net)
 #  Source Code: https://github.com/id774/finance
@@ -35,6 +39,8 @@
 #  - pandas, pytest
 #
 #  Version History:
+#  v1.1 2026-09-09
+#       Cover chart-only stored-file isolation and update fetch boundaries.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -48,7 +54,7 @@ import pandas as pd
 import pytest
 
 from finance.analysis import Analysis, AnalysisRequest, run_many
-from finance.errors import DataFormatError, DataSourceError
+from finance.errors import DataFormatError, DataSourceError, StorageError
 
 CODE = "N225"
 RUN_DATE = date(2015, 3, 23)
@@ -123,6 +129,23 @@ def test_without_update_nothing_is_written(settings, stub_source, stored):
     assert source.calls == []
 
 
+def test_chart_only_uses_the_default_price_file_without_fetch(settings, stub_source, stored):
+    analysis, source = make_analysis(settings, stub_source)
+    result = analysis.run(AnalysisRequest(code=CODE, days=180, update=False))
+
+    assert source.calls == []
+    assert result.chart_path.is_file()
+    assert result.wrote_indicators is False
+
+
+def test_chart_only_without_stored_prices_fails_without_fetch(settings, stub_source):
+    analysis, source = make_analysis(settings, stub_source)
+    with pytest.raises(StorageError, match="does not exist"):
+        analysis.run(AnalysisRequest(code=CODE, days=180, update=False, csvfile=None))
+
+    assert source.calls == []
+
+
 def test_with_update_both_files_and_both_models_are_written(
     settings, stub_source, stored, raw_prices
 ):
@@ -141,6 +164,7 @@ def test_with_update_both_files_and_both_models_are_written(
     assert (settings.model_dir / "clf_N225.pickle").is_file()
     assert (settings.model_dir / "reg_N225.pickle").is_file()
     assert source.calls, "an updating run must fetch"
+    assert source.calls == [(CODE, date(2015, 3, 23), RUN_DATE)]
 
 
 def test_no_new_prices_leaves_the_indicator_file_alone(settings, stub_source, stored):
@@ -184,11 +208,11 @@ def test_the_model_outputs_land_on_the_last_row(settings, stub_source, stored):
     assert result.predicted > 0
 
 
-def test_a_missing_stored_file_falls_back_to_fetching(settings, stub_source, raw_prices):
+def test_update_without_stored_prices_fetches_the_full_window(
+    settings, stub_source, raw_prices
+):
     analysis, source = make_analysis(settings, stub_source, raw_prices)
-    result = analysis.run(
-        AnalysisRequest(code=CODE, days=180, csvfile="stock_N225.csv", update=True)
-    )
+    result = analysis.run(AnalysisRequest(code=CODE, days=180, update=True))
 
     # The whole history is requested from the configured start date, so
     # the run covers whatever the source has rather than the window.
@@ -200,7 +224,7 @@ def test_a_missing_stored_file_falls_back_to_fetching(settings, stub_source, raw
 def test_an_empty_history_is_refused(settings, stub_source):
     analysis, _ = make_analysis(settings, stub_source)
     with pytest.raises(DataFormatError, match="No price data"):
-        analysis.run(AnalysisRequest(code="9999", days=180))
+        analysis.run(AnalysisRequest(code="9999", days=180, update=True))
 
 
 def test_one_failing_stock_does_not_end_a_list_run(settings, stub_source, stored):
@@ -214,7 +238,7 @@ def test_one_failing_stock_does_not_end_a_list_run(settings, stub_source, stored
 
     analysis = Analysis(settings, FailingSource(), today=RUN_DATE)
     requests = [
-        AnalysisRequest(code="BROKEN", days=180),
+        AnalysisRequest(code="BROKEN", days=180, update=True),
         AnalysisRequest(code=CODE, days=180, csvfile=stored.name),
     ]
 
@@ -232,7 +256,11 @@ def test_a_run_of_only_failures_reports_them_all(settings):
 
     analysis = Analysis(settings, FailingSource(), today=RUN_DATE)
     results, failures = run_many(
-        analysis, [AnalysisRequest(code="1111"), AnalysisRequest(code="2222")]
+        analysis,
+        [
+            AnalysisRequest(code="1111", update=True),
+            AnalysisRequest(code="2222", update=True),
+        ],
     )
 
     assert results == []

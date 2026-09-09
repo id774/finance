@@ -69,6 +69,11 @@ line, environment, YAML file, default.
 **The only module in the package that reads the environment.** A value that is
 present but unusable is refused here, before any work begins.
 
+Known YAML sections must be mappings, Boolean values use an explicit accepted
+vocabulary, mail ports are bounded to the TCP port range, and log levels are
+validated before logging starts. The same log-level rule is applied to the
+command-line override before it replaces the loaded setting.
+
 ### 4.3 `finance/errors.py`
 
 The error hierarchy. Its purpose is that a caller can distinguish a source that
@@ -191,6 +196,14 @@ above it, by `Settings.fetch_window`.
 The per stock pipeline: load prices, compute indicators, apply both models,
 write both CSVs, draw the chart. It owns the order and the paths.
 
+A chart-only request resolves its stored price path first and reads it without
+touching the source; a missing stored file is that stock's failure, not a reason
+to fetch. Only an updating request enters the fetch path.
+
+The adapter may carry all-empty rows introduced by business-day reindexing.
+Those rows are useful while normalizing a calendar but are removed from the
+price persistence candidate; a partially empty trading row is retained.
+
 `run_many()` runs a list, catching each stock's failure so that the rest
 continue, and returning both the results and the failures.
 
@@ -234,6 +247,17 @@ is run once by hand and is not in `run.sh`.
 ## 5. The flow of one stock
 
 ```text
+finance-charts -c 7203 -y 60
+    |
+    | read stock_7203.csv                    storage
+    | missing -> fail, no fetch              analysis
+    v
+    | reindex to business days, drop gaps    analysis
+    | compute indicators/models              domain
+    | write chart only                       charts
+```
+
+```text
 finance-charts -s stocks.txt -y 240 -u
     |
     | read_stock_list()                       stocklist
@@ -243,6 +267,7 @@ for each entry:
     | read stock_CODE.csv                     storage
     | fetch from the next business day        datasources/jquants
     | combine, stored rows winning            analysis
+    | drop all-empty calendar gaps            analysis
     | write stock_CODE.csv                    storage
     v
     | reindex to business days, drop gaps,
