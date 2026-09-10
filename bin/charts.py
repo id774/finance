@@ -15,7 +15,7 @@
 #  script; this file exists only so that an un-updated caller does not
 #  break, and it can be deleted once none remain.
 #
-#  Author: id774 (More info: http://id774.net)
+#  Author: id774 (More info: https://id774.net)
 #  Source Code: https://github.com/id774/finance
 #  License: The GPL version 3, or LGPL version 3 (Dual License).
 #  Contact: idnanashi@gmail.com

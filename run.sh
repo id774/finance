@@ -24,7 +24,7 @@
 #  status is non-zero if any step failed, so cron mails the operator
 #  instead of the failure passing unnoticed.
 #
-#  Author: id774 (More info: http://id774.net)
+#  Author: id774 (More info: https://id774.net)
 #  Source Code: https://github.com/id774/finance
 #  License: The GPL version 3, or LGPL version 3 (Dual License).
 #  Contact: idnanashi@gmail.com
