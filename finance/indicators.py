@@ -21,7 +21,7 @@
 #  from TA-Lib 0.4 to 0.7 and from pandas 0.16 to 3.x is an API change
 #  only, verified column by column against test/ti_N225.csv.
 #
-#  Author: id774 (More info: http://id774.net)
+#  Author: id774 (More info: https://id774.net)
 #  Source Code: https://github.com/id774/finance
 #  License: The GPL version 3, or LGPL version 3 (Dual License).
 #  Contact: idnanashi@gmail.com

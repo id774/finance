@@ -29,7 +29,7 @@
 #  the axis the old chart had, where consecutive business days sit
 #  side by side and a weekend leaves no gap.
 #
-#  Author: id774 (More info: http://id774.net)
+#  Author: id774 (More info: https://id774.net)
 #  Source Code: https://github.com/id774/finance
 #  License: The GPL version 3, or LGPL version 3 (Dual License).
 #  Contact: idnanashi@gmail.com

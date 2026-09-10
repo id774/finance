@@ -22,7 +22,7 @@
 #  needs its input corrected. Collapsing them into one type would leave
 #  the nightly log unable to distinguish these conditions.
 #
-#  Author: id774 (More info: http://id774.net)
+#  Author: id774 (More info: https://id774.net)
 #  Source Code: https://github.com/id774/finance
 #  License: The GPL version 3, or LGPL version 3 (Dual License).
 #  Contact: idnanashi@gmail.com
