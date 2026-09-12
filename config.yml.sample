@@ -48,6 +48,8 @@ jquants:
   # How many days behind today the newest row of the configured plan is.
   delay_days: 84
   # How far back from that newest row the configured plan keeps data.
+  # Must be at least 281 days so the current required analysis lookback
+  # fits inside the configured window.
   retention_days: 730
 
 charts:

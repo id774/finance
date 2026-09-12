@@ -19,9 +19,17 @@
 #  - A round trip through the CSV writers preserves values and index.
 #  - An empty frame is not written over a good file.
 #  - A missing or malformed file is reported as the right error.
+#  - A failed CSV, summary or data_source write preserves the existing file.
+#  - Atomic replacement preserves an existing file's mode; a new file gets
+#    the regular creation mode rather than a restrictive temp file default.
 #  - Models round trip, and a corrupt one reads as absent.
+#  - A stock list entry with an empty required code or name is refused.
 #  - Defaults, environment, file and precedence between them.
 #  - Malformed dates, booleans, sections, log levels and mail ports are refused.
+#  - An explicit configuration source that is absent or not valid YAML is
+#    refused; the implicit default may still be absent.
+#  - Non-finite J-Quants numeric settings and a too-short retention window
+#    are refused; the minimum retention window is accepted.
 #  - The mail host guard.
 #
 #  Author: id774 (More info: https://id774.net)
@@ -43,6 +51,8 @@
 
 from __future__ import annotations
 
+import os
+import stat
 from datetime import date
 from pathlib import Path
 
@@ -147,6 +157,100 @@ def test_merge_frames_joins_on_the_index(raw_prices):
 
 
 # --------------------------------------------------------------------
+# atomic writes
+# --------------------------------------------------------------------
+
+
+def _fail_after_partial_write(monkeypatch, patched, attribute):
+    """
+    Make an attribute write a partial temporary file then raise OSError.
+
+    Used to simulate a write that fails after the temporary file already
+    carries some bytes, so a test can assert the existing target survives.
+    """
+    original = getattr(patched, attribute)
+
+    def broken(self, *args, **kwargs):
+        target = args[0] if args else kwargs.get("path_or_buf")
+        Path(target).write_text("partial", encoding="utf-8")
+        raise OSError("disk full")
+
+    monkeypatch.setattr(patched, attribute, broken)
+    return original
+
+
+def test_failed_price_write_preserves_existing_file(settings, raw_prices, monkeypatch):
+    path = settings.data_file("stock_TEST.csv")
+    original = "Date,Open\n2015-01-01,1\n"
+    path.write_text(original, encoding="utf-8")
+
+    _fail_after_partial_write(monkeypatch, pd.DataFrame, "to_csv")
+    with pytest.raises(StorageError):
+        storage.write_price_csv(raw_prices, path)
+
+    assert path.read_text(encoding="utf-8") == original
+    assert list(path.parent.glob("*.tmp")) == []
+
+
+def test_failed_summary_write_preserves_existing_file(settings, monkeypatch):
+    path = settings.data_file("summary.csv")
+    original = "Code\tName\n7203\tトヨタ\n"
+    path.write_text(original, encoding="utf-8")
+
+    frame = pd.DataFrame({"Open": [100]}, index=["1111"])
+    _fail_after_partial_write(monkeypatch, pd.DataFrame, "to_csv")
+    with pytest.raises(StorageError):
+        storage.write_summary_csv(frame, path)
+
+    assert path.read_text(encoding="utf-8") == original
+    assert list(path.parent.glob("*.tmp")) == []
+
+
+def test_failed_data_source_write_preserves_existing_file(settings, monkeypatch):
+    path = settings.data_file("data_source.txt")
+    original = "source\told\n"
+    path.write_text(original, encoding="utf-8")
+
+    real_write_text = Path.write_text
+
+    def broken_write_text(self, content, *args, **kwargs):
+        if self.name.endswith(".tmp"):
+            real_write_text(self, "partial", *args, **kwargs)
+            raise OSError("disk full")
+        return real_write_text(self, content, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "write_text", broken_write_text)
+    with pytest.raises(StorageError):
+        storage.write_data_source(
+            path, "J-Quants API (Free plan)", date(2026, 8, 14), None
+        )
+
+    assert path.read_text(encoding="utf-8") == original
+    assert list(path.parent.glob("*.tmp")) == []
+
+
+def test_atomic_replacement_preserves_existing_mode(settings):
+    path = settings.data_file("data_source.txt")
+    path.write_text("source\told\n", encoding="utf-8")
+    os.chmod(path, 0o640)
+
+    storage.write_data_source(path, "J-Quants API (Free plan)", date(2026, 8, 14), None)
+
+    assert stat.S_IMODE(path.stat().st_mode) == 0o640
+
+
+def test_new_atomic_file_uses_regular_creation_mode(settings):
+    path = settings.data_file("data_source.txt")
+    old_umask = os.umask(0o027)
+    try:
+        storage.write_data_source(path, "J-Quants API (Free plan)", date(2026, 8, 14), None)
+    finally:
+        os.umask(old_umask)
+
+    assert stat.S_IMODE(path.stat().st_mode) == 0o640
+
+
+# --------------------------------------------------------------------
 # stocklist
 # --------------------------------------------------------------------
 
@@ -191,6 +295,20 @@ def test_an_empty_stock_list_is_refused(tmp_path):
     path = tmp_path / "stocks.txt"
     path.write_text("\n\n", encoding="utf-8")
     with pytest.raises(DataFormatError, match="empty"):
+        read_stock_list(path)
+
+
+def test_a_stock_list_with_an_empty_code_is_refused(tmp_path):
+    path = tmp_path / "stocks.txt"
+    path.write_text(",トヨタ\n", encoding="utf-8")
+    with pytest.raises(DataFormatError, match="code must not be empty"):
+        read_stock_list(path)
+
+
+def test_a_stock_list_with_an_empty_name_is_refused(tmp_path):
+    path = tmp_path / "stocks.txt"
+    path.write_text("7203,\n", encoding="utf-8")
+    with pytest.raises(DataFormatError, match="name must not be empty"):
         read_stock_list(path)
 
 
@@ -354,12 +472,51 @@ def test_a_named_configuration_file_must_exist(tmp_path, monkeypatch):
         load_settings(tmp_path / "absent.yml")
 
 
+def test_an_environment_named_configuration_file_must_exist(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("FINANCE_CONFIG", str(tmp_path / "absent.yml"))
+    with pytest.raises(ConfigurationError, match="does not exist"):
+        load_settings()
+
+
 def test_a_configuration_file_that_is_not_a_mapping_is_refused(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     config = tmp_path / "config.yml"
     config.write_text("- one\n- two\n", encoding="utf-8")
     with pytest.raises(ConfigurationError, match="not a mapping"):
         load_settings(config)
+
+
+def test_malformed_yaml_is_reported_as_configuration_error(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    config = tmp_path / "config.yml"
+    config.write_text("paths: [\n", encoding="utf-8")
+    with pytest.raises(ConfigurationError, match="valid YAML"):
+        load_settings(config)
+
+
+@pytest.mark.parametrize(
+    "env_name", ["FINANCE_JQUANTS_TIMEOUT", "FINANCE_JQUANTS_REQUEST_INTERVAL"]
+)
+@pytest.mark.parametrize("value", ["nan", "inf", "-inf"])
+def test_non_finite_jquants_numbers_are_refused(tmp_path, monkeypatch, env_name, value):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv(env_name, value)
+    with pytest.raises(ConfigurationError, match="finite"):
+        load_settings()
+
+
+def test_retention_window_too_short_is_refused(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("FINANCE_JQUANTS_RETENTION_DAYS", "280")
+    with pytest.raises(ConfigurationError, match="281"):
+        load_settings()
+
+
+def test_minimum_retention_window_is_accepted(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("FINANCE_JQUANTS_RETENTION_DAYS", "281")
+    assert load_settings().jquants.retention_days == 281
 
 
 def test_start_date_is_parsed(tmp_path, monkeypatch):

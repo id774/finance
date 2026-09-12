@@ -45,8 +45,9 @@
 #      environment only, never from the configuration file. The name
 #      matches the one the official J-Quants client reads, so a host
 #      that already exports it needs nothing added.
-#  - FINANCE_CONFIG: Path of the YAML configuration file. Optional.
-#      Defaults to ./config.yml when that file exists.
+#  - FINANCE_CONFIG: Path of the YAML configuration file. Optional. When
+#      set, it names an explicit file that must exist and parse as YAML.
+#      Unset, the implicit ./config.yml is used and may be absent.
 #  - FINANCE_DATA_DIR: Directory holding generated files. Defaults to
 #      ./data.
 #  - FINANCE_HISTORY_DIR: Directory holding dated summary copies.
@@ -86,6 +87,8 @@
 #  - PyYAML
 #
 #  Version History:
+#  v1.2 2026-09-12
+#       Reject invalid config sources and ranges; track explicit history paths.
 #  v1.1 2026-09-09
 #       Reject malformed sections, booleans, log levels and mail ports at load.
 #  v1.0 2026-08-14
@@ -96,6 +99,7 @@
 from __future__ import annotations
 
 import logging
+import math
 import os
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
@@ -128,6 +132,15 @@ DEFAULT_REQUEST_INTERVAL = 1.0
 # documentation; these values are only the defaults this program uses.
 DEFAULT_DELAY_DAYS = 84
 DEFAULT_RETENTION_DAYS = 730
+
+# The shortest retention window that still fits the longest indicator
+# lookback. finance.indicators.SMA_PERIODS currently tops out at 200, and
+# this repository's own approximation of trading days in a calendar window
+# is calendar days * 5 / 7; 281 is the smallest integer for which
+# 200 < 281 / 7 * 5. This module does not import finance.indicators, so the
+# derivation is recorded here and pinned by test/test_plan_window.py rather
+# than computed at import time.
+MIN_RETENTION_DAYS = 281
 
 logger = logging.getLogger(__name__)
 
@@ -210,6 +223,12 @@ class Settings:
     mail: MailSettings = field(default_factory=MailSettings)
     jquants: JQuantsSettings = field(default_factory=JQuantsSettings)
 
+    # Not a config key or CLI option. Records whether history_dir came from
+    # an explicit FINANCE_HISTORY_DIR or paths.history_dir rather than being
+    # derived from data_dir, so that --data-dir can preserve an explicit
+    # value even when it happens to equal the derived default.
+    _history_dir_explicit: bool = field(default=False, repr=False, compare=False)
+
     def data_file(self, name: str) -> Path:
         """ Return the path of a generated file inside the data directory. """
         return self.data_dir / name
@@ -269,7 +288,13 @@ def _env(name: str) -> str | None:
 
 
 def _load_file(path: Path) -> dict[str, Any]:
-    """ Load a YAML configuration file, returning an empty mapping when absent. """
+    """
+    Load a YAML configuration file, returning an empty mapping when absent.
+
+    Raises:
+        ConfigurationError: The file exists but could not be read, is not
+            valid YAML, or is not a mapping at the top level.
+    """
     if not path.is_file():
         return {}
     try:
@@ -279,6 +304,8 @@ def _load_file(path: Path) -> dict[str, Any]:
     try:
         with open(path, encoding="utf-8") as handle:
             loaded = yaml.safe_load(handle)
+    except yaml.YAMLError as exc:
+        raise ConfigurationError("Configuration file is not valid YAML: {0}".format(path)) from exc
     except (OSError, ValueError) as exc:
         raise ConfigurationError("Configuration file could not be read: {0}".format(path)) from exc
     if loaded is None:
@@ -344,19 +371,48 @@ def _as_positive_int(value: Any, name: str) -> int:
     return number
 
 
+def _as_retention_days(value: Any, name: str) -> int:
+    """
+    Interpret a configuration value as a retention window of at least
+    MIN_RETENTION_DAYS days.
+
+    A window shorter than that cannot hold the longest indicator lookback
+    this repository currently requires; see MIN_RETENTION_DAYS.
+    """
+    number = _as_positive_int(value, name)
+    if number < MIN_RETENTION_DAYS:
+        raise ConfigurationError(
+            "{0} must be at least {1} days, got {2}".format(name, MIN_RETENTION_DAYS, number)
+        )
+    return number
+
+
 def _as_positive_float(value: Any, name: str) -> float:
-    """ Interpret a configuration value as a number above zero. """
+    """
+    Interpret a configuration value as a finite number above zero.
+
+    nan and +/-inf are refused: a naive comparison against zero lets both
+    through, since neither satisfies "not greater than zero".
+    """
     number = _as_float(value, name)
-    if number <= 0:
-        raise ConfigurationError("{0} must be greater than zero, got {1}".format(name, number))
+    if not math.isfinite(number) or number <= 0:
+        raise ConfigurationError(
+            "{0} must be a finite number greater than zero, got {1}".format(name, number)
+        )
     return number
 
 
 def _as_non_negative(value: Any, name: str) -> float:
-    """ Interpret a configuration value as a number of zero or more. """
+    """
+    Interpret a configuration value as a finite number of zero or more.
+
+    nan and +/-inf are refused; see _as_positive_float.
+    """
     number = _as_float(value, name)
-    if number < 0:
-        raise ConfigurationError("{0} must not be negative, got {1}".format(name, number))
+    if not math.isfinite(number) or number < 0:
+        raise ConfigurationError(
+            "{0} must be a finite number that is not negative, got {1}".format(name, number)
+        )
     return number
 
 
@@ -408,14 +464,43 @@ def _resolve(value: Any) -> Path:
     return Path(os.path.expanduser(str(value))).resolve()
 
 
+def _resolve_config_path(config_file: str | os.PathLike[str] | None) -> Path:
+    """
+    Decide which configuration file to read.
+
+    An explicit source -- the config_file argument, or failing that a
+    non-blank FINANCE_CONFIG -- must name a regular file that exists. With
+    neither, the implicit ./config.yml is used and may be absent, which is
+    read as an empty configuration.
+
+    Raises:
+        ConfigurationError: An explicit source was given but is not a
+            regular file.
+    """
+    if config_file is not None:
+        path = Path(config_file)
+        if not path.is_file():
+            raise ConfigurationError("Configuration file does not exist: {0}".format(config_file))
+        return path
+    env_value = _env("CONFIG")
+    if env_value is not None:
+        path = Path(env_value)
+        if not path.is_file():
+            raise ConfigurationError("Configuration file does not exist: {0}".format(env_value))
+        return path
+    return Path("config.yml")
+
+
 def load_settings(config_file: str | os.PathLike[str] | None = None) -> Settings:
     """
     Resolve settings from the environment and the configuration file.
 
     Args:
-        config_file: Explicit path of a YAML file. When omitted,
-            FINANCE_CONFIG is used, and failing that ./config.yml when
-            it exists.
+        config_file: Explicit path of a YAML file. When omitted, a
+            non-blank FINANCE_CONFIG is used instead. Either one must name
+            a file that exists and parses as YAML. With neither given, the
+            implicit ./config.yml is read and may be absent, in which case
+            defaults are used.
 
     Returns:
         A validated Settings instance.
@@ -423,9 +508,7 @@ def load_settings(config_file: str | os.PathLike[str] | None = None) -> Settings
     Raises:
         ConfigurationError: A value is present but cannot be used.
     """
-    path = Path(config_file) if config_file else Path(_env("CONFIG") or "config.yml")
-    if config_file and not Path(config_file).is_file():
-        raise ConfigurationError("Configuration file does not exist: {0}".format(config_file))
+    path = _resolve_config_path(config_file)
     config = _load_file(path)
 
     paths = _section(config, "paths")
@@ -436,9 +519,9 @@ def load_settings(config_file: str | os.PathLike[str] | None = None) -> Settings
     jquants_section = _section(config, "jquants")
 
     data_dir = _resolve(_first(_env("DATA_DIR"), paths.get("data_dir"), "data"))
-    history_dir = _resolve(
-        _first(_env("HISTORY_DIR"), paths.get("history_dir"), data_dir / "history")
-    )
+    explicit_history_dir = _first(_env("HISTORY_DIR"), paths.get("history_dir"))
+    history_dir_explicit = explicit_history_dir is not None
+    history_dir = _resolve(explicit_history_dir if history_dir_explicit else data_dir / "history")
     model_dir = _resolve(_first(_env("MODEL_DIR"), paths.get("model_dir"), "clf"))
 
     start_date = str(_first(_env("START_DATE"), pipeline.get("start_date"), "") or "")
@@ -459,6 +542,7 @@ def load_settings(config_file: str | os.PathLike[str] | None = None) -> Settings
         ),
         mail=_load_mail(mail_section),
         jquants=_load_jquants(jquants_section),
+        _history_dir_explicit=history_dir_explicit,
     )
     logger.debug("Resolved settings from %s", path if path.is_file() else "defaults")
     return settings
@@ -504,7 +588,7 @@ def _load_jquants(section: dict[str, Any]) -> JQuantsSettings:
             _first(_env("JQUANTS_DELAY_DAYS"), section.get("delay_days"), DEFAULT_DELAY_DAYS),
             "jquants delay_days",
         ),
-        retention_days=_as_positive_int(
+        retention_days=_as_retention_days(
             _first(
                 _env("JQUANTS_RETENTION_DAYS"),
                 section.get("retention_days"),

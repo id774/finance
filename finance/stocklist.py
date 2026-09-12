@@ -32,6 +32,8 @@
 #  - Standard library only
 #
 #  Version History:
+#  v1.1 2026-09-12
+#       Reject stock-list records with an empty required code or name.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -77,7 +79,8 @@ def read_stock_list(path: str | os.PathLike[str]) -> list[StockEntry]:
 
     Raises:
         StorageError: The file does not exist or cannot be read.
-        DataFormatError: A non-blank line carries fewer than two fields.
+        DataFormatError: A non-blank line carries fewer than two fields, or
+            has an empty required code or name.
     """
     target = Path(path)
     try:
@@ -90,16 +93,27 @@ def read_stock_list(path: str | os.PathLike[str]) -> list[StockEntry]:
 
     entries: list[StockEntry] = []
     for number, fields in enumerate(rows, start=1):
-        if not fields or not fields[0].strip():
+        # A true blank line: an empty CSV row, or a single whitespace-only
+        # field. A row such as ",トヨタ" or "7203," has content and is
+        # refused below rather than treated as blank.
+        if not fields:
+            continue
+        if len(fields) == 1 and not fields[0].strip():
             continue
         if len(fields) < 2:
             raise DataFormatError(
                 "{0} line {1}: expected at least a code and a name".format(target, number)
             )
+        code = fields[0].strip()
+        if not code:
+            raise DataFormatError("{0} line {1}: code must not be empty".format(target, number))
+        name = fields[1].strip()
+        if not name:
+            raise DataFormatError("{0} line {1}: name must not be empty".format(target, number))
         entries.append(
             StockEntry(
-                code=fields[0].strip(),
-                name=fields[1].strip(),
+                code=code,
+                name=name,
                 fullname=fields[2].strip() if len(fields) > 2 else "",
             )
         )

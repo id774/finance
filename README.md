@@ -236,15 +236,17 @@ Copy the sample to start:
 cp config.yml.sample config.yml
 ```
 
-A value that is present but unusable — a date that is not `YYYY-MM-DD`, a port
-that is not a number, mail enabled without addresses — is refused before any
-work begins. This job runs unattended, and a setting rejected at 18:10 is
-cheaper than a wrong file written at 18:11.
+An explicit configuration file named by `--config` or `FINANCE_CONFIG` must
+exist and contain valid YAML. The implicit `./config.yml` may be absent, in
+which case defaults are used. Any present but unusable setting is rejected
+before work starts.
 
-A present setting that cannot be interpreted is rejected before work starts.
 Boolean settings accept only `1/0`, `true/false`, `yes/no` and `on/off`
 (case-insensitive); the mail port must be in `1..65535`, and a log level must
-be a standard Python logging level name.
+be a standard Python logging level name. J-Quants timeout values must be finite
+and positive, request intervals must be finite and non-negative, and
+`retention_days` must be at least 281 days so the current required analysis
+lookback fits inside the configured window.
 
 The chart caption is Japanese and needs a font that can render it. On Debian and
 Ubuntu:
@@ -339,12 +341,12 @@ The schedule lives in `cron.d/stock` and is unchanged:
 10 18  * * 1-5 root test -x /var/stock/run.sh && /var/stock/run.sh
 ```
 
-18:10 on weekdays, after the Tokyo close. The hour matters less than it did: the
-Free plan publishes weeks in arrears, so a run collects what was published long
-before it, and a missed evening costs nothing the next run does not pick up. It
-is cron rather than a systemd timer because a plain daily batch has no ordering,
-activation or resource requirement that a timer would serve, and because it
-works.
+18:10 on weekdays, after the Tokyo close. The wall-clock hour does not decide
+data freshness: the configured publication window decides the newest date a
+fetch may request, and a missed evening is recovered by the next updating run.
+It is cron rather than a systemd timer because a plain daily batch has no
+ordering, activation or resource requirement that a timer would serve, and
+because it works.
 
 `my_stocks.txt`, the operator's holdings, is not in this repository. It lives in
 the data directory on the host and uses the same format as `stocks.txt`. The
@@ -374,7 +376,7 @@ finance-charts -c 7203 -n トヨタ -y 60
 | `-r, --readfile FILE` | Read stored prices from this CSV instead of `stock_CODE.csv` |
 | `-u, --update` | Fetch, rewrite both CSVs and persist the retrained models |
 | `-d, --date DATE` | Earliest date to fetch. A date before the plan's window is raised to it |
-| `-y, --days N` | Trailing rows to analyse and chart. `0` means all |
+| `-y, --days N` | Trailing rows to analyse and chart. `0` means all; negative values are rejected |
 | `-a, --axis N` | `1` price panel only, `2` adds the oscillator panel |
 | `-p, --complexity N` | `1` to `3`, how many series each panel carries |
 
@@ -403,7 +405,7 @@ finance-summary -o screening_rsi14.csv -r 1 -c rsi14 -a -k rsi14
 |---|---|
 | `-s, --stock FILE` | Stock list to aggregate. Defaults to the configured list |
 | `-o, --output FILE` | Output name inside the data directory |
-| `-r, --range N` | Rows the change spans. `1` compares the last two |
+| `-r, --range N` | Rows the change spans. Must be at least `1`; `1` compares the last two |
 | `-k, --sortkey KEY` | Column to sort by. Defaults to `Ratio` |
 | `-a, --ascending` | Sort ascending |
 | `-c, --screening_key KEY` | Report this indicator instead of the model outputs |
@@ -494,9 +496,9 @@ Two details are load bearing and easy to lose:
   [section 11 of the data contract](doc/DATA_CONTRACT.md).
 
 `data_source.txt` is why the dashboard can say how old its figures are. It
-carries the last trading day the data covers, which is weeks behind the
-generation date, and an unknown value is left **empty** rather than filled in
-with today.
+carries the last trading day the data covers. That date may precede the
+generation date by the configured publication delay, and an unknown value is
+left **empty** rather than filled in with today.
 
 `ref_index.csv` was linked by earlier versions of the dashboard and was never
 produced here. The link is gone; see
@@ -593,7 +595,7 @@ are kept because deleting them would delete the evidence that the arithmetic has
 not moved across three library generations. They are not refreshed, and nothing
 from the current provider joins them.
 
-The suite is in four groups:
+The suite is in five groups:
 
 - **Regression** — every indicator, feature and model value asserted against the
   numbers the previous test suite asserted, on the same committed fixture. These
@@ -645,7 +647,7 @@ reapply their ownership and permissions.
 |---|---|
 | Code | `/var/stock/.venv` |
 | API key | `/var/stock/env`, mode 600, root only |
-| Commands | `/var/stock/.venv/bin/finance-charts`, `-summary`, `-notify` |
+| Commands | `/var/stock/.venv/bin/finance-charts`, `/var/stock/.venv/bin/finance-summary`, `/var/stock/.venv/bin/finance-notify`, `/var/stock/.venv/bin/finance-migrate` |
 | Batch script | `/var/stock/run.sh` |
 | Data | `/var/stock/data` |
 | History | `/var/stock/data/history` |
@@ -655,8 +657,10 @@ reapply their ownership and permissions.
 
 `TARGET_DIR`, `PYTHON` and `DATA_GROUP` override the defaults. Code, data and
 the credential are separated in responsibility: a deployment replaces the
-virtual environment and the batch script, touches neither `data/` nor `clf/`,
-and never writes a key into `env`. Updating data needs no code change, and
+virtual environment and the batch script. It does not overwrite generated data,
+model contents or existing stock-list contents; it may create missing
+directories or shipped stock lists and reapplies ownership and permissions.
+It never writes a key into `env`. Updating data needs no code change, and
 rotating the credential needs neither.
 
 The dashboard's group reaches `data/` and nothing else — not the virtual
@@ -715,12 +719,14 @@ This is the change that needs action on both sides.
    provider's series and this one's do not mean the same thing, and the daily
    job merges stored rows with fetched ones, so the older files are archived and
    rebuilt rather than merged. Nothing is deleted.
-3. **Expect a shorter history.** The Free plan keeps about two years, where the
-   old configuration fetched from 2014. Every indicator fits inside the window,
-   and a test asserts it.
-4. **Expect delayed data.** The newest row is weeks old, and
-   `data_source.txt` says by how much. This is the plan working as intended, not
-   a stalled pipeline.
+3. **Expect history to be bounded by the configured retention window.** An
+   explicit start date older than that window is raised to its lower bound.
+   The configured window must still be large enough for every analysis; values
+   below the current 281-day minimum are rejected at configuration load.
+4. **Expect data age to follow the configured publication window.**
+   `data_source.txt` records the actual last trading day. A delayed row is
+   expected when the configured window says so; do not infer a fixed number of
+   weeks from this document.
 5. **Drop the market indices from your stock lists.** They cannot be fetched on
    this plan and are refused as codes. The shipped
    `stocks.txt` now holds listed equities.
