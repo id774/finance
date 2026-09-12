@@ -74,6 +74,14 @@ vocabulary, mail ports are bounded to the TCP port range, and log levels are
 validated before logging starts. The same log-level rule is applied to the
 command-line override before it replaces the loaded setting.
 
+An explicit configuration source -- `--config`, or failing that a non-blank
+`FINANCE_CONFIG` -- must name a file that exists and parses as valid YAML; the
+implicit `./config.yml` may be absent, which is read as an empty
+configuration. J-Quants timeout and request-interval values must be finite,
+and `retention_days` must be at least `MIN_RETENTION_DAYS`, the shortest window
+that still fits the longest indicator lookback this repository currently
+requires.
+
 ### 4.3 `finance/errors.py`
 
 The error hierarchy. Its purpose is that a caller can distinguish a source that
@@ -88,6 +96,10 @@ continue or stop on that difference.
 
 Parses the comma separated stock lists into `StockEntry` values. Every entry
 names a listing on the Tokyo exchange; market indices are not accepted.
+
+Blank lines are ignored. Every non-blank record must carry a non-empty code and
+short name; a missing required value is a `DataFormatError`, not a silently
+skipped entry.
 
 ### 4.5 `finance/indicators.py`
 
@@ -152,6 +164,11 @@ reported as absent rather than raised, because estimators pickled by an older
 scikit-learn do not load on a newer one and refusing to run for that reason
 would stop the whole job the first time the library is upgraded.
 
+Generated CSV and provenance text writes are replacement-safe: content is
+completed in a sibling temporary file and atomically replaces the target only
+after the write succeeds. A failed write leaves the last good target intact.
+Existing target ownership and mode are preserved across replacement.
+
 ### 4.11 `finance/datasources/`
 
 `__init__.py` declares the `StockDataSource` protocol — one method, `fetch(code,
@@ -178,6 +195,10 @@ Failures are separated by what an operator would do about them:
 throttle the retries did not clear, `DataUnavailableError` for a range or a
 dataset the plan does not carry, `InvalidStockCodeError` for a code that cannot
 name a listing, and `DataSourceError` for the rest.
+
+Provider error text may be retained for diagnosis, but the configured API key is
+redacted before that text can enter an application exception, stderr or the job
+log. The response body itself is never copied into an error.
 
 A source refuses to be built without an API key, before a socket is opened.
 `LazySource` defers that construction to the first fetch, which is what lets the
@@ -243,6 +264,10 @@ No analysis is written here.
 
 `charts.py`, `summary.py` and `notify.py` are the daily commands. `migrate.py`
 is run once by hand and is not in `run.sh`.
+
+Argument boundaries are rejected at parsing: chart days are zero or greater,
+with zero retaining its all-history meaning, and summary ranges are one or
+greater. Invalid values are usage errors and exit 2.
 
 ## 5. The flow of one stock
 
@@ -321,9 +346,10 @@ The API key is read from `JQUANTS_API_KEY` and from nothing else. It is refused
 if it appears in the configuration file, and its field is excluded from the
 dataclass repr so that logging a `Settings` cannot disclose it.
 
-`--data-dir` moves the history directory with it unless the history directory
-was configured on its own, so that the option moves the whole output of a run
-rather than half of it.
+`--data-dir` moves the history directory with it only when that history path was
+derived from the data directory. A history directory explicitly supplied by
+`FINANCE_HISTORY_DIR` or `paths.history_dir` remains fixed even when its value
+happened to equal the old derived default.
 
 ## 8. Error handling
 

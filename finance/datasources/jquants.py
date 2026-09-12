@@ -54,6 +54,10 @@
 #  A non-object item in the response data list is likewise refused rather than
 #  silently discarded.
 #
+#  A provider error message may echo back part of the request, which is why
+#  the configured API key is redacted from it before the text can enter an
+#  exception, stderr or the job log; see _message().
+#
 #  Author: id774 (More info: https://id774.net)
 #  Source Code: https://github.com/id774/finance
 #  License: The GPL version 3, or LGPL version 3 (Dual License).
@@ -64,6 +68,8 @@
 #  - pandas, requests
 #
 #  Version History:
+#  v1.2 2026-09-12
+#       Redact an echoed API key from provider error messages.
 #  v1.1 2026-09-09
 #       Refuse non-object response rows instead of silently discarding them.
 #  v1.0 2026-08-14
@@ -380,14 +386,19 @@ class JQuantsSource:
         except (TypeError, ValueError):
             return None
 
-    @staticmethod
-    def _message(response: object) -> str:
+    def _message(self, response: object) -> str:
         """
         Return the message the API reported, and nothing else.
 
         Only the message member is taken. The body is never logged or
         re-raised whole: it carries market data, and an error path is no
         place to copy that into a log file.
+
+        A provider is free to echo request details back in an error
+        message, so the configured API key -- if any -- is redacted from
+        the message before it is truncated, and only the sanitized text is
+        returned. Truncating first and redacting after would let a key
+        that straddles the cutoff survive intact.
         """
         try:
             body = response.json()
@@ -395,8 +406,11 @@ class JQuantsSource:
             return ""
         if not isinstance(body, dict):
             return ""
-        message = body.get("message") or ""
-        return str(message)[:200]
+        message = str(body.get("message") or "")
+        key = self.settings.api_key
+        if key:
+            message = message.replace(key, "[REDACTED]")
+        return message[:200]
 
     def _decode(self, response: object) -> dict[str, Any]:
         """

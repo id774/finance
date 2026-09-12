@@ -45,10 +45,10 @@
 #      the earliest the subscribed plan keeps is raised to it and the
 #      run says so, rather than being refused.
 #  - -y, --days N
-#      How many trailing rows to analyse and chart. 0 means all. The
-#      value also selects the chart: over 300 writes long_CODE.png, 60
-#      or fewer writes short_CODE.png, anything between writes
-#      chart_CODE.png.
+#      How many trailing rows to analyse and chart. 0 means all;
+#      negative values are rejected. The value also selects the chart:
+#      over 300 writes long_CODE.png, 60 or fewer writes short_CODE.png,
+#      anything between writes chart_CODE.png.
 #  - -a, --axis N
 #      1 draws the price panel alone, 2 adds the oscillator panel.
 #  - -p, --complexity N
@@ -64,6 +64,8 @@
 #  - See pyproject.toml
 #
 #  Version History:
+#  v1.2 2026-09-12
+#       Reject negative --days values instead of treating them as all history.
 #  v1.1 2026-08-24
 #       Record provider and plan provenance without embedding a mutable
 #       publication-delay claim.
@@ -111,6 +113,17 @@ SOURCE_DESCRIPTION = "J-Quants API (Free plan)"
 logger = logging.getLogger(__name__)
 
 
+def _days(value: str) -> int:
+    """ Parse --days, accepting zero or a positive integer and refusing the rest. """
+    try:
+        number = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("must be an integer, got {0!r}".format(value)) from exc
+    if number < 0:
+        raise argparse.ArgumentTypeError("must not be negative, got {0}".format(number))
+    return number
+
+
 def parse_arguments(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """ Parse the command line. """
     parser = argparse.ArgumentParser(
@@ -126,7 +139,8 @@ def parse_arguments(argv: Sequence[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("-d", "--date", dest="startdate", help="start date as YYYY-MM-DD")
     parser.add_argument(
-        "-y", "--days", dest="days", type=int, default=DEFAULT_DAYS, help="rows to analyse"
+        "-y", "--days", dest="days", type=_days, default=DEFAULT_DAYS,
+        help="rows to analyse; 0 means all, negative is rejected",
     )
     parser.add_argument(
         "-a", "--axis", dest="axis", type=int, default=DEFAULT_AXIS, choices=(1, 2),

@@ -33,6 +33,9 @@
 #    API key needed.
 #  - A chart-only list run continues past a stock with no stored file.
 #  - An unknown command-line log level fails as a configuration error.
+#  - A negative --days or a non-positive --range exits 2.
+#  - --data-dir moves a derived history directory but preserves an
+#    explicitly configured one.
 #
 #  Author: id774 (More info: https://id774.net)
 #  Source Code: https://github.com/id774/finance
@@ -56,7 +59,7 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from finance.cli import EXIT_FAILURE, EXIT_SUCCESS, EXIT_USAGE
+from finance.cli import EXIT_FAILURE, EXIT_SUCCESS, EXIT_USAGE, resolve_settings
 from finance.cli import charts as charts_cli
 from finance.cli import migrate as migrate_cli
 from finance.cli import notify as notify_cli
@@ -178,6 +181,19 @@ def test_an_invalid_value_exits_two(argv):
     assert raised.value.code == EXIT_USAGE
 
 
+def test_charts_rejects_negative_days():
+    with pytest.raises(SystemExit) as raised:
+        charts_cli.parse_arguments(["-y", "-1"])
+    assert raised.value.code == EXIT_USAGE
+
+
+@pytest.mark.parametrize("value", ["0", "-1"])
+def test_summary_rejects_non_positive_range(value):
+    with pytest.raises(SystemExit) as raised:
+        summary_cli.parse_arguments(["-r", value])
+    assert raised.value.code == EXIT_USAGE
+
+
 def test_charts_without_a_code_or_a_list_fails(tmp_path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
     status = charts_cli.main(["--data-dir", str(tmp_path)])
@@ -226,6 +242,40 @@ def test_summary_with_an_unknown_sort_key_fails(tmp_path, monkeypatch, capsys):
 # --------------------------------------------------------------------
 # Output location
 # --------------------------------------------------------------------
+
+
+def test_data_dir_override_moves_derived_history_directory(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    new_dir = tmp_path / "new"
+    arguments = charts_cli.parse_arguments(["--data-dir", str(new_dir)])
+    settings = resolve_settings(arguments)
+
+    assert settings.data_dir == new_dir.resolve()
+    assert settings.history_dir == new_dir.resolve() / "history"
+
+
+def test_data_dir_override_preserves_explicit_history_directory(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    old_dir = tmp_path / "old"
+    old_dir.mkdir()
+    config = tmp_path / "config.yml"
+    config.write_text(
+        "paths:\n"
+        "  data_dir: {0}\n"
+        "  history_dir: {0}/history\n".format(old_dir),
+        encoding="utf-8",
+    )
+    new_dir = tmp_path / "new"
+    arguments = charts_cli.parse_arguments(
+        ["--config", str(config), "--data-dir", str(new_dir)]
+    )
+    settings = resolve_settings(arguments)
+
+    # The explicit history directory happens to equal what would have been
+    # derived from the old data directory. Provenance, not that equality,
+    # is what must keep it fixed under --data-dir.
+    assert settings.data_dir == new_dir.resolve()
+    assert settings.history_dir == (old_dir / "history").resolve()
 
 
 def test_summary_writes_where_data_dir_points(tmp_path, monkeypatch, indicator_fixture):

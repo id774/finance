@@ -42,6 +42,8 @@
 #  - An empty response is a normal answer, not an error.
 #  - An unknown source name is refused.
 #  - No error message and no log record carries the API key.
+#  - An API key echoed back by the provider is redacted rather than
+#    suppressing the rest of the message.
 #
 #  Author: id774 (More info: https://id774.net)
 #  Source Code: https://github.com/id774/finance
@@ -403,10 +405,16 @@ def test_an_invalid_code_fails_before_a_request():
 
 
 def test_no_error_message_carries_the_api_key():
-    session = FakeSession([FakeResponse(status_code=401, body={"message": "denied"})])
+    session = FakeSession(
+        [FakeResponse(status_code=401, body={"message": "denied {0}".format(API_KEY)})]
+    )
     with pytest.raises(AuthenticationError) as caught:
         source(session).fetch("7203", START, END)
-    assert API_KEY not in str(caught.value)
+
+    message = str(caught.value)
+    assert API_KEY not in message
+    assert "[REDACTED]" in message
+    assert "denied" in message
 
 
 def test_no_log_record_carries_the_api_key(caplog):

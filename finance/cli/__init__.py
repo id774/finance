@@ -30,6 +30,9 @@
 #  - Standard library only
 #
 #  Version History:
+#  v1.2 2026-09-12
+#       Preserve explicit history paths under --data-dir; this fixes incompatible
+#       path resolution from the prior implementation.
 #  v1.1 2026-09-09
 #       Validate command-line log levels with the shared configuration rule.
 #  v1.0 2026-08-14
@@ -87,8 +90,10 @@ def resolve_settings(arguments: argparse.Namespace) -> Settings:
         overrides["data_dir"] = data_dir
         # The history directory follows the data directory unless it was
         # configured on its own, so that --data-dir moves the whole
-        # output of a run rather than half of it.
-        if settings.history_dir == settings.data_dir / "history":
+        # output of a run rather than half of it. Provenance, not value
+        # equality, decides this: an explicit history directory that
+        # happens to equal the derived default must still stay fixed.
+        if not settings._history_dir_explicit:
             overrides["history_dir"] = data_dir / "history"
     if getattr(arguments, "log_level", None):
         overrides["log_level"] = validate_log_level(arguments.log_level)

@@ -318,8 +318,11 @@ git pull
 ./deploy.sh
 ```
 
-The virtual environment and `run.sh` are replaced; `data/` and `clf/` are not
-touched. Re-run one stock by hand as above before the next scheduled run.
+The virtual environment and `run.sh` are replaced. Existing generated data,
+model contents and stock-list contents are not overwritten. Deployment may
+create missing directories or shipped stock lists, and it reapplies ownership
+and permissions under `data/` and `clf/`. Re-run one stock by hand as above
+before the next scheduled run.
 
 ---
 

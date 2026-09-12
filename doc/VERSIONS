@@ -6,8 +6,14 @@ v1.0.2 (Release Date: TBD)
 - Keep chart-only runs on stored prices, leaving fetches exclusive to
   `--update`.
 - Keep `stock_CODE.csv` to trading-day rows by omitting empty calendar gaps.
-- Reject malformed configuration values instead of silently defaulting them.
+- Reject missing or malformed configuration, non-finite request values and
+  retention windows too short for the analysis before work starts.
+- Preserve an explicitly configured history directory when `--data-dir`
+  changes the data output directory.
 - Reject malformed J-Quants data rows instead of silently discarding them.
+- Redact any echoed API key before a provider error reaches logs or stderr.
+- Reject invalid chart/summary ranges and stock-list rows missing code or name.
+- Replace generated CSV/TXT files atomically so failed writes keep good data.
 
 v1.0.1 (2026-08-26)
 -------------------

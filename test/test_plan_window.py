@@ -28,6 +28,7 @@
 #  - Stored data reaching the newest published date is not re-requested.
 #  - Staleness is measured against the newest published date.
 #  - The lookback the longest indicator needs fits inside the window.
+#  - The configured minimum retention window covers that same lookback.
 #
 #  Author: id774 (More info: https://id774.net)
 #  Source Code: https://github.com/id774/finance
@@ -52,7 +53,7 @@ from datetime import date, timedelta
 import pandas as pd
 
 from finance.analysis import Analysis, AnalysisRequest
-from finance.config import JQuantsSettings
+from finance.config import MIN_RETENTION_DAYS, JQuantsSettings
 from finance.indicators import SMA_PERIODS
 from finance.reporting import SummaryRequest, build_summary
 from finance.storage import write_price_csv
@@ -169,3 +170,13 @@ def test_the_longest_lookback_fits_inside_the_window():
     """
     trading_days = (TEST_PLAN.retention_days / 7) * 5
     assert max(SMA_PERIODS) < trading_days
+
+
+def test_minimum_retention_window_covers_the_longest_required_lookback():
+    """
+    MIN_RETENTION_DAYS must be the smallest window that still fits the
+    longest indicator lookback, so a configuration right at the minimum
+    is usable and one day short is provably not.
+    """
+    assert max(SMA_PERIODS) < (MIN_RETENTION_DAYS / 7) * 5
+    assert not max(SMA_PERIODS) < ((MIN_RETENTION_DAYS - 1) / 7) * 5

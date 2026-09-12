@@ -9,7 +9,7 @@
 #  separated summary table, and optionally keep a dated copy.
 #
 #  The options are the ones bin/summary.py has always accepted. run.sh
-#  invokes this command six times with different combinations of them,
+#  invokes this command five times with different combinations of them,
 #  and each combination produces one of the files finance-dashboard
 #  reads, so the letters and their meanings are fixed.
 #
@@ -32,8 +32,8 @@
 #      Name of the summary written into the data directory. Defaults to
 #      out.csv.
 #  - -r, --range N
-#      How many rows back the change is measured over. 1 compares the
-#      last row with the one before it.
+#      How many rows back the change is measured over. Must be at least
+#      1; 1 compares the last row with the one before it.
 #  - -k, --sortkey KEY
 #      Column to sort by. Defaults to Ratio.
 #  - -a, --ascending
@@ -55,6 +55,8 @@
 #  - See pyproject.toml
 #
 #  Version History:
+#  v1.1 2026-09-12
+#       Reject non-positive --range values before aggregation.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -82,6 +84,17 @@ DEFAULT_OUTPUT = "out.csv"
 logger = logging.getLogger(__name__)
 
 
+def _span(value: str) -> int:
+    """ Parse --range, accepting an integer of 1 or more and refusing the rest. """
+    try:
+        number = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("must be an integer, got {0!r}".format(value)) from exc
+    if number < 1:
+        raise argparse.ArgumentTypeError("must be at least 1, got {0}".format(number))
+    return number
+
+
 def parse_arguments(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """ Parse the command line. """
     parser = argparse.ArgumentParser(
@@ -93,7 +106,8 @@ def parse_arguments(argv: Sequence[str] | None = None) -> argparse.Namespace:
         "-o", "--output", dest="output", default=DEFAULT_OUTPUT, help="output file name"
     )
     parser.add_argument(
-        "-r", "--range", dest="span", type=int, default=1, help="rows the change spans"
+        "-r", "--range", dest="span", type=_span, default=1,
+        help="rows the change spans; must be at least 1",
     )
     parser.add_argument(
         "-k", "--sortkey", dest="sortkey", default=DEFAULT_SORT_KEY, help="column to sort by"

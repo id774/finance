@@ -18,6 +18,16 @@
 #  layers above it own the layout and a test can point it at a temporary
 #  directory.
 #
+#  The generated CSV and data_source.txt writers replace their target
+#  atomically: content is completed in a sibling temporary file first, and
+#  only a successful write is moved onto the target with os.replace(). A
+#  failure -- while writing, while carrying over the existing target's
+#  ownership and mode, or while replacing -- leaves the last good target
+#  untouched and cleans up the temporary file. ModelStore.save() and the PNG
+#  writer in finance/charts.py are outside this: models tolerate an unreadable
+#  file by retraining, and chart regeneration always follows a successful CSV
+#  write.
+#
 #  Author: id774 (More info: https://id774.net)
 #  Source Code: https://github.com/id774/finance
 #  License: The GPL version 3, or LGPL version 3 (Dual License).
@@ -28,6 +38,8 @@
 #  - pandas
 #
 #  Version History:
+#  v1.1 2026-09-12
+#       Atomically replace generated CSV/TXT output after complete writes.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -38,6 +50,9 @@ from __future__ import annotations
 import logging
 import os
 import pickle
+import stat
+import uuid
+from collections.abc import Callable
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -102,6 +117,74 @@ def ensure_directory(path: str | os.PathLike[str]) -> Path:
     return target
 
 
+def _create_temp_file(target: Path) -> Path:
+    """
+    Create an empty, uniquely named sibling of target and return its path.
+
+    Created with O_CREAT | O_EXCL at mode 0o666, the same request every
+    regular file creation makes; the umask in effect, not a restrictive
+    hardcoded mode, is what narrows it. A new file written this way and
+    then moved onto an absent target keeps that mode, rather than the
+    narrower default a general-purpose temp file helper would leave it at.
+    """
+    while True:
+        candidate = target.with_name("{0}.{1}.tmp".format(target.name, uuid.uuid4().hex))
+        try:
+            fd = os.open(str(candidate), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o666)
+        except FileExistsError:
+            continue
+        os.close(fd)
+        return candidate
+
+
+def _preserve_metadata(target: Path, temp_path: Path) -> None:
+    """ Carry an existing target's mode, owner and group onto its replacement. """
+    try:
+        info = target.stat()
+    except FileNotFoundError:
+        return
+    os.chmod(temp_path, stat.S_IMODE(info.st_mode))
+    os.chown(temp_path, info.st_uid, info.st_gid)
+
+
+def _discard_temp_file(temp_path: Path) -> None:
+    """ Remove a temporary file left behind by a write that did not complete. """
+    try:
+        temp_path.unlink()
+    except OSError:
+        pass
+
+
+def _replace_atomically(target: Path, write: Callable[[Path], None]) -> None:
+    """
+    Write target's replacement into a sibling temporary file, then move it
+    into place with a single atomic os.replace().
+
+    write is called with the temporary file's path and must write the
+    complete content to it. Nothing about target is touched until the
+    write, the metadata carry-over and the replace have all succeeded, so
+    a failure at any point leaves the last good target exactly as it was.
+
+    Raises:
+        StorageError: The write, the metadata carry-over or the replace
+            failed with an OSError.
+    """
+    ensure_directory(target.parent)
+    temp_path = _create_temp_file(target)
+    try:
+        write(temp_path)
+        _preserve_metadata(target, temp_path)
+        os.replace(temp_path, target)
+    except OSError as exc:
+        _discard_temp_file(temp_path)
+        raise StorageError("File could not be written: {0}".format(target)) from exc
+    except BaseException:
+        # An unexpected failure is not collapsed into StorageError, but the
+        # temporary file is still cleaned up and target is still untouched.
+        _discard_temp_file(temp_path)
+        raise
+
+
 def read_price_csv(path: str | os.PathLike[str]) -> pd.DataFrame:
     """
     Read a price or indicator CSV indexed by date.
@@ -132,6 +215,9 @@ def write_price_csv(frame: pd.DataFrame, path: str | os.PathLike[str]) -> None:
     read to the dashboard as a stock that has lost its history, which is
     worse than one that was not refreshed today.
 
+    The write is atomic: a failure partway through leaves the existing
+    file exactly as it was, rather than truncated or half rewritten.
+
     Raises:
         StorageError: The file cannot be written.
     """
@@ -139,11 +225,11 @@ def write_price_csv(frame: pd.DataFrame, path: str | os.PathLike[str]) -> None:
         logger.warning("Refusing to write an empty frame to %s", path)
         return
     target = Path(path)
-    ensure_directory(target.parent)
-    try:
-        frame.to_csv(target, sep=PRICE_SEPARATOR, index_label=PRICE_INDEX_LABEL)
-    except OSError as exc:
-        raise StorageError("File could not be written: {0}".format(target)) from exc
+
+    def write(temp_path: Path) -> None:
+        frame.to_csv(temp_path, sep=PRICE_SEPARATOR, index_label=PRICE_INDEX_LABEL)
+
+    _replace_atomically(target, write)
     logger.debug("Wrote %d rows to %s", len(frame), target)
 
 
@@ -151,15 +237,18 @@ def write_summary_csv(frame: pd.DataFrame, path: str | os.PathLike[str]) -> None
     """
     Write a summary table in the tab separated format the dashboard reads.
 
+    The write is atomic: a failure partway through leaves the existing
+    file exactly as it was, rather than truncated or half rewritten.
+
     Raises:
         StorageError: The file cannot be written.
     """
     target = Path(path)
-    ensure_directory(target.parent)
-    try:
-        frame.to_csv(target, sep=SUMMARY_SEPARATOR, index_label=SUMMARY_INDEX_LABEL)
-    except OSError as exc:
-        raise StorageError("File could not be written: {0}".format(target)) from exc
+
+    def write(temp_path: Path) -> None:
+        frame.to_csv(temp_path, sep=SUMMARY_SEPARATOR, index_label=SUMMARY_INDEX_LABEL)
+
+    _replace_atomically(target, write)
     logger.debug("Wrote %d rows to %s", len(frame), target)
 
 
@@ -216,6 +305,9 @@ def write_data_source(
             substituting the run date would make older or unknown data
             look more current than it is.
 
+    The write is atomic: a failure partway through leaves the existing
+    file exactly as it was, rather than truncated or half rewritten.
+
     Raises:
         StorageError: The file cannot be written.
     """
@@ -225,12 +317,13 @@ def write_data_source(
         "last_trading_day": last_trading_day.isoformat() if last_trading_day else "",
     }
     lines = ["{0}\t{1}".format(key, values[key]) for key in DATA_SOURCE_KEYS]
+    content = "\n".join(lines) + "\n"
     target = Path(path)
-    ensure_directory(target.parent)
-    try:
-        target.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    except OSError as exc:
-        raise StorageError("File could not be written: {0}".format(target)) from exc
+
+    def write(temp_path: Path) -> None:
+        temp_path.write_text(content, encoding="utf-8")
+
+    _replace_atomically(target, write)
     logger.debug("Wrote %s", target)
 
 
