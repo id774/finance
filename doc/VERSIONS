@@ -14,6 +14,8 @@ v1.0.2 (Release Date: TBD)
 - Redact any echoed API key before a provider error reaches logs or stderr.
 - Reject invalid chart/summary ranges and stock-list rows missing code or name.
 - Replace generated CSV/TXT files atomically so failed writes keep good data.
+- Normalize shell helper contracts so missing and non-executable commands
+  report statuses `127` and `126` consistently.
 
 v1.0.1 (2026-08-26)
 -------------------

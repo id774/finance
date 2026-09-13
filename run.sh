@@ -62,8 +62,12 @@
 #  Exit Codes:
 #  - 0: Every step succeeded.
 #  - 1: At least one step failed.
+#  - 126: A required command is not executable.
+#  - 127: A required command is missing.
 #
 #  Version History:
+#  v1.1 2026-09-13
+#       Normalize shared usage and command checks; keep pipeline checks separate.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -102,8 +106,9 @@ NOTIFY="$VENV_DIR/bin/finance-notify"
 
 failures=0
 
-# Display this script's header as usage information
+# Display full script header information extracted from the top comment block
 usage() {
+    check_commands awk
     awk '
         BEGIN { in_header = 0 }
         /^#+$/ && length($0) >= 10 { if (!in_header) { in_header = 1; next } else exit }
@@ -125,8 +130,22 @@ log() {
     echo "$@" >>"$JOBLOG" 2>&1
 }
 
-# Check that the commands this job drives are installed
+# Check if required commands are available and executable
 check_commands() {
+    for cmd in "$@"; do
+        cmd_path=$(command -v "$cmd" 2>/dev/null)
+        if [ -z "$cmd_path" ]; then
+            echo "[ERROR] Command '$cmd' is not installed. Please install $cmd and try again." >&2
+            exit 127
+        elif [ ! -x "$cmd_path" ]; then
+            echo "[ERROR] Command '$cmd' is not executable. Please check the permissions." >&2
+            exit 126
+        fi
+    done
+}
+
+# Check that the finance pipeline commands are installed
+check_pipeline_commands() {
     for cmd in "$CHARTS" "$SUMMARY" "$NOTIFY"; do
         if [ ! -x "$cmd" ]; then
             echo "[ERROR] Command not found: $cmd" >&2
@@ -134,10 +153,6 @@ check_commands() {
             exit 1
         fi
     done
-    if ! command -v date >/dev/null 2>&1; then
-        echo "[ERROR] Command not found: date" >&2
-        exit 127
-    fi
 }
 
 # Check that the fetching step has the credential it needs
@@ -226,7 +241,8 @@ main() {
         -h|--help) usage ;;
     esac
     load_environment
-    check_commands
+    check_pipeline_commands
+    check_commands date
     check_credential
     check_environment
 
