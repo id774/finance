@@ -352,10 +352,21 @@ not a list of the functions below it, which the code already carries.
   - Documentation-only, comment-only and formatting-only changes (help text,
     README/POLICY/VERSIONS wording, whitespace and layout, with no effect on
     behaviour) do not bump the version.
-  - Any change that affects code behaviour (bug fixes, new options, and
-    refactors that change observable behaviour) bumps the version.
-  - Multiple updates on the same date are consolidated into a single version
-    entry; do not increment the version multiple times on the same date.
+  - A module version represents one coherent behaviour or specification change
+    unit, not an edit, commit, pull request, or calendar day. Start a new
+    version only when the new change is independently meaningful from the
+    change described by the newest entry.
+  - Follow-up work that completes, corrects, or hardens the same newest change
+    unit stays in that version even when it is made on a later date or in
+    another commit or pull request. Update the entry date to the date the
+    completed unit reached its current form and rewrite the description to
+    summarize the whole change.
+  - An internal cleanup or refactor that preserves observable behaviour does
+    not by itself bump the version.
+  - Do not merge independent change units merely because they were made on the
+    same day or close together. If an independent version has intervened, a
+    later fix to an older change is a new change unit rather than a
+    retroactive rewrite across that intervening version.
   - Finalizing only the release date of an entry that already exists, such as
     changing `TBD` to the actual date, is not by itself a new change. Classify
     that entry as version-only or as containing real changes based on what it
