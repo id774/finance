@@ -319,6 +319,16 @@ This repository was left behind by exactly the practices this section forbids.
 - Define `usage()`, `main()`, and call `main "$@"` at the end.
 - An interpreter path is a default that can be overridden, not a constant
   compiled into the script.
+- A helper name shared with other id774 shell scripts is an interface. The same
+  name means the same arguments, exit statuses, side effects and implementation.
+  Do not specialize a shared helper in place.
+- Repository-specific behavior belongs at the call site or in a differently
+  named helper. If the behavior differs, the function name differs.
+- `check_commands()` takes the command names to inspect in `"$@"`, resolves each
+  with `command -v`, exits `127` when a command is unavailable and `126` when the
+  resolved path is not executable.
+- The shared header-extracting `usage()` calls `check_commands awk` before
+  invoking `awk`, prints the header block and exits `0`.
 
 ### 2.7 Documentation and Versioning
 

@@ -56,9 +56,12 @@
 #  Exit Codes:
 #  - 0: The deployment finished.
 #  - 1: A step failed.
+#  - 126: A required command is not executable.
 #  - 127: A required command is missing.
 #
 #  Version History:
+#  v1.1 2026-09-13
+#       Normalize shared usage and command checks across shell scripts.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -72,8 +75,9 @@ DATA_GROUP=${DATA_GROUP:-www-data}
 VENV_DIR="$TARGET_DIR/.venv"
 SOURCE_DIR=$(cd "$(dirname "$0")" && pwd)
 
-# Display this script's header as usage information
+# Display full script header information extracted from the top comment block
 usage() {
+    check_commands awk
     awk '
         BEGIN { in_header = 0 }
         /^#+$/ && length($0) >= 10 { if (!in_header) { in_header = 1; next } else exit }
@@ -82,12 +86,16 @@ usage() {
     exit 0
 }
 
-# Check that the required commands are available
+# Check if required commands are available and executable
 check_commands() {
-    for cmd in "$PYTHON" sudo install; do
-        if ! command -v "$cmd" >/dev/null 2>&1; then
-            echo "[ERROR] Command not found: $cmd" >&2
+    for cmd in "$@"; do
+        cmd_path=$(command -v "$cmd" 2>/dev/null)
+        if [ -z "$cmd_path" ]; then
+            echo "[ERROR] Command '$cmd' is not installed. Please install $cmd and try again." >&2
             exit 127
+        elif [ ! -x "$cmd_path" ]; then
+            echo "[ERROR] Command '$cmd' is not executable. Please check the permissions." >&2
+            exit 126
         fi
     done
 }
@@ -198,7 +206,7 @@ main() {
     case "${1:-}" in
         -h|--help) usage ;;
     esac
-    check_commands
+    check_commands "$PYTHON" sudo install
     check_python
     create_directories
     create_environment_file
