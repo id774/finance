@@ -32,10 +32,6 @@ finance-dashboard  (read only, private)
 before deploying this, and [Data Source](#2-data-source) for what the Free plan
 does and does not provide.
 
-This repository uses `master` as its primary branch name.
-
-The name is used solely as a technical identifier, following the long-standing convention historically used by Git. It does not express or imply any association with racism, slavery, discrimination, or any political or social ideology.
-
 ## Features
 
 - **Prices from the J-Quants API Free plan**, a source an individual may use at
@@ -78,7 +74,8 @@ this README does not duplicate the currently resolved dependency versions.
 13. [Directory Structure](#13-directory-structure)
 14. [Migrating from the previous version](#14-migrating-from-the-previous-version)
 15. [Documents](#15-documents)
-16. [License](#16-license)
+16. [Primary Branch](#16-primary-branch)
+17. [License](#17-license)
 
 ---
 
@@ -800,7 +797,15 @@ entrance, and the details live under `doc/`.
 
 ---
 
-## 16. License
+## 16. Primary Branch
+
+This repository uses `master` as its primary branch name.
+
+The name is used solely as a technical identifier, following the long-standing convention historically used by Git. It does not express or imply any association with racism, slavery, discrimination, or any political or social ideology.
+
+---
+
+## 17. License
 
 Two separate questions, and conflating them would be the most consequential
 mistake a reader of this file could make.
