@@ -173,9 +173,12 @@ the filesystem, the price provider
 - A library module never prints. It takes a module logger and logs.
 - A command line entry point writes user-facing messages to stderr, prefixed
   `[ERROR]` or `[WARN]`, and its ordinary output to stdout.
-- INFO says what a step did, WARNING says what was skipped, ERROR says what
-  failed. A nightly log is read as a record of the run, so third-party loggers
-  that report their own transport are held at WARNING.
+- INFO records useful normal progress. WARNING is reserved for a degraded or
+  otherwise abnormal but recoverable condition that the operator should know
+  about; a normal no-op, guard, or inapplicable item may be silent and is not a
+  warning merely because work was skipped. ERROR says what failed. A nightly
+  log is read as a record of the run, so third-party loggers that report their
+  own transport are held at WARNING.
 - Log with `%s` placeholders, not with an already-formatted string.
 
 ### 1.8 Error Handling and Exit Codes
@@ -190,6 +193,14 @@ the filesystem, the price provider
   traceback is wanted.
 - Exit codes: `0` the command did its work, `1` it failed or a stock in a list
   run failed, `2` argparse rejected the command line.
+- Classify the operation result, decide whether independent later work may
+  continue, and decide whether anything needs to be reported as three separate
+  questions. The established batch rule remains authoritative: one stock may
+  fail while later stocks continue, and the aggregate command reports failure
+  at the end.
+- A missing global prerequisite or another condition that makes correct batch
+  completion impossible stops the affected command. Do not downgrade such a
+  condition to a warning merely to keep processing.
 
 ### 1.9 Judging a Change
 
