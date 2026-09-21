@@ -103,6 +103,9 @@ Version History Guidelines
   same file or feature.
 - Place closely related entries near each other.
 - Append an independent new change to the end of the current version entry.
+- Never create more than one repository version for the same calendar date.
+- Independent changes may use separate bullets, but they stay in that day's
+  single version entry.
 - Where the record reaches back to a genuine first version, that entry
   reads only "Initial release." and nothing else. v1.0 here is a
   modernization release, not that first version, and keeps its own record.
