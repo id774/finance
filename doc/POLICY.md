@@ -373,21 +373,31 @@ not a list of the functions below it, which the code already carries.
   - Documentation-only, comment-only and formatting-only changes (help text,
     README/POLICY/VERSIONS wording, whitespace and layout, with no effect on
     behaviour) do not bump the version.
-  - A module version represents one coherent behaviour or specification change
-    unit, not an edit, commit, pull request, or calendar day. Start a new
-    version only when the new change is independently meaningful from the
-    change described by the newest entry.
-  - Follow-up work that completes, corrects, or hardens the same newest change
-    unit stays in that version even when it is made on a later date or in
+  - A module version moves on a version-worthy behaviour or specification
+    change, and the calendar date bounds how many versions may result. A
+    versioned unit must not have more than one version number for the same
+    calendar date. This rule has no exception.
+  - If another version-worthy change is made on a date already used by the
+    newest entry, do not create another version. Keep one version for that
+    date and rewrite the existing entry to describe the completed state,
+    whether or not the new change is related to the one already recorded.
+  - Separate commits, pull requests, independent features, bug fixes,
+    security fixes, compatibility changes, breaking changes, or release units
+    do not permit another version number on the same date. Coherence and
+    independence may decide pull request scope or bullet grouping, but they
+    never override the one-version-per-calendar-day rule.
+  - On a later date, follow-up work that completes, corrects, or hardens the
+    same newest change unit stays in that version even when it is made in
     another commit or pull request. Update the entry date to the date the
     completed unit reached its current form and rewrite the description to
-    summarize the whole change.
+    summarize the whole change. A later-date change that is independent of the
+    newest entry starts a new version. The same-date rule above always
+    applies first.
   - An internal cleanup or refactor that preserves observable behaviour does
     not by itself bump the version.
-  - Do not merge independent change units merely because they were made on the
-    same day or close together. If an independent version has intervened, a
-    later fix to an older change is a new change unit rather than a
-    retroactive rewrite across that intervening version.
+  - If an independent version has intervened, a later fix to an older change
+    is a new change unit rather than a retroactive rewrite across that
+    intervening version.
   - Finalizing only the release date of an entry that already exists, such as
     changing `TBD` to the actual date, is not by itself a new change. Classify
     that entry as version-only or as containing real changes based on what it
@@ -420,6 +430,9 @@ not a list of the functions below it, which the code already carries.
 - Repository release versions are independent of individual module versions.
 - Record repository release versions in [`VERSIONS`](VERSIONS) and use the same
   versions for Git tags.
+- The one-version-per-calendar-day rule of 2.7.1 applies to repository release
+  versions as well: `doc/VERSIONS` never carries more than one version for the
+  same calendar date, whatever the independence of the changes released.
 - Repository release versions may use a three-level `major.minor.patch` scheme.
 - Work that is not released yet takes no version of its own: it belongs to the
   entry already standing at the top of `doc/VERSIONS`.
