@@ -215,6 +215,131 @@ A change is judged by:
 
 ---
 
+### 1.10 Repository Versioning
+
+- Repository release versions are independent of individual module versions.
+- Record repository release versions in [`VERSIONS`](VERSIONS) and use the same
+  versions for Git tags.
+- The one-version-per-calendar-day rule of 2.7.1 applies to repository release
+  versions as well: `doc/VERSIONS` never carries more than one version for the
+  same calendar date, whatever the independence of the changes released.
+- Repository release versions may use a three-level `major.minor.patch` scheme.
+- Work that is not released yet takes no version of its own: it belongs to the
+  entry already standing at the top of `doc/VERSIONS`.
+- An unreleased entry carries `(Release Date: TBD)`, and its version number
+  stays provisional until it ships. An entry opened as
+  `v1.0.1 (Release Date: TBD)` may be released under a different number once
+  what accumulated in it is known; which number it takes is decided then.
+- Replacing `TBD` with the actual release date is the release itself, not a
+  change to record in the entry.
+- A repository that has not yet made its first release is in its initial
+  construction stage, and that stage takes no entry here. Typically this is the
+  state while `v1.0` is the first release and the repository still stands below
+  it, or `v1.0` itself is unreleased. The changes made while building up to that
+  release are not accumulated in `doc/VERSIONS` one by one: the file is the
+  record of released versions, not of the construction that precedes the first
+  of them, and its first entry is written when that release is made.
+- A documentation-only change takes no `doc/VERSIONS` entry, unless its scale
+  makes it worth one line saying so.
+- The version declared in `pyproject.toml`, the one exposed as
+  `finance.__version__`, and the one the `finance-*` commands print for
+  `--version` are the repository release version. They are one number and are
+  changed together.
+- File level `Version History` and the repository level `doc/VERSIONS` are kept
+  apart. A release entry does not raise a module version, and a module version
+  does not become a release entry unless the change is observable from outside.
+
+### 1.11 doc/VERSIONS Structure
+
+- `doc/VERSIONS` must read as a version-level summary of overall changes, not a
+  raw commit log. It tells a reader what a release changed. It is not the place
+  to transcribe how that work happened to be committed.
+- Each entry opens with a heading of the form `vX.Y.Z (YYYY-MM-DD)`, or
+  `vX.Y.Z (Release Date: TBD)` while it is unreleased, underlined with `-`
+  characters, followed by one `-` bullet per change.
+- Use UTF-8.
+
+#### 1.11.1 One Change per Line
+
+- One coherent change is one bullet. A bullet is at most two physical lines,
+  and a single line at or under 80 columns is preferred whenever practical.
+  This is an explicit limit, not a prompt to reread: a bullet that runs past
+  two lines, or a single line that runs past 80 columns without necessity,
+  must be shortened. The entry is a list meant to be scanned, and a bullet
+  that grows past this limit costs it that: the eye no longer finds the
+  changes by counting lines, and a diff no longer shows a small, bounded
+  edit.
+- A bullet that has to carry file names, command names, function names,
+  option names or configuration names may pass 80 columns on its one or two
+  lines when those names cannot be shortened without losing meaning. The
+  two-line ceiling still applies.
+- Bullets written before this rule are left as they stand. The rule applies
+  to what is written from now on.
+- `doc/VERSIONS` carries these guidelines again at its foot, and an entry
+  written into it follows the limit recorded there.
+- Where the record reaches back to a genuine first version, that entry
+  reads only `Initial release.` and nothing else. `v1.0` here is a
+  modernization release, not that first version, and keeps its own record.
+- The case standing outside the rule is a version history that has already
+  settled on a width and a layout of its own, predating this limit. There a
+  new bullet is wrapped to that width and balanced against the lines already
+  standing, so that the version history stays of a piece. Wrapping to hold an
+  established form does not overturn the two-line, 80-column limit above;
+  where a file has settled on no such form, that limit applies in full.
+
+#### 1.11.2 Shortening a Long Entry
+
+- When a bullet runs long, the first move is to abstract it, not to reach for
+  the second line the two-line limit allows. Drop the implementation detail,
+  the examples, the reason and the secondary effects, and state what the
+  change is. Wrap onto the second line only when the abstracted bullet still
+  exceeds 80 columns.
+- Keep what a reader of the release cannot reconstruct without it: what was
+  changed, what is now observably different from outside, what it does to
+  compatibility, what it does to safety, and the identifiers someone would
+  search for.
+- A bullet that is long because it names what it must name stays long. Do not
+  cut a file name, an option name or a configuration key to reach a column
+  count.
+
+#### 1.11.3 Grouping and Order
+
+- When multiple changes to the same file within one version are really one
+  coherent change, merge them into a single bullet instead of listing them
+  separately. Changes that serve one purpose are described together even when
+  they touch several files.
+- Changes to one file that carry independent meaning are not forced together.
+  Coherence decides, not the file name.
+- When changes are independent, still place entries that touch the same file or
+  the same feature near each other, so that each version's entry reads as a
+  coherent, reviewable whole rather than an unordered sequence of unrelated
+  lines.
+- An independent change that belongs with nothing already listed is appended to
+  the end of the current version's entry.
+- Order within a version serves the reader, not the commit history. Do not
+  preserve commit order at the cost of the entry reading as a whole.
+
+### 1.12 License
+
+This repository is dual licensed: GPL version 3 or LGPL version 3, at the
+recipient's option. The texts are [`COPYING`](COPYING) and
+[`COPYING.LESSER`](COPYING.LESSER), and [`LICENSE.md`](LICENSE.md) states the
+choice. This settles what earlier revisions of this document and of
+[`MODERNIZATION_PLAN.md`](MODERNIZATION_PLAN.md) recorded as an open item for the
+copyright holder; the decision came from the copyright holder.
+
+- Every source module carries the line
+  `License: The GPL version 3, or LGPL version 3 (Dual License).` in its header
+  block, between `Source Code` and `Contact`.
+- `pyproject.toml` carries the matching
+  `license = { text = "GPL-3.0-or-later OR LGPL-3.0-or-later" }`.
+- The README, `LICENSE.md`, `pyproject.toml`, and the module headers must state
+  the same licence. A licence change updates each of those locations in the same
+  commit.
+- Do not vendor third-party code into this repository. Dependencies are declared
+  in `pyproject.toml` and installed from PyPI, which keeps their licenses theirs
+  and this file short.
+
 ## 2. Python Policy
 
 ### 2.1 Structure
@@ -424,128 +549,3 @@ not a list of the functions below it, which the code already carries.
   changing how a path or a configuration value is resolved are all incompatible
   changes. Say so in the `Version History` entry, so that the number the change
   is released under can be chosen knowing that.
-
-#### 2.7.3 Repository Versioning
-
-- Repository release versions are independent of individual module versions.
-- Record repository release versions in [`VERSIONS`](VERSIONS) and use the same
-  versions for Git tags.
-- The one-version-per-calendar-day rule of 2.7.1 applies to repository release
-  versions as well: `doc/VERSIONS` never carries more than one version for the
-  same calendar date, whatever the independence of the changes released.
-- Repository release versions may use a three-level `major.minor.patch` scheme.
-- Work that is not released yet takes no version of its own: it belongs to the
-  entry already standing at the top of `doc/VERSIONS`.
-- An unreleased entry carries `(Release Date: TBD)`, and its version number
-  stays provisional until it ships. An entry opened as
-  `v1.0.1 (Release Date: TBD)` may be released under a different number once
-  what accumulated in it is known; which number it takes is decided then.
-- Replacing `TBD` with the actual release date is the release itself, not a
-  change to record in the entry.
-- A repository that has not yet made its first release is in its initial
-  construction stage, and that stage takes no entry here. Typically this is the
-  state while `v1.0` is the first release and the repository still stands below
-  it, or `v1.0` itself is unreleased. The changes made while building up to that
-  release are not accumulated in `doc/VERSIONS` one by one: the file is the
-  record of released versions, not of the construction that precedes the first
-  of them, and its first entry is written when that release is made.
-- A documentation-only change takes no `doc/VERSIONS` entry, unless its scale
-  makes it worth one line saying so.
-- The version declared in `pyproject.toml`, the one exposed as
-  `finance.__version__`, and the one the `finance-*` commands print for
-  `--version` are the repository release version. They are one number and are
-  changed together.
-- File level `Version History` and the repository level `doc/VERSIONS` are kept
-  apart. A release entry does not raise a module version, and a module version
-  does not become a release entry unless the change is observable from outside.
-
-#### 2.7.4 doc/VERSIONS Structure
-
-- `doc/VERSIONS` must read as a version-level summary of overall changes, not a
-  raw commit log. It tells a reader what a release changed. It is not the place
-  to transcribe how that work happened to be committed.
-- Each entry opens with a heading of the form `vX.Y.Z (YYYY-MM-DD)`, or
-  `vX.Y.Z (Release Date: TBD)` while it is unreleased, underlined with `-`
-  characters, followed by one `-` bullet per change.
-- Use UTF-8.
-
-##### 2.7.4.1 One Change per Line
-
-- One coherent change is one bullet. A bullet is at most two physical lines,
-  and a single line at or under 80 columns is preferred whenever practical.
-  This is an explicit limit, not a prompt to reread: a bullet that runs past
-  two lines, or a single line that runs past 80 columns without necessity,
-  must be shortened. The entry is a list meant to be scanned, and a bullet
-  that grows past this limit costs it that: the eye no longer finds the
-  changes by counting lines, and a diff no longer shows a small, bounded
-  edit.
-- A bullet that has to carry file names, command names, function names,
-  option names or configuration names may pass 80 columns on its one or two
-  lines when those names cannot be shortened without losing meaning. The
-  two-line ceiling still applies.
-- Bullets written before this rule are left as they stand. The rule applies
-  to what is written from now on.
-- `doc/VERSIONS` carries these guidelines again at its foot, and an entry
-  written into it follows the limit recorded there.
-- Where the record reaches back to a genuine first version, that entry
-  reads only `Initial release.` and nothing else. `v1.0` here is a
-  modernization release, not that first version, and keeps its own record.
-- The case standing outside the rule is a version history that has already
-  settled on a width and a layout of its own, predating this limit. There a
-  new bullet is wrapped to that width and balanced against the lines already
-  standing, so that the version history stays of a piece. Wrapping to hold an
-  established form does not overturn the two-line, 80-column limit above;
-  where a file has settled on no such form, that limit applies in full.
-
-##### 2.7.4.2 Shortening a Long Entry
-
-- When a bullet runs long, the first move is to abstract it, not to reach for
-  the second line the two-line limit allows. Drop the implementation detail,
-  the examples, the reason and the secondary effects, and state what the
-  change is. Wrap onto the second line only when the abstracted bullet still
-  exceeds 80 columns.
-- Keep what a reader of the release cannot reconstruct without it: what was
-  changed, what is now observably different from outside, what it does to
-  compatibility, what it does to safety, and the identifiers someone would
-  search for.
-- A bullet that is long because it names what it must name stays long. Do not
-  cut a file name, an option name or a configuration key to reach a column
-  count.
-
-##### 2.7.4.3 Grouping and Order
-
-- When multiple changes to the same file within one version are really one
-  coherent change, merge them into a single bullet instead of listing them
-  separately. Changes that serve one purpose are described together even when
-  they touch several files.
-- Changes to one file that carry independent meaning are not forced together.
-  Coherence decides, not the file name.
-- When changes are independent, still place entries that touch the same file or
-  the same feature near each other, so that each version's entry reads as a
-  coherent, reviewable whole rather than an unordered sequence of unrelated
-  lines.
-- An independent change that belongs with nothing already listed is appended to
-  the end of the current version's entry.
-- Order within a version serves the reader, not the commit history. Do not
-  preserve commit order at the cost of the entry reading as a whole.
-
-### 2.8 License
-
-This repository is dual licensed: GPL version 3 or LGPL version 3, at the
-recipient's option. The texts are [`COPYING`](COPYING) and
-[`COPYING.LESSER`](COPYING.LESSER), and [`LICENSE.md`](LICENSE.md) states the
-choice. This settles what earlier revisions of this document and of
-[`MODERNIZATION_PLAN.md`](MODERNIZATION_PLAN.md) recorded as an open item for the
-copyright holder; the decision came from the copyright holder.
-
-- Every source module carries the line
-  `License: The GPL version 3, or LGPL version 3 (Dual License).` in its header
-  block, between `Source Code` and `Contact`.
-- `pyproject.toml` carries the matching
-  `license = { text = "GPL-3.0-or-later OR LGPL-3.0-or-later" }`.
-- The README, `LICENSE.md`, `pyproject.toml`, and the module headers must state
-  the same licence. A licence change updates each of those locations in the same
-  commit.
-- Do not vendor third-party code into this repository. Dependencies are declared
-  in `pyproject.toml` and installed from PyPI, which keeps their licenses theirs
-  and this file short.
