@@ -87,6 +87,14 @@ general policy would otherwise ask for.
   arbitrary usually encodes an operational fact.
 - Where a decision looks odd, the comment gives the reason, so that a later
   change does not quietly undo it.
+- Use `must`, `always`, and `never` only for invariants that admit no
+  reasonable exception. Express preferences and situational decisions with
+  `prefer`, `should`, or other qualified wording. Do not apply a rule literally
+  where doing so would defeat the repository's stated purpose, intended
+  behavior, compatibility, safety, or approved change scope. Where the
+  applicable specifications and policy leave a legitimate choice open, an
+  explicit maintainer decision governs that choice; general conventions do not
+  override it.
 
 ### 1.4 The Layers and the Direction of Dependency
 
@@ -212,6 +220,18 @@ A change is judged by:
 - Is a formula change deliberate, measured and documented?
 - Does it leave the repository understandable on its own?
 - Is it the smallest change that does the job?
+
+#### 1.9.1 Pull Request Scope and History
+
+A pull request carries one coherent higher-level purpose, which may require
+coordinated changes across several files or responsibilities. Do not split one
+approved purpose mechanically by individual finding, file, or review comment,
+and do not include unrelated cleanup, formatting, or feature work. Represent
+one coherent change as one commit and amend review corrections instead of
+accumulating follow-up commits; use `--force-with-lease` only on the branch
+under review when a safe history rewrite is required. Check the final branch
+against its base to remove abandoned intermediate wording and work. Merge only
+with explicit maintainer approval.
 
 ---
 
@@ -488,6 +508,15 @@ not a list of the functions below it, which the code already carries.
   may run long.
 - Comments, docstrings and documents are in English. Japanese appears only where
   it is data: a company name, a chart caption, a stock list.
+- Write English explanatory prose in clear, natural sentences. Do not replace a
+  sentence with a label and a colon, a status prefix such as `Implement:` or
+  `Incompatible:`, a symbol, or an unexplained abbreviation. Apply this to
+  English prose in comments, docstrings, documentation, version histories,
+  release notes, commit messages, and pull request descriptions. This rule does
+  not alter the established forms of headings, list labels, tables, code,
+  configuration syntax, machine-readable fields, literal interface strings, or
+  non-English content required by the repository's purpose. Do not rewrite
+  historical entries or unrelated text merely to align their style.
 
 #### 2.7.1 When to Bump a Module Version
 
