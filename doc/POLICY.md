@@ -13,6 +13,14 @@ The Invariants below decide over the rest of it.
 
 ---
 
+## 0. Governing Principle
+
+**Simplicity is robustness.**
+
+This principle governs the following implementation and maintenance rules. It
+does not permit dropping required behavior, security, compatibility, or
+validation; satisfy those obligations without unnecessary complexity.
+
 ## 1. General Policy
 
 ### 1.1 Purpose and Scope
@@ -98,24 +106,9 @@ general policy would otherwise ask for.
 
 ### 1.4 The Layers and the Direction of Dependency
 
-The layers of the basic design are the layers of the code, and dependency points
-one way:
-
-```text
-finance/cli/*
-      |
-      v
-analysis.py  reporting.py  notification.py
-      |
-      v
-indicators  features  models  aggregation  charts  stocklist
-      |
-      v
-storage.py  datasources/
-      |
-      v
-the filesystem, the price provider
-```
+The component topology and dependency direction are defined in
+[`BASIC_DESIGN.md`](BASIC_DESIGN.md). Preserve those boundaries rather than
+defining a second layer diagram here.
 
 - **The domain layer computes and nothing else.** It takes values and returns
   values. It opens no file, makes no request, reads no environment variable,
@@ -346,12 +339,10 @@ change a human maintainer's authority or the existing merge approval rule.
 
 ### 1.12 License
 
-This repository is dual licensed: GPL version 3 or LGPL version 3, at the
-recipient's option. The texts are [`COPYING`](COPYING) and
-[`COPYING.LESSER`](COPYING.LESSER), and [`LICENSE.md`](LICENSE.md) states the
-choice. This settles what earlier revisions of this document and of
-[`MODERNIZATION_PLAN.md`](MODERNIZATION_PLAN.md) recorded as an open item for the
-copyright holder; the decision came from the copyright holder.
+Follow the applicable terms in [`LICENSE.md`](LICENSE.md),
+[`COPYING`](COPYING), and [`COPYING.LESSER`](COPYING.LESSER). Those documents
+are the authority for repository licensing; this policy governs how source
+headers, packaging metadata, and dependencies remain consistent with them.
 
 - Every source module carries the line
   `License: The GPL version 3, or LGPL version 3 (Dual License).` in its header
