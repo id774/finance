@@ -82,7 +82,7 @@ def legacy_files(data_dir: Path) -> list[Path]:
 
     Only the two per-stock series are listed. The summaries and the
     charts are rewritten wholesale by the next run and carry nothing
-    forward, so they need no migration; the stock lists are input and
+    forward, so they need no migration. The stock lists are input and
     are not touched.
     """
     if not data_dir.is_dir():

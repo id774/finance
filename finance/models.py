@@ -15,8 +15,8 @@
 #  need rather than growing them into something a reader might trust
 #  further than the author does.
 #
-#  Persistence is not here. A model is fitted, applied and handed back;
-#  loading and saving belong to finance/storage.py, so that these
+#  Persistence is not here. A model is fitted, applied and handed back.
+#  Loading and saving belong to finance/storage.py, so that these
 #  classes can be exercised without a filesystem.
 #
 #  Author: id774 (More info: https://id774.net)
@@ -54,7 +54,7 @@ DEFAULT_REGRESSION = "Ridge"
 DEFAULT_ALPHA = 1.0
 
 # The classifier names the CLI and the tests refer to. The set is the
-# one this repository has always offered; only "Decision Tree" is used
+# one this repository has always offered. Only "Decision Tree" is used
 # by the nightly run.
 CLASSIFIER_NAMES = (
     "Decision Tree",
@@ -129,7 +129,7 @@ class TrendClassifier:
         Fit the classifier on the return index.
 
         A model being seen for the first time is fitted over the whole
-        available history; one restored from disk is refreshed on the
+        available history. One restored from disk is refreshed on the
         most recent window only, which is what makes the nightly run
         cheap.
 

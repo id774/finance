@@ -11,7 +11,7 @@ it.**
 
 > **Updated after the provider decision.** The original plan kept Yahoo Finance
 > through `yfinance`. The pipeline now fetches from the J-Quants API. Section 6
-> summarizes the resulting design; the terms, source survey and detailed
+> summarizes the resulting design. The terms, source survey and detailed
 > reasoning are in [`JQUANTS_MIGRATION.md`](JQUANTS_MIGRATION.md).
 >
 > The survey of what was found remains historical. The contract analysis,
@@ -29,7 +29,7 @@ directory, and mails two of the CSV files to the operator.
 
 `finance-dashboard` is a separate FastAPI application that reads that same
 directory and renders it. It generates nothing. The two repositories share no
-code and no process; they share a directory of files.
+code and no process. They share a directory of files.
 
 ```text
 J-Quants API (Free plan, delayed)
@@ -75,7 +75,7 @@ each step consumes what an earlier step wrote:
    copy under `data/history/`.
 3. `summary.py -o summary_10.csv -r 10 -k Ratio` — the same over a 10-day change.
 4. `summary.py -s my_stocks.txt -o portfolio.csv -r 1 -k Ratio` — the operator's
-   holdings. `my_stocks.txt` is not in the repository; it is a private file on
+   holdings. `my_stocks.txt` is not in the repository. It is a private file on
    the host.
 5. `summary.py -s topix_core30.txt -o topix_core30.csv -r 1 -c rsi9 -k Ratio`
 6. `summary.py -o screening_rsi14.csv -r 1 -c rsi14 -a -k rsi14`
@@ -106,7 +106,7 @@ summaries come after the charts and before the long and short runs.
 This was established by reading `finance_dashboard/data.py`,
 `finance_dashboard/indicators.py`, the Jinja2 templates and `test/conftest.py`
 in that repository, not by reading its README alone. It is restated in full in
-[`DATA_CONTRACT.md`](DATA_CONTRACT.md), which is the normative document; what
+[`DATA_CONTRACT.md`](DATA_CONTRACT.md), which is the normative document. What
 follows is the summary that drove the plan.
 
 | File | Read by the dashboard as | Verdict |
@@ -246,7 +246,7 @@ drawing function it used no longer exists.
 
 The `ewma` equivalence is worth stating explicitly, because it is the only
 non-obvious mapping. `pandas.stats.moments.ewma(x, span=n)` defaulted to
-`adjust=True`, `ignore_na=False`, `min_periods=0`; `Series.ewm` defaults
+`adjust=True`, `ignore_na=False`, `min_periods=0`. `Series.ewm` defaults
 differently on `min_periods` in some call forms, so the three parameters are
 passed explicitly rather than left to defaults.
 
@@ -265,7 +265,7 @@ Two paths, chosen by whether the code is an index:
 
 Both are dead. The Yahoo endpoint `pandas-datareader` used was withdrawn in
 2017, and the Yahoo Japan history page it scraped no longer exists. Neither is
-deprecated-but-working; both fail outright. There is no option to keep them.
+deprecated-but-working. Both fail outright. There is no option to keep them.
 
 ### 6.2 What replaces them
 
@@ -348,13 +348,13 @@ The rules this encodes:
 
 - The domain modules take frames and return frames. They open no file, make no
   request, read no environment variable and know no path.
-- `storage.py` is told where to write; it does not decide.
+- `storage.py` is told where to write. It does not decide.
 - `config.py` is the only module that reads `os.environ`. Settings are resolved
   at the entry point and passed down.
 - `requests`, `talib`, `sklearn` and `matplotlib` types and exceptions do not
-  cross upward out of the layer that owns them; failures become
+  cross upward out of the layer that owns them. Failures become
   `finance.errors` exceptions.
-- No module calls `sys.exit`; `main()` returns an exit code.
+- No module calls `sys.exit`. `main()` returns an exit code.
 
 `bin/charts.py` and `bin/summary.py` remain as compatibility wrappers so that an
 un-updated `run.sh` or crontab keeps working. They contain argument forwarding
@@ -386,7 +386,7 @@ Two deliberate corrections, both of which the old code contradicted itself on:
    The visible effect on the contract is that `ti_CODE.csv` keeps the 240-day
    window written by the `-u` run instead of being truncated to 60 rows by the
    short run minutes later. The file's name, separator, index and columns are
-   unchanged; it simply holds the window the operator asked to keep. This is
+   unchanged. It simply holds the window the operator asked to keep. This is
    recorded here rather than done silently.
 2. `summary.py` declared `-s` as "read stock names from text file" but the
    value was used only in the constructor, while `aggregate()` took a second,
@@ -422,7 +422,7 @@ Old assertions that could not be carried across, and why:
 - `test_analysis.py` asserted `os.path.exists('chart_N225.png')` relative to the
   working directory. The output directory is now explicit, so the assertion
   moves to a temporary directory.
-- `test_draw.py` asserted only that a PNG appeared. That is kept; pixel
+- `test_draw.py` asserted only that a PNG appeared. That is kept. Pixel
   comparison was never done and is not introduced.
 - `test_aggregate.py` asserted `result.empty` against a directory with no
   matching `ti_*.csv`. Kept, and joined by tests that assert a populated result.
@@ -438,7 +438,7 @@ so the path never ran in production. The new `TrendClassifier` raises a
 
 ## 10. Deployment
 
-The shape of the deployment changes; its location does not.
+The shape of the deployment changes. Its location does not.
 
 | Concern | Was | Becomes |
 |---|---|---|
@@ -463,7 +463,7 @@ systemd timer would give it. Replacing it would be change for its own sake.
 
 ## 11. Configuration
 
-Resolved once, at the entry point, in `config.py`; nothing below it reads the
+Resolved once, at the entry point, in `config.py`. Nothing below it reads the
 environment.
 
 | Setting | Environment variable | Default |
@@ -502,7 +502,7 @@ nightly run for the other thirty** — while making it visible:
   it.
 - A single-stock run fails immediately with a non-zero status.
 - A configuration error fails before any work starts.
-- No library module prints; all of them log. The CLIs write user-facing
+- No library module prints. All of them log. The CLIs write user-facing
   messages to stderr.
 
 ---
@@ -541,7 +541,7 @@ Contracts first, because they are the hardest to walk back:
 
 **Resolved after this plan was written.** The repository is dual licensed under
 the GPL version 3 or the LGPL version 3, at the recipient's option. The decision
-was made by the copyright holder; `doc/LICENSE.md`, `doc/COPYING` and
+was made by the copyright holder. `doc/LICENSE.md`, `doc/COPYING` and
 `doc/COPYING.LESSER` carry it, `pyproject.toml` declares it and every source
 module repeats it in its header. See section 2.8 of `doc/POLICY.md`.
 

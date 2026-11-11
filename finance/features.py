@@ -6,7 +6,7 @@
 #
 #  Description:
 #  Turn a return index series into the training sets the two models use.
-#  Both build sliding windows of fourteen consecutive values; they
+#  Both build sliding windows of fourteen consecutive values. They
 #  differ in what they predict from one. binary_class() labels whether
 #  the next value rises, and proportion_class() takes the next value
 #  itself as the target.

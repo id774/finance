@@ -12,7 +12,7 @@
 #
 #  It holds no logic. Every option is parsed by the command it forwards
 #  to, so the two cannot drift apart. New work goes to the console
-#  script; this file exists only so that an un-updated caller does not
+#  script. This file exists only so that an un-updated caller does not
 #  break, and it can be deleted once none remain.
 #
 #  Author: id774 (More info: https://id774.net)

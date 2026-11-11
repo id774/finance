@@ -122,7 +122,7 @@ def _create_temp_file(target: Path) -> Path:
     Create an empty, uniquely named sibling of target and return its path.
 
     Created with O_CREAT | O_EXCL at mode 0o666, the same request every
-    regular file creation makes; the umask in effect, not a restrictive
+    regular file creation makes. The umask in effect, not a restrictive
     hardcoded mode, is what narrows it. A new file written this way and
     then moved onto an absent target keeps that mode, rather than the
     narrower default a general-purpose temp file helper would leave it at.

@@ -113,7 +113,7 @@ def send_report(
         report_name: Human readable name placed in the subject.
         hostname: The host the guard is checked against. Defaults to the
             real host name.
-        transport: How the message is delivered. Injected by tests; the
+        transport: How the message is delivered. Injected by tests. The
             default opens an SMTP connection.
         today: The date in the subject. Injected for tests.
 

@@ -6,7 +6,7 @@
 #
 #  Description:
 #  Assert the properties that the modernization was for, so that they
-#  cannot quietly come undone. These are not tests of behaviour; they
+#  cannot quietly come undone. These are not tests of behaviour. They
 #  are tests of the shape the code has to keep.
 #
 #  Each one guards against a specific thing this repository actually
@@ -17,7 +17,7 @@
 #
 #  Two of them guard a decision rather than a shape. The provider this
 #  repository fetches from is a licensing decision, and the API key is a
-#  secret; a test that no module names the withdrawn provider, and a
+#  secret. A test that no module names the withdrawn provider, and a
 #  test that no module outside config.py reads or logs the key, are what
 #  keep either from being undone by a convenient import or a debug line.
 #

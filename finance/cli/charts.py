@@ -10,7 +10,7 @@
 #
 #  The options are the ones bin/charts.py has always accepted, with the
 #  same letters and the same meanings, because run.sh and the operator's
-#  crontab pass them. optparse was replaced by argparse; nothing else
+#  crontab pass them. optparse was replaced by argparse. Nothing else
 #  about the interface moved.
 #
 #  Author: id774 (More info: https://id774.net)
@@ -45,8 +45,8 @@
 #      the earliest the subscribed plan keeps is raised to it and the
 #      run says so, rather than being refused.
 #  - -y, --days N
-#      How many trailing rows to analyse and chart. 0 means all;
-#      negative values are rejected. The value also selects the chart:
+#      How many trailing rows to analyse and chart. 0 means all.
+#      Negative values are rejected. The value also selects the chart:
 #      over 300 writes long_CODE.png, 60 or fewer writes short_CODE.png,
 #      anything between writes chart_CODE.png.
 #  - -a, --axis N

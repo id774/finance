@@ -23,7 +23,7 @@ not restate them.
   travels above the module that owns it.
 - **Settings are resolved once.** At the entry point, and passed down.
 - **One implementation.** The command line and the batch script drive the same
-  functions; nothing is written twice.
+  functions. Nothing is written twice.
 
 ## 3. Composition
 
@@ -75,7 +75,7 @@ validated before logging starts. The same log-level rule is applied to the
 command-line override before it replaces the loaded setting.
 
 An explicit configuration source -- `--config`, or failing that a non-blank
-`FINANCE_CONFIG` -- must name a file that exists and parses as valid YAML; the
+`FINANCE_CONFIG` -- must name a file that exists and parses as valid YAML. The
 implicit `./config.yml` may be absent, which is read as an empty
 configuration. J-Quants timeout and request-interval values must be finite,
 and `retention_days` must be at least `MIN_RETENTION_DAYS`, the shortest window
@@ -95,10 +95,10 @@ continue or stop on that difference.
 ### 4.4 `finance/stocklist.py`
 
 Parses the comma separated stock lists into `StockEntry` values. Every entry
-names a listing on the Tokyo exchange; market indices are not accepted.
+names a listing on the Tokyo exchange. Market indices are not accepted.
 
 Blank lines are ignored. Every non-blank record must carry a non-empty code and
-short name; a missing required value is a `DataFormatError`, not a silently
+short name. A missing required value is a `DataFormatError`, not a silently
 skipped entry.
 
 ### 4.5 `finance/indicators.py`
@@ -110,6 +110,10 @@ the whole frame.
 `build_indicator_frame()` is the single definition of the call sequence, and
 that sequence is the column order of `ti_CODE.csv`. A caller that wants the
 contract calls it rather than replaying the methods.
+
+Bollinger bands use a five-day period with `MA_Type.T3` smoothing. Both
+parameters are passed explicitly to TA-Lib so that a change in library
+defaults cannot alter the stored indicator values or the chart bands.
 
 TA-Lib exceptions are caught here and re-raised as `IndicatorError`.
 
@@ -127,14 +131,14 @@ capped so that a long history does not lengthen the nightly run.
 persists: loading and saving are `storage.ModelStore`, so that a model can be
 exercised without a filesystem.
 
-A model built fresh trains over the whole history; one restored from disk is
+A model built fresh trains over the whole history. One restored from disk is
 refreshed on the recent window only.
 
 ### 4.8 `finance/aggregation.py`
 
 `Aggregator` reduces many indicator frames to one summary table. It holds the
 positional column layouts as constants, the ten day staleness rule, and the
-historical ratio formula. It is handed frames; it reads nothing.
+historical ratio formula. It is handed frames. It reads nothing.
 
 ### 4.9 `finance/charts.py`
 
@@ -145,7 +149,7 @@ prefix.
 This is the one module that could not be ported by changing API calls. The
 previous implementation registered a subclass of a private pandas plotting class
 into three private pandas registries and drew candles with
-`matplotlib.finance.candlestick_ochl`; the registries are gone from pandas and
+`matplotlib.finance.candlestick_ochl`. The registries are gone from pandas and
 the module was deleted from matplotlib in 3.0. Candles are now drawn with
 matplotlib primitives against row positions, with the ticks labelled by date, so
 that consecutive business days sit side by side as they did before.
@@ -186,7 +190,7 @@ Normalization is what the module is for. The response rows become a frame
 carrying the six canonical columns, on a tz-naive midnight index, sorted,
 deduplicated and reindexed to business days. All six columns are taken from the
 adjusted series — `AdjO`, `AdjH`, `AdjL`, `AdjC`, `AdjVo` — so that the
-candlesticks and the indicators are on one basis; `DATA_CONTRACT.md` section 11
+candlesticks and the indicators are on one basis. `DATA_CONTRACT.md` section 11
 records that decision and the reasoning behind it. A response without the
 adjusted fields is refused rather than filled from the unadjusted ones.
 
@@ -218,12 +222,12 @@ The per stock pipeline: load prices, compute indicators, apply both models,
 write both CSVs, draw the chart. It owns the order and the paths.
 
 A chart-only request resolves its stored price path first and reads it without
-touching the source; a missing stored file is that stock's failure, not a reason
+touching the source. A missing stored file is that stock's failure, not a reason
 to fetch. Only an updating request enters the fetch path.
 
 The adapter may carry all-empty rows introduced by business-day reindexing.
 Those rows are useful while normalizing a calendar but are removed from the
-price persistence candidate; a partially empty trading row is retained.
+price persistence candidate. A partially empty trading row is retained.
 
 `run_many()` runs a list, catching each stock's failure so that the rest
 continue, and returning both the results and the failures.
@@ -258,8 +262,9 @@ call, and the data source layer is deliberately kept ignorant of it.
 
 ### 4.15 `finance/cli/`
 
-The command-line entry points and their shared helpers. Each parses arguments, resolves
-settings, calls one function in the application layer and reports what happened.
+The command-line entry points and their shared helpers. Each parses arguments,
+resolves settings, calls one function in the application layer and reports what
+happened.
 No analysis is written here.
 
 `charts.py`, `summary.py` and `notify.py` are the daily commands. `migrate.py`
@@ -378,7 +383,7 @@ existing file, and stored price rows are never recalculated.
 ## 9. Logging
 
 Configured once in `finance/__init__.py`. Library modules take a module logger
-and never print; the CLIs write user-facing messages to stderr. Third-party
+and never print. The CLIs write user-facing messages to stderr. Third-party
 loggers that report their own HTTP traffic are held at WARNING so that the
 nightly log stays a record of the pipeline.
 

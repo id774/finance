@@ -12,7 +12,7 @@ summary to the operator.
 It has no server, no database and no user interface of its own. The directory it
 writes is read by [finance-dashboard](https://github.com/id774/finance-dashboard),
 a private dashboard which renders it and generates nothing. The two repositories
-share no code and no process; they share a directory of files, and the format of
+share no code and no process. They share a directory of files, and the format of
 those files is the whole of the interface between them.
 
 ```text
@@ -54,8 +54,8 @@ does and does not provide.
 - A Japanese TrueType font for the chart captions
 
 Python 3.11 is the current compatibility floor. The authoritative Python
-requirement and dependency version ranges are declared in `pyproject.toml`;
-this README does not duplicate the currently resolved dependency versions.
+requirement and dependency version ranges are declared in `pyproject.toml`.
+This README does not duplicate the currently resolved dependency versions.
 
 ## Contents
 
@@ -104,13 +104,13 @@ code, the tests and the deployment are arranged around them:
   no undocumented endpoint is called. Where a free plan does not carry something,
   the capability is withdrawn rather than obtained by other means.
 - **Publishing the code is not publishing the data.** This source is open
-  source; the market data put through it is not, and never becomes so by being
+  source. The market data put through it is not, and never becomes so by being
   processed here.
 - **Nothing sensitive is committed.** No API key, no fetched market data, no
   portfolio. `my_stocks.txt` lives on the host, and every test fixture that
   imitates an API response is invented.
 
-[`doc/POLICY.md`](doc/POLICY.md) states the rules a change is judged against;
+[`doc/POLICY.md`](doc/POLICY.md) states the rules a change is judged against.
 [`doc/REQUIREMENTS.md`](doc/REQUIREMENTS.md) states what the system is for.
 
 ---
@@ -146,7 +146,7 @@ The system is built around those configured limits:
 - A configured start date older than the configured retention window is
   raised to the available window, and the run says so.
 - Every configured indicator must fit inside the configured retention
-  window; `test/test_plan_window.py` enforces that relationship.
+  window. The test in `test/test_plan_window.py` enforces that relationship.
 - A shortfall is **never** made up from another source. No paid plan is
   assumed and no unofficial one is used.
 
@@ -182,7 +182,7 @@ be built by hand. If a wheel is unavailable for your platform, install the
 TA-Lib C library first and let pip build the extension against it.
 
 There is no `requirements.txt`. Dependencies are declared in `pyproject.toml`
-and are installed by `pip install .`; see
+and are installed by `pip install .`. See
 [Migrating from the previous version](#14-migrating-from-the-previous-version).
 
 ---
@@ -224,7 +224,7 @@ sends no mail.
 `delay_days` and `retention_days` describe the subscription assumptions used
 by the program. Their runtime defaults are defined in `finance/config.py`.
 The Configuration table, `config.yml.sample`, and `doc/DEPLOYMENT.md` expose
-those defaults for operators; they document this program's configuration
+those defaults for operators. They document this program's configuration
 rather than current provider terms. Current provider terms belong to the
 official J-Quants documentation. These values are settings because a plan's
 published terms can change. Everything downstream follows from them:
@@ -243,7 +243,7 @@ which case defaults are used. Any present but unusable setting is rejected
 before work starts.
 
 Boolean settings accept only `1/0`, `true/false`, `yes/no` and `on/off`
-(case-insensitive); the mail port must be in `1..65535`, and a log level must
+(case-insensitive). The mail port must be in `1..65535`, and a log level must
 be a standard Python logging level name. J-Quants timeout values must be finite
 and positive, request intervals must be finite and non-negative, and
 `retention_days` must be at least 281 days so the current required analysis
@@ -256,7 +256,7 @@ Ubuntu:
 sudo apt-get install fonts-vlgothic
 ```
 
-Without a usable font the chart is still drawn; only the caption renders as
+Without a usable font the chart is still drawn. Only the caption renders as
 boxes.
 
 ---
@@ -292,8 +292,8 @@ output, a generated CSV, a chart, the dashboard, an HTTP response, or a test's
 output. It is read once in `config.py`, held in a field excluded from the
 dataclass repr, and sent only as the `x-api-key` header. `test/test_package.py`
 asserts that no module outside `config.py` reads it and that no logging call is
-handed it; `test/test_datasources.py` asserts that no error message and no log
-record contains it.
+handed it. The test in `test/test_datasources.py` asserts that no error message
+and no log record contains it.
 
 A run that would fetch without a key **fails before opening a socket**. A run
 that only draws charts from stored files needs no key at all, which is why the
@@ -322,7 +322,7 @@ each group of steps consumes what an earlier group wrote.
 | 10 | Short charts | `short_CODE.png` | step 1 |
 
 Only step 1 passes `--update`. It is the run that fetches, rewrites, retrains
-and records the provenance; steps 9 and 10 draw from what it already stored. The
+and records the provenance. Steps 9 and 10 draw from what it already stored. The
 job therefore makes one pass over the network per stock per day, and only step 1
 needs the API key.
 
@@ -383,7 +383,7 @@ finance-charts -c 7203 -n トヨタ -y 60
 
 Without `-u` the run draws a chart from stored data and writes nothing else —
 no fetch, no CSV, no model, and no API key needed. A single-stock run reads
-`stock_CODE.csv` by default, or the file named by `-r`; if that stored file is
+`stock_CODE.csv` by default, or the file named by `-r`. If that stored file is
 missing, the stock fails rather than turning the chart-only run into a fetch.
 The window given to `-y` also selects the chart file: over 300 rows writes
 `long_`, 60 or fewer writes `short_`, anything between writes `chart_`.
@@ -436,7 +436,7 @@ finance-migrate
 
 **Run once, by hand, when upgrading a deployment whose stored files were
 produced before the data source changed.** It is not in `run.sh` and nothing
-calls it on a schedule. Nothing is deleted; the stock lists, summaries and
+calls it on a schedule. Nothing is deleted. The stock lists, summaries and
 charts are untouched.
 
 It exists because the two providers' price series do not mean the same thing and
@@ -463,7 +463,7 @@ can be deleted once none remain.
 ## 8. Generated Files
 
 Written into the data directory. [`doc/DATA_CONTRACT.md`](doc/DATA_CONTRACT.md)
-is the normative description; this is the index.
+is the normative description. This is the index.
 
 | File | Format | Content |
 |---|---|---|
@@ -484,7 +484,7 @@ is the normative description; this is the index.
 Two details are load bearing and easy to lose:
 
 - The summary files are **tab** separated and are read **positionally** by the
-  dashboard. A column inserted or reordered does not fail there; it shifts every
+  dashboard. A column inserted or reordered does not fail there. It shifts every
   later value into the wrong name.
 - In `ti_CODE.csv` the `classified` and `predicted` columns are populated on the
   **last row only**. They are a statement about the next trading day, not a
@@ -493,7 +493,7 @@ Two details are load bearing and easy to lose:
   series. Under the previous provider the candlesticks were drawn from
   unadjusted prices while the indicators were computed from an adjusted close,
   so a split put a step in the chart that the indicators under it did not have.
-  No formula changed; the two now agree. See
+  No formula changed. The two now agree. See
   [section 11 of the data contract](doc/DATA_CONTRACT.md).
 
 `data_source.txt` is why the dashboard can say how old its figures are. It
@@ -502,7 +502,7 @@ generation date by the configured publication delay, and an unknown value is
 left **empty** rather than filled in with today.
 
 `ref_index.csv` was linked by earlier versions of the dashboard and was never
-produced here. The link is gone; see
+produced here. The link is gone. See
 [section 10 of the data contract](doc/DATA_CONTRACT.md).
 
 ---
@@ -562,8 +562,8 @@ The rules this encodes:
   in `datasources/jquants.py` and leave it in no direction. No module above it
   sees an HTTP response, and it in turn knows nothing about what is on disk,
   which provider wrote it, or what plan it is on.
-- **No module calls `sys.exit`** except an entry point; `main()` returns a code.
-- **No library module prints.** Everything logs; the CLIs write user-facing
+- **No module calls `sys.exit`** except an entry point. `main()` returns a code.
+- **No library module prints.** Everything logs. The CLIs write user-facing
   messages to stderr.
 
 `test/test_package.py` asserts each of these against the source, so they are
@@ -659,7 +659,7 @@ reapply their ownership and permissions.
 `TARGET_DIR`, `PYTHON` and `DATA_GROUP` override the defaults. Code, data and
 the credential are separated in responsibility: a deployment replaces the
 virtual environment and the batch script. It does not overwrite generated data,
-model contents or existing stock-list contents; it may create missing
+model contents or existing stock-list contents. It may create missing
 directories or shipped stock lists and reapplies ownership and permissions.
 It never writes a key into `env`. Updating data needs no code change, and
 rotating the credential needs neither.
@@ -722,11 +722,11 @@ This is the change that needs action on both sides.
    rebuilt rather than merged. Nothing is deleted.
 3. **Expect history to be bounded by the configured retention window.** An
    explicit start date older than that window is raised to its lower bound.
-   The configured window must still be large enough for every analysis; values
+   The configured window must still be large enough for every analysis. Values
    below the current 281-day minimum are rejected at configuration load.
 4. **Expect data age to follow the configured publication window.**
    `data_source.txt` records the actual last trading day. A delayed row is
-   expected when the configured window says so; do not infer a fixed number of
+   expected when the configured window says so. Do not infer a fixed number of
    weeks from this document.
 5. **Drop the market indices from your stock lists.** They cannot be fetched on
    this plan and are refused as codes. The shipped
@@ -736,7 +736,7 @@ This is the change that needs action on both sides.
    value does no harm.
 7. **Update `finance-dashboard` in the same change.** It gains the delayed-data
    notice and loses the dead `ref_index.csv` link. The generated formats it
-   already read are unchanged; `data_source.txt` is additive.
+   already read are unchanged. `data_source.txt` is additive.
 
 ### From the version before the package restructuring
 
@@ -744,7 +744,7 @@ The generated files are unchanged, so `finance-dashboard` needs nothing done to
 it. What changes is how this side is installed and driven.
 
 1. **Install rather than copy.** `deploy.sh` no longer copies `bin/` and `lib/`
-   into `/var/stock`; it builds `/var/stock/.venv` and installs the package.
+   into `/var/stock`. It builds `/var/stock/.venv` and installs the package.
    Remove the stale `/var/stock/bin` and `/var/stock/lib` after the first
    successful run.
 2. **`requirements.txt` is gone.** Dependencies live in `pyproject.toml`. Where
@@ -756,7 +756,7 @@ it. What changes is how this side is installed and driven.
    a copy of the tree from mailing anyone.
 4. **The interpreter is not hardcoded.** `/opt/python/current/bin/python` is
    replaced by the virtual environment. If the host keeps its interpreter there,
-   pass `PYTHON=/opt/python/current/bin/python` to `deploy.sh`; it must be 3.11
+   pass `PYTHON=/opt/python/current/bin/python` to `deploy.sh`. It must be 3.11
    or later.
 5. **Existing pickles in `clf/` will not load.** They were written by
    scikit-learn 0.17. An unreadable model is logged and a fresh one trained in
@@ -768,7 +768,7 @@ it. What changes is how this side is installed and driven.
    it on the stock-list path, so all three of the daily chart runs fetched,
    retrained and rewrote `ti_CODE.csv`. Now only the run that passes `-u` does.
    The visible effect is that `ti_CODE.csv` keeps the 240-row window rather than
-   being truncated to 60 rows by the short run minutes later; its name,
+   being truncated to 60 rows by the short run minutes later. Its name,
    separator, index and columns are unchanged.
 8. **cron is unchanged.** The entry and the schedule are the same.
 
@@ -792,7 +792,7 @@ Every one of them stands on its own. Nothing here requires reading another
 repository to understand what this one does or how it is operated.
 
 Routine operations, the log, and what to check when a step fails are in
-[`doc/DEPLOYMENT.md`](doc/DEPLOYMENT.md) rather than here; this README is the
+[`doc/DEPLOYMENT.md`](doc/DEPLOYMENT.md) rather than here. This README is the
 entrance, and the details live under `doc/`.
 
 ---
@@ -801,7 +801,10 @@ entrance, and the details live under `doc/`.
 
 This repository uses `master` as its primary branch name.
 
-The name is used solely as a technical identifier, following the long-standing convention historically used by Git. It does not express or imply any association with racism, slavery, discrimination, or any political or social ideology.
+The name is used solely as a technical identifier, following the long-standing
+convention historically used by Git. It does not express or imply any
+association with racism, slavery, discrimination, or any political or social
+ideology.
 
 ---
 
@@ -822,8 +825,8 @@ the complete license texts.
 `pyproject.toml` carries the matching `license` field, and every source module
 repeats the terms in its header block.
 
-Third-party components keep their own licenses. This repository bundles none;
-its dependencies are installed from PyPI and are listed in `pyproject.toml`.
+Third-party components keep their own licenses. This repository bundles none.
+Its dependencies are installed from PyPI and are listed in `pyproject.toml`.
 
 ### The market data
 

@@ -13,7 +13,7 @@
 #
 #  That order is part of the contract with finance-dashboard and is
 #  pinned by a test, not by convention. build_indicator_frame() below is
-#  the single definition of the sequence; a caller that wants the
+#  the single definition of the sequence. A caller that wants the
 #  contract calls it rather than replaying the methods by hand.
 #
 #  Nothing here reads or writes a file, and nothing reaches the network.
@@ -31,6 +31,8 @@
 #  - NumPy, pandas, TA-Lib
 #
 #  Version History:
+#  v1.1 2026-11-12
+#       Preserve five-day T3 Bollinger bands across TA-Lib versions.
 #  v1.0 2026-08-14
 #       Initial release.
 #
@@ -252,10 +254,11 @@ class TechnicalIndicators:
 
         MA_Type.T3 rather than the TA-Lib default is deliberate and
         original to this repository: the bands drawn on the charts are
-        T3-smoothed.
+        T3-smoothed. The five-day period is stated explicitly because
+        TA-Lib 0.8 changed the BBANDS default period from 5 to 20.
         """
         upperband, middleband, lowerband = self._talib(
-            "BBANDS", lambda: ta.BBANDS(self.close, matype=MA_Type.T3)
+            "BBANDS", lambda: ta.BBANDS(self.close, timeperiod=5, matype=MA_Type.T3)
         )
         self.stock["upperband"] = upperband
         self.stock["middleband"] = middleband
@@ -354,7 +357,7 @@ class TechnicalIndicators:
         """
         Add the rolling correlation of the returns against a reference series.
 
-        Not part of the daily pipeline; kept because it is a working
+        Not part of the daily pipeline. It is kept because it is a working
         indicator this repository has always offered for ad hoc use.
         """
         reference_returns = reference.pct_change()

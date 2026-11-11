@@ -9,7 +9,7 @@
 #  the directories the job writes to.
 #
 #  This replaces copying bin/ and lib/ into /var/stock. The location has
-#  not moved; what has changed is that code now arrives as an installed
+#  not moved. What has changed is that code now arrives as an installed
 #  package rather than as loose files whose imports depended on their
 #  position on disk.
 #
@@ -46,7 +46,7 @@
 #  - TARGET_DIR: Deployment root. Defaults to /var/stock.
 #  - PYTHON: Interpreter used to build the environment. Defaults to
 #      python3 as found on PATH. The previous deployment hardcoded
-#      /opt/python/current/bin/python; set PYTHON to that path if the
+#      /opt/python/current/bin/python. Set PYTHON to that path if the
 #      host still keeps its interpreter there.
 #  - DATA_GROUP: Group given read access to the generated data, which is
 #      how the dashboard reads it. Defaults to www-data. The credential
