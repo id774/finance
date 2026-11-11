@@ -27,7 +27,7 @@
 #
 #  The dates a fetch may ask for come from Settings.fetch_window, which
 #  is where the subscribed plan's delay and retention are applied. This
-#  layer decides the range and the data source answers it; the source is
+#  layer decides the range and the data source answers it. The source is
 #  not told what plan it is on, and this layer does not know how the
 #  window was arrived at.
 #
@@ -167,7 +167,7 @@ class Analysis:
         predicted = self._predict(request.code, ret_index, indicators, will_update)
 
         # Assigned to the last row only. The columns exist for every row
-        # so that the CSV keeps its shape; every earlier row is empty.
+        # so that the CSV keeps its shape. Every earlier row is empty.
         indicators.stock.loc[indicators.stock.index[-1], CLASSIFIED_COLUMN] = classified
         indicators.stock.loc[indicators.stock.index[-1], PREDICTED_COLUMN] = predicted
 

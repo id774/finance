@@ -33,7 +33,7 @@ The data directory defaults to `./data` and is `/var/stock/data` in the
 deployment. `finance-dashboard` is pointed at the same directory, usually
 through a symlink at `public/data`.
 
-Neither side imports the other. `finance-dashboard` never writes; `finance`
+Neither side imports the other. `finance-dashboard` never writes. `finance`
 never reads anything the dashboard produces, because the dashboard produces
 nothing. The provider appears at the top of that diagram and nowhere below it:
 the dashboard never calls the J-Quants API and is never given its API key.
@@ -58,7 +58,7 @@ the difference decides what is safe to change.
 | **Not parsed**: served as a download or an image | `stock_CODE.csv`, `*.png` | n/a | n/a |
 
 A positional file is the dangerous one. An extra column inserted in the middle
-of `portfolio.csv` does not raise on the other side; it shifts every later value
+of `portfolio.csv` does not raise on the other side. It shifts every later value
 one name to the left and renders a company name where a ratio belongs.
 
 ---
@@ -70,9 +70,9 @@ The list of stocks the pipeline covers, and the index page's company listing.
 - Encoding UTF-8, one record per line, comma separated, **no header**.
 - Field 1 is the code, field 2 the short name. Both are required.
 - Further fields are optional. `finance` uses field 3 as the long name in a
-  chart caption; the dashboard ignores everything past field 2.
+  chart caption. The dashboard ignores everything past field 2.
 - A code is the four character form of a Tokyo listing code. The data source
-  appends the trailing zero required by the J-Quants API; market index codes are
+  appends the trailing zero required by the J-Quants API. Market index codes are
   not accepted.
 
 ```text
@@ -80,7 +80,7 @@ The list of stocks the pipeline covers, and the index page's company listing.
 ```
 
 `topix_core30.txt` and the operator's private `my_stocks.txt` use the same
-format. They are inputs to `finance` only; the dashboard does not read them.
+format. They are inputs to `finance` only. The dashboard does not read them.
 
 ---
 
@@ -100,7 +100,7 @@ incrementally.
   and `Close` are both the adjusted close, and `Open`, `High`, `Low` and
   `Volume` are the adjusted open, high, low and volume. Indicators are computed
   from `Adj Close` and candlesticks are drawn from `Open`, `High`, `Low` and
-  `Close`, as they always were; what changed is that the two now agree. See
+  `Close`, as they always were. What changed is that the two now agree. See
   section 10.
 
 The dashboard links this file for download from each stock page. It does not
@@ -156,11 +156,12 @@ The order is the order the indicators are computed in, and it is fixed by
 
 - Moving averages, oscillators and ranges are TA-Lib outputs on `Adj Close`,
   except those that need the full bar. Since the whole row is on the adjusted
-  basis, "the full bar" and "the adjusted close" no longer disagree; see
+  basis, "the full bar" and "the adjusted close" no longer disagree. See
   section 11. `ewma*` are pandas exponentially weighted
   means with `adjust=True` and `min_periods=0`.
-- `upperband`, `middleband`, `lowerband` are Bollinger bands smoothed with
-  `MA_Type.T3`, not the TA-Lib default.
+- `upperband`, `middleband`, `lowerband` are five-day Bollinger bands
+  smoothed with `MA_Type.T3`. Both the period and moving-average type are
+  specified explicitly rather than inherited from TA-Lib defaults.
 - `ret_index` is the cumulative return index, based at exactly 1 on the first
   row of the window. Both models are trained on it.
 - `vol` is the rolling 250-day standard deviation of `ret_index`, annualized by
@@ -231,7 +232,7 @@ Code	Open	High	Low	Close	Change	Ratio	rsi14	Name
 ```
 
 Read by the dashboard as `code, open, high, low, close, diff, ratio, rsi, name`.
-The screening column replaces `Trend` and `Pred`; its header carries the
+The screening column replaces `Trend` and `Pred`. Its header carries the
 indicator name, which the dashboard ignores in favour of its position.
 
 ### 6.3 What the values mean
@@ -310,14 +311,14 @@ drawn and the caption renders as boxes.
 ## 9. `data_source.txt`
 
 Where the generated data came from and how old it is. `generated` records when
-the job ran; `last_trading_day` records the newest trading day the run actually
+the job ran. `last_trading_day` records the newest trading day the run actually
 analysed. Keeping both lets the dashboard show data age without encoding a
 subscription's current publication delay in the contract.
 
 - Tab separated, one key and value per line, no header, UTF-8.
 - Three keys, in this order: `source`, `generated`, `last_trading_day`.
 - Written by `finance-charts --update`, which is the run that fetches. The
-  chart-only runs later in the job do not rewrite it; restamping it from them
+  chart-only runs later in the job do not rewrite it. Restamping it from them
   would age the notice by the length of the job rather than by the data.
 
 | Key | Meaning |
@@ -351,7 +352,7 @@ dividend yield, market capitalisation — scraped from a Yahoo Japan quote page
 that no longer exists.
 
 Nothing replaces it. Restoring it would mean choosing a new source for
-fundamentals; no free source licensed for this use and offered for machine
+fundamentals. No free source licensed for this use and offered for machine
 access has been adopted. Scraping one is not an option here. The link has been
 removed from the dashboard so that nothing dangles. No runtime code in either
 repository consumes `ref_index.csv`, and the dashboard no longer links it from
@@ -414,7 +415,7 @@ the evidence that the calculations are the same ones.
 this. Where the meaning of a series cannot be shown to be the same, mixing it is
 worse than starting again, so `finance-migrate` moves the older per-stock files
 into a dated archive and the next run rebuilds them. That is an explicit
-operation the operator runs once; it is not in `run.sh`, and the data source
+operation the operator runs once. It is not in `run.sh`, and the data source
 knows nothing about it.
 
 ---

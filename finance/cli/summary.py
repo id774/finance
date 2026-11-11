@@ -33,7 +33,7 @@
 #      out.csv.
 #  - -r, --range N
 #      How many rows back the change is measured over. Must be at least
-#      1; 1 compares the last row with the one before it.
+#      1. A value of 1 compares the last row with the one before it.
 #  - -k, --sortkey KEY
 #      Column to sort by. Defaults to Ratio.
 #  - -a, --ascending

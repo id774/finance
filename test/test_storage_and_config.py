@@ -20,16 +20,16 @@
 #  - An empty frame is not written over a good file.
 #  - A missing or malformed file is reported as the right error.
 #  - A failed CSV, summary or data_source write preserves the existing file.
-#  - Atomic replacement preserves an existing file's mode; a new file gets
+#  - Atomic replacement preserves an existing file's mode. A new file gets
 #    the regular creation mode rather than a restrictive temp file default.
 #  - Models round trip, and a corrupt one reads as absent.
 #  - A stock list entry with an empty required code or name is refused.
 #  - Defaults, environment, file and precedence between them.
 #  - Malformed dates, booleans, sections, log levels and mail ports are refused.
 #  - An explicit configuration source that is absent or not valid YAML is
-#    refused; the implicit default may still be absent.
+#    refused. The implicit default may still be absent.
 #  - Non-finite J-Quants numeric settings and a too-short retention window
-#    are refused; the minimum retention window is accepted.
+#    are refused. The minimum retention window is accepted.
 #  - The mail host guard.
 #
 #  Author: id774 (More info: https://id774.net)

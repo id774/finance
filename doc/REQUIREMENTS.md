@@ -3,8 +3,8 @@
 ## 1. Purpose of this document
 
 This document states what the system is for, what it accepts, what it produces
-and where its responsibility ends. It does not describe how any of it is built;
-that belongs to [`BASIC_DESIGN.md`](BASIC_DESIGN.md), and how a change is
+and where its responsibility ends. It does not describe how any of it is built.
+That belongs to [`BASIC_DESIGN.md`](BASIC_DESIGN.md), and how a change is
 carried out belongs to [`POLICY.md`](POLICY.md).
 
 It stands on its own. Nothing in it is completed by a document in another
@@ -76,7 +76,7 @@ Comma separated files naming the stocks a run covers: the code, a short name,
 and optionally a longer name for a chart caption.
 
 - `stocks.txt` — the full set, in the repository. It seeds a new deployment and
-  is meant to be replaced by the operator's own watchlist; the version shipped
+  is meant to be replaced by the operator's own watchlist. The version shipped
   here is the TOPIX Core30 constituents. Every entry names a listing on the
   Tokyo exchange.
 - `topix_core30.txt` — the TOPIX Core30 constituents, in the repository.
@@ -95,8 +95,8 @@ The provider is chosen under the following conditions, in this order:
    no-cost operation holds without a subscription.
 2. **Offered for machine access**, so that reading it is the intended use of the
    interface rather than a tolerated one.
-3. **Terms that permit this use.** Personal analysis is permitted;
-   redistribution and providing a continuing analysis service to third parties
+3. **Terms that permit this use.** Personal analysis is permitted.
+   Redistribution and providing a continuing analysis service to third parties
    are not, and the system does neither.
 
 A provider that fails any of the three is not adopted, and a shortfall in the
@@ -115,7 +115,7 @@ The configured subscription limits are requirements, not defects:
   worked around.
 
 Interfaces not adopted by this pipeline are not obtained elsewhere. Market
-index values are the case that matters here; see section 7.4.
+index values are the case that matters here. See section 7.4.
 
 ### 7.3 Stored history
 
@@ -184,8 +184,8 @@ volatility, RSI, MFI, rates of change, CCI, the ultimate oscillator, both
 stochastics, MACD, Williams %R, momentum, true range, ATR and NATR, and two
 volume ratios.
 
-- The formulas are what they have always been. Adding an indicator is a feature;
-  changing an existing one restates history.
+- The formulas are what they have always been. Adding an indicator is a feature.
+  Changing an existing one restates history.
 - Values are stored unscaled. The display shifts several of them onto a shared
   axis, and that shifting belongs to the chart, not to the file.
 
@@ -197,7 +197,7 @@ The per-stock models are trained on the return index:
 - A ridge regression estimating the next value, reported as a price.
 
 They are refreshed nightly. A model seen for the first time is fitted over the
-whole available history; a stored one is refreshed on the most recent window
+whole available history. A stored one is refreshed on the most recent window
 only. A stored model that cannot be loaded is replaced by a fresh one rather
 than ending the run.
 
@@ -209,10 +209,10 @@ and nothing else.
 Per stock, the system produces standard, short, and long chart views,
 distinguished by window length and by file name prefix. Each
 carries a candlestick price panel with trend overlays and, optionally, an
-oscillator panel below it. The `-a`/`--axis` switch selects the panel layout, and the `-p`/`--complexity`
-switch selects how many series each panel carries.
+oscillator panel below it. The `-a`/`--axis` switch selects the panel layout,
+and the `-p`/`--complexity` switch selects how many series each panel carries.
 
-The images are for a person to look at. Their content is specified; their pixels
+The images are for a person to look at. Their content is specified. Their pixels
 are not, and no requirement here asks for reproducible rendering.
 
 ## 13. Scheduling and order
@@ -228,7 +228,7 @@ Exactly one step fetches prices. The others work from what it stored.
 The job runs unattended, so how it fails is part of what it is.
 
 - **One stock must not cost the others their run.** A code that cannot be
-  fetched is logged and skipped; the remaining stocks are analysed.
+  fetched is logged and skipped. The remaining stocks are analysed.
 - **A failure must be visible.** A run with any failure ends non-zero, so that
   cron reports it. Silence must mean success.
 - **A bad configuration fails before work starts**, not halfway through a
@@ -239,7 +239,7 @@ The job runs unattended, so how it fails is part of what it is.
   file that is malformed, an indicator that could not be computed and a file
   that could not be written are different problems and are reported as such.
 - **A chart-only run never becomes a fetching run.** If its stored price file is
-  absent, that stock fails; only a run explicitly given `--update` may fetch.
+  absent, that stock fails. Only a run explicitly given `--update` may fetch.
 
 ## 15. Networking
 
@@ -266,7 +266,7 @@ from.
 
 Operational values — where files go, which list is used, how far back to fetch,
 where mail goes — are settings, not constants in code. They are resolved in one
-place and passed down; no module reaches for the environment on its own.
+place and passed down. No module reaches for the environment on its own.
 
 Values that are not operational stay in code. Not every constant needs to become
 a setting.

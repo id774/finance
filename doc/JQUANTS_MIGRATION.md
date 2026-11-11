@@ -19,10 +19,11 @@ are [`POLICY.md`](POLICY.md). This is the reasoning behind them.
 
 Not because the old one had stopped working. Because of what using it meant.
 
-The pipeline had, over its history, reached Yahoo in three ways: the Yahoo
-reader of `pandas-datareader`, withdrawn in 2017; `pandas.read_html()` against
-Yahoo Japan's history pages, which is scraping a page written for a human; and
-most recently `yfinance`, an unofficial client for an undocumented endpoint.
+The pipeline had, over its history, reached Yahoo in three ways. First,
+it used the Yahoo reader of `pandas-datareader`, withdrawn in 2017.
+It later used `pandas.read_html()` against Yahoo Japan's history pages,
+which scraped a page written for a human. Most recently, it used
+`yfinance`, an unofficial client for an undocumented endpoint.
 
 All three share the same defect, and it is not a technical one. None of them is
 an interface the provider offers for programmatic use. A system built on them is
@@ -77,7 +78,7 @@ This is the decision with the most consequence for what the numbers mean, and
 [`DATA_CONTRACT.md`](DATA_CONTRACT.md) section 11 is its normative record.
 
 **What the pipeline used to do.** Candlesticks were drawn from `Open`, `High`,
-`Low` and `Close`; every indicator was computed from `Adj Close`. Under Yahoo
+`Low` and `Close`. Every indicator was computed from `Adj Close`. Under Yahoo
 Japan the first four were as traded and `Adj Close` was adjusted for splits
 only. Under Yahoo Finance `Adj Close` was adjusted for splits *and* dividends.
 Either way the file mixed two bases, and a share split put a step in the chart
@@ -131,13 +132,13 @@ gap.
 Everything specific to J-Quants is in `finance/datasources/jquants.py` and
 leaves it in no direction:
 
-- the `x-api-key` header, the base URL, the endpoint and its parameters;
-- pagination, including a guard against a repeated key and a page ceiling;
-- the request interval, the retry policy, the timeout;
+- the `x-api-key` header, the base URL, the endpoint and its parameters
+- pagination, including a guard against a repeated key and a page ceiling
+- the request interval, the retry policy, the timeout
 - HTTP status handling, and the mapping from status to an error type an operator
-  can act on;
-- the abbreviated v2 field names;
-- the five character stock code form.
+  can act on
+- the abbreviated v2 field names
+- the five character stock code form
 
 Above it, the analysis layer receives the same six-column frame it always
 received and cannot tell which provider filled it. Below it, the adapter knows
@@ -177,7 +178,7 @@ name works.
 
 **`ref_index.csv`.** Never produced here, linked by the dashboard, and carrying
 fundamentals scraped from a Yahoo Japan quote page that no longer exists. The
-link is removed from the dashboard in the same change; nothing dangles.
+link is removed from the dashboard in the same change. Nothing dangles.
 
 "Not obtainable on acceptable terms, therefore not provided" is a legitimate
 outcome, and a better one than data of uncertain provenance.
@@ -194,7 +195,7 @@ The pipeline gained its first secret, and the rules around it are in
   because a credential in a file inside the working tree is one careless
   `git add` from being published. No command line option exists, because a
   command line is readable by every user of the host.
-- **Excluded from the repr.** `Settings` is a dataclass that gets logged; the
+- **Excluded from the repr.** `Settings` is a dataclass that gets logged. The
   key field carries `repr=False` so that it cannot leak that way.
 - **Fails before the socket.** The source refuses to be built without a key, so
   a misconfigured run stops once rather than failing per stock.
@@ -229,7 +230,7 @@ operator's data. Having the adapter reconcile it would put a filesystem concern
 inside the network layer.
 
 Retiring an archive is the operator's decision. The command makes it easy and
-reversible; it does not make it automatic.
+reversible. It does not make it automatic.
 
 ---
 

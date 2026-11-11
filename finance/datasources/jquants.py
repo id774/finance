@@ -29,7 +29,7 @@
 #    "pagination_key" member, when present, must be echoed as a query
 #    parameter to obtain the next page.
 #  - Rows carry abbreviated names. O, H, L, C, Vo and Va are the day's
-#    prices, volume and turnover as traded; AdjO, AdjH, AdjL, AdjC and
+#    prices, volume and turnover as traded. AdjO, AdjH, AdjL, AdjC and
 #    AdjVo are the same figures restated onto the current share basis
 #    using AdjFactor.
 #
@@ -43,7 +43,7 @@
 #  row also removes an inconsistency that was there before: candles were
 #  drawn from unadjusted prices while every indicator was computed from
 #  an adjusted close, so a split put a step in the chart that the
-#  indicators under it did not have. No formula changed; the series they
+#  indicators under it did not have. No formula changed. The series they
 #  are computed from is now one basis rather than two. See
 #  doc/DATA_CONTRACT.md.
 #
@@ -56,7 +56,7 @@
 #
 #  A provider error message may echo back part of the request, which is why
 #  the configured API key is redacted from it before the text can enter an
-#  exception, stderr or the job log; see _message().
+#  exception, stderr or the job log. See _message().
 #
 #  Author: id774 (More info: https://id774.net)
 #  Source Code: https://github.com/id774/finance
@@ -104,7 +104,7 @@ DATA_KEY = "data"
 PAGINATION_KEY = "pagination_key"
 
 # The canonical column each abbreviated response field fills. Only the
-# adjusted series is read; see the module description for why.
+# adjusted series is read. See the module description for why.
 FIELD_MAP: dict[str, str] = {
     "Open": "AdjO",
     "High": "AdjH",
@@ -120,7 +120,7 @@ CODE_FIELD = "Code"
 # A listing is named by four characters at the exchange and by five in
 # this API, the fifth being a trailing zero. Codes issued since 2024 may
 # carry a letter in a later position, as in 193A, so this is not a
-# digits-only pattern; the first character is still always a digit,
+# digits-only pattern. The first character is still always a digit,
 # which is what tells a listing code from a market index name.
 LOCAL_CODE_PATTERN = re.compile(r"^[0-9][0-9A-Z]{3}$")
 API_CODE_PATTERN = re.compile(r"^[0-9][0-9A-Z]{4}$")
@@ -331,7 +331,7 @@ class JQuantsSource:
                     url, params=params, headers=headers, timeout=self.settings.timeout
                 )
             except Exception as exc:  # noqa: BLE001 - the client raises its own types
-                # A transport failure is retried; the loop reports the
+                # A transport failure is retried. The loop reports the
                 # last one if none of the attempts get through.
                 last_error = exc
                 logger.warning(

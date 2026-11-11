@@ -164,7 +164,7 @@ def test_the_longest_lookback_fits_inside_the_window():
     The longest moving average must be computable within the plan.
 
     The configured retention window is converted to an approximate
-    weekday count. The longest indicator window must fit inside it; if
+    weekday count. The longest indicator window must fit inside it. If
     a future configuration change made this false, every long indicator
     would silently become all-NaN.
     """

@@ -19,7 +19,7 @@ The Invariants below decide over the rest of it.
 
 This principle governs the following implementation and maintenance rules. It
 does not permit dropping required behavior, security, compatibility, or
-validation; satisfy those obligations without unnecessary complexity.
+validation. Satisfy those obligations without unnecessary complexity.
 
 ## 1. General Policy
 
@@ -29,7 +29,7 @@ validation; satisfy those obligations without unnecessary complexity.
   It is not a market data service, not a publication, and not a way of giving
   anyone else access to what it fetches. That premise decides several rules
   below that would otherwise look arbitrary.
-- **The data it fetches is licensed; this source code is not the data.** Market
+- **The data it fetches is licensed. This source code is not the data.** Market
   data is obtained from the J-Quants API under terms permitting personal
   analysis and prohibiting redistribution and the provision of a continuing
   analysis service to third parties. This repository is published under the GPL
@@ -46,14 +46,15 @@ validation; satisfy those obligations without unnecessary complexity.
   programmatic access, and its terms permit this use. No web page written for a
   human is scraped, no undocumented endpoint is called, and a gap in what a free
   plan offers is never filled from a source that fails those conditions. A
-  capability that cannot be obtained on acceptable terms is withdrawn instead;
-  see `REQUIREMENTS.md` section 7.4.
+  capability that cannot be obtained on acceptable terms is withdrawn instead.
+  See `REQUIREMENTS.md` section 7.4.
 - This document applies to everything committed here: the package, the batch and
   deployment scripts, the cron entry, the tests and the documents.
-- What the system is for belongs to [`REQUIREMENTS.md`](REQUIREMENTS.md); how it
-  is composed belongs to [`BASIC_DESIGN.md`](BASIC_DESIGN.md); what it writes
-  belongs to [`DATA_CONTRACT.md`](DATA_CONTRACT.md). This document does not
-  restate them; it decides how they are carried out.
+- [`REQUIREMENTS.md`](REQUIREMENTS.md) defines what the system is for.
+  [`BASIC_DESIGN.md`](BASIC_DESIGN.md) defines how it is composed.
+  [`DATA_CONTRACT.md`](DATA_CONTRACT.md) defines what it writes.
+  This document does not restate those definitions. It decides how they
+  are carried out.
 
 ### 1.2 Invariants
 
@@ -101,7 +102,7 @@ general policy would otherwise ask for.
   where doing so would defeat the repository's stated purpose, intended
   behavior, compatibility, safety, or approved change scope. Where the
   applicable specifications and policy leave a legitimate choice open, an
-  explicit maintainer decision governs that choice; general conventions do not
+  explicit maintainer decision governs that choice. General conventions do not
   override it.
 
 ### 1.4 The Layers and the Direction of Dependency
@@ -118,7 +119,7 @@ defining a second layer diagram here.
   them.
 - **The data source layer keeps whatever is peculiar to a provider inside it.**
   An exception, a client object or a column convention belonging to the provider
-  does not appear above it; what leaves it is this application's own frame and
+  does not appear above it. What leaves it is this application's own frame and
   this application's own errors.
 - **Settings are read at the entry point and passed down.** A module below never
   reaches for the environment.
@@ -166,7 +167,7 @@ defining a second layer diagram here.
 - An empty or whitespace-only environment variable reads as unset, so that a
   bare `NAME=` behaves exactly like the absent line.
 - Not every constant becomes a setting. A value the operator would plausibly
-  change on a host is a setting; a value that is part of what the program means
+  change on a host is a setting. A value that is part of what the program means
   stays in code.
 
 ### 1.7 Logging and Output
@@ -176,7 +177,7 @@ defining a second layer diagram here.
   `[ERROR]` or `[WARN]`, and its ordinary output to stdout.
 - INFO records useful normal progress. WARNING is reserved for a degraded or
   otherwise abnormal but recoverable condition that the operator should know
-  about; a normal no-op, guard, or inapplicable item may be silent and is not a
+  about. A normal no-op, guard, or inapplicable item may be silent and is not a
   warning merely because work was skipped. ERROR says what failed. A nightly
   log is read as a record of the run, so third-party loggers that report their
   own transport are held at WARNING.
@@ -221,7 +222,7 @@ coordinated changes across several files or responsibilities. Do not split one
 approved purpose mechanically by individual finding, file, or review comment,
 and do not include unrelated cleanup, formatting, or feature work. Represent
 one coherent change as one commit and amend review corrections instead of
-accumulating follow-up commits; use `--force-with-lease` only on the branch
+accumulating follow-up commits. Use `--force-with-lease` only on the branch
 under review when a safe history rewrite is required. Check the final branch
 against its base to remove abandoned intermediate wording and work. Merge only
 with explicit maintainer approval.
@@ -247,7 +248,7 @@ change a human maintainer's authority or the existing merge approval rule.
 - An unreleased entry carries `(Release Date: TBD)`, and its version number
   stays provisional until it ships. An entry opened as
   `v1.0.1 (Release Date: TBD)` may be released under a different number once
-  what accumulated in it is known; which number it takes is decided then.
+  what accumulated in it is known. The final version number is decided then.
 - Replacing `TBD` with the actual release date is the release itself, not a
   change to record in the entry.
 - A repository that has not yet made its first release is in its initial
@@ -302,8 +303,8 @@ change a human maintainer's authority or the existing merge approval rule.
   settled on a width and a layout of its own, predating this limit. There a
   new bullet is wrapped to that width and balanced against the lines already
   standing, so that the version history stays of a piece. Wrapping to hold an
-  established form does not overturn the two-line, 80-column limit above;
-  where a file has settled on no such form, that limit applies in full.
+  established form does not overturn the two-line, 80-column limit above.
+  Where a file has settled on no such form, that limit applies in full.
 
 #### 1.11.2 Shortening a Long Entry
 
@@ -341,7 +342,7 @@ change a human maintainer's authority or the existing merge approval rule.
 
 Follow the applicable terms in [`LICENSE.md`](LICENSE.md),
 [`COPYING`](COPYING), and [`COPYING.LESSER`](COPYING.LESSER). Those documents
-are the authority for repository licensing; this policy governs how source
+are the authority for repository licensing. This policy governs how source
 headers, packaging metadata, and dependencies remain consistent with them.
 
 - Every source module carries the line
@@ -375,8 +376,8 @@ headers, packaging metadata, and dependencies remain consistent with them.
   inside each pair of quotes. A longer one opens on the line after the quotes
   and describes the non-obvious parameters under `Args:`, the result under
   `Returns:` and the failures under `Raises:`.
-- Prefer `str.format()` over an f-string. This is the repository's convention;
-  ruff's `UP030` and `UP032` are disabled for it.
+- Prefer `str.format()` over an f-string. This is the repository's convention.
+  Ruff's `UP030` and `UP032` are disabled for it.
 
 ### 2.2 Program Structure
 
@@ -397,7 +398,7 @@ headers, packaging metadata, and dependencies remain consistent with them.
   major, so that a future release cannot break a running job overnight.
 - Never pin a decade-old version, and never leave a dependency unbounded.
 - Add a dependency only when it earns its place. Prefer the standard library.
-  A large framework is not introduced to call one HTTP endpoint; before adopting
+  A large framework is not introduced to call one HTTP endpoint. Before adopting
   a provider SDK, establish that it is needed, maintained, appropriately
   licensed, current with the API, and more maintainable than a direct call.
 - Some dependencies are refused by what this system is rather than by their
@@ -431,8 +432,8 @@ This repository was left behind by exactly the practices this section forbids.
 
 - `pytest` and `ruff check .` must both pass.
 - A test never reaches the network, never writes outside a temporary directory,
-  and never sends mail. The price source is a protocol and tests inject a stub;
-  the mail transport is a parameter. The default suite needs no API key, and CI
+  and never sends mail. The price source is a protocol and tests inject a stub.
+  The mail transport is a parameter. The default suite needs no API key, and CI
   is given none.
 - Tests that need a real endpoint live in `test/integration/`, carry the
   `integration` marker, and are excluded from the default run and from CI. They
@@ -500,7 +501,7 @@ not a list of the functions below it, which the code already carries.
   `test/test_contract.py` in the same change. A contract change with no test
   change has not been made.
 - Documents named `.md` are Markdown and may assume a renderer. Prose is wrapped
-  near the width the document already uses; a URL, a table row or a code block
+  near the width the document already uses. A URL, a table row or a code block
   may run long.
 - Comments, docstrings and documents are in English. Japanese appears only where
   it is data: a company name, a chart caption, a stock list.

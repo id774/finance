@@ -17,8 +17,8 @@
 #
 #  The data source errors are split further than the rest because the
 #  operator's response differs by kind. A rejected API key needs a
-#  configuration change; a rate limit needs a slower request pace; an
-#  unavailable dataset or date can be skipped; an invalid stock code
+#  configuration change. A rate limit needs a slower request pace. An
+#  unavailable dataset or date can be skipped. An invalid stock code
 #  needs its input corrected. Collapsing them into one type would leave
 #  the nightly log unable to distinguish these conditions.
 #

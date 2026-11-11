@@ -129,14 +129,14 @@ DEFAULT_REQUEST_INTERVAL = 1.0
 # Runtime defaults for the configured publication and retention window.
 # They are settings rather than fixed service facts because provider terms
 # can change. Current plan terms belong to the official J-Quants
-# documentation; these values are only the defaults this program uses.
+# documentation. These values are only the defaults this program uses.
 DEFAULT_DELAY_DAYS = 84
 DEFAULT_RETENTION_DAYS = 730
 
 # The shortest retention window that still fits the longest indicator
 # lookback. finance.indicators.SMA_PERIODS currently tops out at 200, and
 # this repository's own approximation of trading days in a calendar window
-# is calendar days * 5 / 7; 281 is the smallest integer for which
+# is calendar days * 5 / 7. The value 281 is the smallest integer for which
 # 200 < 281 / 7 * 5. This module does not import finance.indicators, so the
 # derivation is recorded here and pinned by test/test_plan_window.py rather
 # than computed at import time.
@@ -260,7 +260,7 @@ class Settings:
         The end is the newest date the configured plan window permits.
         The start is the configured start date, raised to the oldest
         date that window keeps. A start date earlier than the window is
-        not an error; it is clamped to the window and the change is
+        not an error. It is clamped to the window and the change is
         recorded in the log.
         """
         end = self.jquants.latest_available(today)
@@ -377,7 +377,7 @@ def _as_retention_days(value: Any, name: str) -> int:
     MIN_RETENTION_DAYS days.
 
     A window shorter than that cannot hold the longest indicator lookback
-    this repository currently requires; see MIN_RETENTION_DAYS.
+    this repository currently requires. See MIN_RETENTION_DAYS.
     """
     number = _as_positive_int(value, name)
     if number < MIN_RETENTION_DAYS:
@@ -406,7 +406,7 @@ def _as_non_negative(value: Any, name: str) -> float:
     """
     Interpret a configuration value as a finite number of zero or more.
 
-    nan and +/-inf are refused; see _as_positive_float.
+    nan and +/-inf are refused. See _as_positive_float.
     """
     number = _as_float(value, name)
     if not math.isfinite(number) or number < 0:

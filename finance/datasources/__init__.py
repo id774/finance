@@ -13,7 +13,7 @@
 #  The protocol exists so that a test can supply prices without a
 #  network, and so that replacing the provider is one file rather than a
 #  change spread through the analysis code. No HTTP client is imported
-#  here; create_source() imports the one it builds.
+#  here. The create_source() function imports the source module it uses.
 #
 #  There is one source, and it is J-Quants. A second name is not
 #  reserved for a provider that does not exist: an entry in this table

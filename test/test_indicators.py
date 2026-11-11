@@ -11,12 +11,12 @@
 #  The expected numbers are not new. Each one is carried over from the
 #  test suite this repository has had since 2015, when they were
 #  produced by pandas 0.16, NumPy 1.11 and TA-Lib 0.4.9. They are
-#  asserted here unchanged, on NumPy 2, pandas 3 and TA-Lib 0.7, which
-#  is what makes this file the evidence that the upgrade moved the API
-#  and not the arithmetic.
+#  asserted here unchanged on NumPy 2, pandas 3 and supported TA-Lib
+#  versions. This checks the historical calculation at the fixed date.
 #
 #  Test Cases:
 #  - Every calc_* method reproduces its historical value at 2015-03-20.
+#  - Five-day T3 Bollinger bands retain their historical final values.
 #  - The exponentially weighted average matches the removed
 #    pandas.stats.moments.ewma at three spans.
 #  - build_indicator_frame() produces the contract column order.

@@ -9,7 +9,8 @@
 #  panel with moving averages, Bollinger bands and the parabolic SAR,
 #  captioned with the closing figures and the two model outputs. When
 #  axis=2 an oscillator panel carrying RSI, MFI, stochastics and the
-#  rest is added below it; axis=1 draws the price panel alone.
+#  rest is added below it. With axis=1, the system draws the price
+#  panel alone.
 #
 #  This is the one module that could not be ported by changing API
 #  calls. The old implementation registered a subclass of a private
@@ -74,7 +75,7 @@ X_TICK_COUNT = 8
 
 # The prefixes finance-dashboard builds its <img> sources from, and the
 # windows that select them. A window longer than LONG_WINDOW_DAYS is a
-# long chart; one no longer than SHORT_WINDOW_DAYS is a short chart.
+# long chart. One no longer than SHORT_WINDOW_DAYS is a short chart.
 LONG_PREFIX = "long"
 SHORT_PREFIX = "short"
 DEFAULT_PREFIX = "chart"
@@ -363,7 +364,7 @@ class ChartRenderer:
         0-100 axis: the rates of change are lifted by 50 around their
         zero, Williams %R by 100 from its negative range, and the
         volatility ratio by five so that a normal day is visible against
-        the oscillators. These are display transforms only; ti_CODE.csv
+        the oscillators. These are display transforms only. ti_CODE.csv
         holds the unscaled values.
         """
         if "vl" in indicators.columns:

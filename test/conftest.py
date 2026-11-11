@@ -88,7 +88,7 @@ def data_dir(tmp_path: Path) -> Path:
 
 # The committed fixture ends in March 2015, so the plan window the
 # tests run against is one with no delay. The window itself has its own
-# tests; every other test would otherwise be asserting arithmetic on
+# tests. Every other test would otherwise be asserting arithmetic on
 # today's date rather than the behaviour it is about.
 FIXTURE_PLAN = JQuantsSettings(
     api_key="test-key-not-a-real-credential",

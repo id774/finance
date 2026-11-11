@@ -28,7 +28,7 @@ It seeds these files only when they are missing:
 
 On every deployment it reapplies ownership and permissions under the deployment
 root. It does not overwrite generated data or model contents, existing stock
-lists, or the contents of an existing `env`; it never writes an API key.
+lists, or the contents of an existing `env`. It never writes an API key.
 
 These concerns are kept apart on purpose, and it is worth naming them because
 they used to be one directory of copied files:
@@ -164,7 +164,7 @@ J-Quants client's request behavior:
 | `timeout` | 30 | Seconds one request may take |
 | `max_retries` | 3 | Attempts for a throttled or failed request |
 
-The runtime defaults are defined in `finance/config.py`; this table exposes
+The runtime defaults are defined in `finance/config.py`. This table exposes
 them to the operator as configuration defaults. They are not assertions about
 current provider terms. Consult the official J-Quants service information when
 aligning them with the subscription in use. Everything downstream — the dates
@@ -239,7 +239,7 @@ than empty.
 
 `data_source.txt` must name the source and carry a `last_trading_day`. It may
 be earlier than today by the configured publication delay, and that is correct
-rather than a fault; it is the figure the dashboard shows so that nobody reads
+rather than a fault. It is the figure the dashboard shows so that nobody reads
 these pages as live market data. If it is empty, the run analysed nothing.
 
 If the command fails with a message about `JQUANTS_API_KEY`, the environment
@@ -270,8 +270,8 @@ on stderr, which is what cron will mail.
 The schedule is kept for operational consistency. The configured publication
 window, not the wall-clock hour, determines which dates a fetch may request.
 An occasional missed evening is recovered by the next updating run, which asks
-for data newer than the last stored row. The operator relies on the schedule;
-the data source does not require this particular hour.
+for data newer than the last stored row. The operator relies on the schedule.
+The data source does not require this particular hour.
 
 It is cron rather than a systemd timer because a plain daily batch has no
 ordering, activation or resource requirement that a timer would serve. Changing
@@ -306,7 +306,7 @@ the two sides share a directory of files and nothing else.
 
 The data in that directory came from the J-Quants API under terms permitting
 personal analysis and prohibiting redistribution. Whatever the dashboard is
-published behind, that is the constraint it inherits; see its README.
+published behind, that is the constraint it inherits. See its README.
 
 ---
 
@@ -332,7 +332,7 @@ before the next scheduled run.
 its full history from the configured start date, writes its files and trains its
 models. Nothing else is needed.
 
-**Remove a stock.** Delete its line. Its existing files stay where they are; the
+**Remove a stock.** Delete its line. Its existing files stay where they are. The
 dashboard stops linking it from the index. Remove
 `/var/stock/data/{stock,ti}_CODE.csv`, the three PNGs and
 `/var/stock/clf/{clf,reg}_CODE.pickle` if the space is wanted.
@@ -342,7 +342,7 @@ fits fresh models over the whole history.
 
 **Refetch a stock's history.** Delete its `stock_CODE.csv`. The next updating
 run fetches from the configured start date. Note that rows refetched now come
-from the current adjustment basis; see section 10 of
+from the current adjustment basis. See section 10 of
 [`DATA_CONTRACT.md`](DATA_CONTRACT.md).
 
 **Prune the archive.** `/var/stock/data/history/` grows by one file per weekday
@@ -374,7 +374,7 @@ the virtual environment. Re-run `./deploy.sh`, or
 Set `PYTHON` to a newer one.
 
 **One stock fails, the rest succeed** — expected behaviour. The log names the
-code and the reason. A delisted or renamed code needs removing from the list; a
+code and the reason. A delisted or renamed code needs removing from the list. A
 transient fetch failure resolves itself the next evening.
 
 **Every stock fails with `JQUANTS_API_KEY is not set`** — `/var/stock/env` is
@@ -437,7 +437,7 @@ sudo -i
 
 It moves every `stock_CODE.csv` and `ti_CODE.csv` into
 `/var/stock/data/legacy.YYYYMMDD/` and deletes nothing. The stock lists, the
-summaries and the charts are left where they are; the next run with `-u`
+summaries and the charts are left where they are. The next run with `-u`
 rebuilds the per-stock files from the current source.
 
 Why it is a separate command rather than part of the upgrade: the previous
@@ -450,7 +450,7 @@ archive is the operator's call rather than a cron job's.
 
 Expect the rebuilt history to be **shorter**. The Free plan keeps about two
 years, and files that went back to 2014 will not. That is the plan's constraint
-working as intended; every indicator the pipeline computes fits inside the
+working as intended. Every indicator the pipeline computes fits inside the
 window, and a test asserts it.
 
 Keep or delete `legacy.YYYYMMDD/` as you see fit. Nothing reads it.

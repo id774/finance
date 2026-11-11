@@ -17,7 +17,7 @@
 #  layouts are therefore stated as constants and asserted by
 #  test/test_contract.py, and neither is derived from anything.
 #
-#  This module computes; it does not read or write. It is handed the
+#  This module computes. It does not read or write. It is handed the
 #  frames it aggregates.
 #
 #  Author: id774 (More info: https://id774.net)
@@ -94,7 +94,7 @@ def change_ratio(change: int, close: int) -> float:
     close. That is not the textbook definition of a percentage change,
     but it is what this repository has reported since it was written,
     what the mailed summaries have always said and what the dashboard
-    labels as the ratio. It is preserved deliberately; correcting it
+    labels as the ratio. It is preserved deliberately. Correcting it
     would restate every historical figure in data/history/.
     """
     return round((1 + change) / close * 100, 2)
