@@ -5,9 +5,10 @@ responsibilities of the layers and the direction of dependency between them, the
 handling of settings, the approach to tests and documentation, and the criteria
 a change is judged by.
 
-It stands on its own. No rule here is completed by a document kept in another
-repository, and a subject it does not cover is a gap in this document, to be
-filled here rather than looked up elsewhere.
+This document stands on its own. It is the whole implementation policy of this
+repository, and no rule here is completed by a document kept somewhere else. A
+subject it does not cover is a gap in this document, to be filled here rather
+than looked up elsewhere.
 
 The Invariants below decide over the rest of it.
 
@@ -17,9 +18,25 @@ The Invariants below decide over the rest of it.
 
 **Simplicity is robustness.**
 
-This principle governs the following implementation and maintenance rules. It
-does not permit dropping required behavior, security, compatibility, or
-validation. Satisfy those obligations without unnecessary complexity.
+This is the governing principle for every rule below. It does not authorize
+dropping required behavior, compatibility, security, safety, documentation, or
+validation. It requires satisfying those requirements with no more complexity
+than the actual problem justifies.
+
+Complexity is itself a source of failure, compatibility risk, operational risk,
+security risk, and maintenance cost. Do not add a branch, state variable,
+helper, abstraction, dependency, network boundary, retry, fallback, validation,
+configuration state, or framework unless the specification requires it or it
+addresses a realistic failure mode with meaningful consequence.
+
+Do not re-check a condition already guaranteed by a preceding successful
+operation or an established invariant. Do not create a layer merely to resemble
+a possible future architecture.
+
+When two designs satisfy the same requirements, choose the one with less
+control flow, less state, fewer dependencies, fewer side effects, fewer moving
+parts, and fewer operational assumptions. Simplicity is judged by the number of
+necessary concepts and behaviors, not by line count alone.
 
 ## 1. General Policy
 
@@ -94,16 +111,41 @@ general policy would otherwise ask for.
   for a decade has earned the benefit of the doubt.
 - Understand why something exists before replacing it. A constant that looks
   arbitrary usually encodes an operational fact.
-- Where a decision looks odd, the comment gives the reason, so that a later
-  change does not quietly undo it.
-- Use `must`, `always`, and `never` only for invariants that admit no
-  reasonable exception. Express preferences and situational decisions with
-  `prefer`, `should`, or other qualified wording. Do not apply a rule literally
-  where doing so would defeat the repository's stated purpose, intended
-  behavior, compatibility, safety, or approved change scope. Where the
-  applicable specifications and policy leave a legitimate choice open, an
-  explicit maintainer decision governs that choice. General conventions do not
-  override it.
+
+Use `must`, `always`, and `never` only for invariants that admit no reasonable
+exception. Express preferences and situational decisions with `prefer`,
+`should`, or other qualified wording.
+
+Do not apply a rule literally where doing so would defeat the repository's
+stated purpose, intended behavior, compatibility, safety, or approved change
+scope.
+
+Where the applicable specifications and policy leave a legitimate choice
+open, an explicit maintainer decision governs that choice. General
+conventions do not override it.
+
+Documentation work, policy work, review, diagnostics, cleanup, or another
+task whose stated scope does not include an implementation change must not
+expand into one merely because an improvement opportunity is discovered.
+
+Before changing established behavior, weigh the probability and impact of the
+failure being prevented against the added complexity, new failure modes,
+compatibility risk, operational cost, maintenance cost, and rollback cost.
+
+A safety-motivated change is not automatically justified by Safety having
+priority over Efficiency. Added complexity can itself create new failure
+modes, compatibility risk, operational risk, and maintenance cost. Evaluate
+the proposed change as a whole.
+
+Behavior that has operated reliably over time is evidence and has value of
+its own. Do not refactor established infrastructure merely because another
+design appears cleaner, more modern, or more defensive.
+
+An implementation change is made only when that change has been explicitly
+chosen as part of the work being performed. Before deployment, validate it in
+the supported and representative environments affected by the change. A
+successful check in one convenient environment is not sufficient evidence for
+a change whose compatibility risk extends to other supported environments.
 
 ### 1.4 The Layers and the Direction of Dependency
 
@@ -206,6 +248,11 @@ defining a second layer diagram here.
 
 ### 1.9 Judging a Change
 
+Before accepting a change, ask whether it is the smallest coherent change that
+serves its purpose, whether it alters behavior outside that purpose, whether it
+adds an unnecessary dependency or side effect, whether it exposes private
+information, and whether directly affected documentation remains correct.
+
 A change is judged by:
 
 - Does it keep the data contract, and does a test say so?
@@ -213,24 +260,39 @@ A change is judged by:
 - Does it respect the direction of dependency?
 - Is a formula change deliberate, measured and documented?
 - Does it leave the repository understandable on its own?
-- Is it the smallest change that does the job?
 
 #### 1.9.1 Pull Request Scope and History
 
 A pull request carries one coherent higher-level purpose, which may require
-coordinated changes across several files or responsibilities. Do not split one
-approved purpose mechanically by individual finding, file, or review comment,
-and do not include unrelated cleanup, formatting, or feature work. Represent
-one coherent change as one commit and amend review corrections instead of
-accumulating follow-up commits. Use `--force-with-lease` only on the branch
-under review when a safe history rewrite is required. Check the final branch
-against its base to remove abandoned intermediate wording and work. Merge only
-with explicit maintainer approval.
+coordinated changes across several files or responsibilities.
 
-An automated agent must not commit or push directly to `master`.
-It must commit authorized changes to a work branch and submit them through
-a pull request targeting the approved base branch. This paragraph does not
-change a human maintainer's authority or the existing merge approval rule.
+Do not split one approved purpose mechanically by individual finding, file,
+or review comment, and do not include unrelated cleanup, formatting, or
+feature work.
+
+Represent one coherent change as one commit and amend review corrections
+instead of accumulating follow-up commits.
+
+Rewriting the history of a branch under review requires an explicit
+instruction from the maintainer. When such a rewrite is authorized, use
+`--force-with-lease` and limit the operation to the branch under review.
+
+Check the final branch against its base to remove abandoned intermediate
+wording and work. Merge only with explicit maintainer approval.
+
+Unless explicitly instructed otherwise by the maintainer, an automated agent
+must commit authorized changes to a work branch and submit them through a
+pull request targeting the approved base branch.
+
+An automated agent must not commit or push directly to `master` without
+explicit instructions from the maintainer authorizing that operation.
+
+Creating or updating a pull request does not authorize the agent to merge it
+or enable auto-merge. Either action requires an explicit instruction from
+the maintainer.
+
+Authorization for one operation does not imply authorization for another.
+These rules do not change a human maintainer's authority.
 
 ---
 
@@ -264,9 +326,13 @@ change a human maintainer's authority or the existing merge approval rule.
   `finance.__version__`, and the one the `finance-*` commands print for
   `--version` are the repository release version. They are one number and are
   changed together.
-- File level `Version History` and the repository level `doc/VERSIONS` are kept
-  apart. A release entry does not raise a module version, and a module version
-  does not become a release entry unless the change is observable from outside.
+- File-level `Version History` and the repository-level `doc/VERSIONS` are
+  maintained independently. A repository release entry does not raise a
+  module version, and a module version change does not by itself require a
+  repository release entry. Record externally meaningful or architecturally
+  significant changes in `doc/VERSIONS` in accordance with its Version
+  History Guidelines. An architecturally significant change is recorded
+  even when it does not alter externally observable behavior.
 
 ### 1.11 doc/VERSIONS Structure
 
@@ -280,31 +346,23 @@ change a human maintainer's authority or the existing merge approval rule.
 
 #### 1.11.1 One Change per Line
 
-- One coherent change is one bullet. A bullet is at most two physical lines,
-  and a single line at or under 80 columns is preferred whenever practical.
-  This is an explicit limit, not a prompt to reread: a bullet that runs past
-  two lines, or a single line that runs past 80 columns without necessity,
-  must be shortened. The entry is a list meant to be scanned, and a bullet
-  that grows past this limit costs it that: the eye no longer finds the
-  changes by counting lines, and a diff no longer shows a small, bounded
-  edit.
-- A bullet that has to carry file names, command names, function names,
-  option names or configuration names may pass 80 columns on its one or two
-  lines when those names cannot be shortened without losing meaning. The
-  two-line ceiling still applies.
+- Write one coherent change per bullet, at most two physical lines.
+- A single line at or under 80 columns is preferred whenever practical.
+  Names and identifiers necessary to describe the change may pass 80 columns
+  on the bullet's one or two lines when they cannot be shortened without
+  losing meaning.
+- When a version history already exists, balance a new entry against the
+  length of the existing lines, so that the whole file stays consistent.
+  Holding to the form this file has settled on comes before the two-line,
+  80-column limit above, and leaves that limit standing wherever no such
+  form exists.
 - Bullets written before this rule are left as they stand. The rule applies
   to what is written from now on.
 - `doc/VERSIONS` carries these guidelines again at its foot, and an entry
   written into it follows the limit recorded there.
-- Where the record reaches back to a genuine first version, that entry
-  reads only `Initial release.` and nothing else. `v1.0` here is a
-  modernization release, not that first version, and keeps its own record.
-- The case standing outside the rule is a version history that has already
-  settled on a width and a layout of its own, predating this limit. There a
-  new bullet is wrapped to that width and balanced against the lines already
-  standing, so that the version history stays of a piece. Wrapping to hold an
-  established form does not overturn the two-line, 80-column limit above.
-  Where a file has settled on no such form, that limit applies in full.
+- The first version recorded here is a release of a substantially revised
+  existing system, not its initial release. Preserve the existing entry for
+  that version and do not replace it with "Initial release."
 
 #### 1.11.2 Shortening a Long Entry
 
@@ -356,6 +414,10 @@ headers, packaging metadata, and dependencies remain consistent with them.
 - Do not vendor third-party code into this repository. Dependencies are declared
   in `pyproject.toml` and installed from PyPI, which keeps their licenses theirs
   and this file short.
+
+Content adapted from an external article, answer, documentation example, source
+file, dataset, or other third-party material credits its source and respects
+the license or redistribution terms that apply to it.
 
 ## 2. Python Policy
 
@@ -505,15 +567,49 @@ not a list of the functions below it, which the code already carries.
   may run long.
 - Comments, docstrings and documents are in English. Japanese appears only where
   it is data: a company name, a chart caption, a stock list.
-- Write English explanatory prose in clear, natural sentences. Do not replace a
-  sentence with a label and a colon, a status prefix such as `Implement:` or
-  `Incompatible:`, a symbol, or an unexplained abbreviation. Apply this to
-  English prose in comments, docstrings, documentation, version histories,
-  release notes, commit messages, and pull request descriptions. This rule does
-  not alter the established forms of headings, list labels, tables, code,
-  configuration syntax, machine-readable fields, literal interface strings, or
-  non-English content required by the repository's purpose. Do not rewrite
-  historical entries or unrelated text merely to align their style.
+
+Write English explanatory prose in clear, natural sentences. Do not replace a
+sentence with a label and a colon, a status prefix such as `Implement:` or
+`Incompatible:`, a symbol, or an unexplained abbreviation.
+
+Apply this to English prose in comments, docstrings, documentation, version
+histories, release notes, commit messages, and pull request descriptions.
+
+This rule does not alter the established forms of headings, list labels,
+tables, code, configuration syntax, machine-readable fields, literal
+interface strings, or non-English content required by the repository's
+purpose.
+
+Wrap ordinary prose at approximately 80 columns where practical. Preserve
+the logical structure of paragraphs, lists, and other document elements.
+Do not break URLs, code, tables, identifiers, or other elements whose
+structure requires a longer line.
+
+Shared boilerplate must retain its common wording, line breaks, blank lines,
+and formatting. Do not reformat it independently in individual repositories.
+Its established common form takes precedence over the ordinary line-wrapping
+guideline.
+
+Do not rewrite historical entries or unrelated text merely to align their
+style.
+
+A concrete specification has exactly one authoritative home appropriate to the
+responsibility that owns it. Other documents may link to or summarize that
+specification for navigation, but they do not create a competing normative
+copy.
+
+The implementation is the primary evidence of what currently happens. It is
+not, by itself, proof that the current behavior is the intended specification.
+
+When implementation and documentation disagree, compare the implementation,
+documented interface, component header, history, existing design, and
+maintenance intent. If the implementation contains a regression, do not adopt
+that regression as the specification merely because it is present in the
+current code.
+
+A comment preserves a reason, constraint, non-obvious intent, or decision that
+a later change could otherwise undo. Do not use comments merely to restate code
+whose operation is already evident.
 
 #### 2.7.1 When to Bump a Module Version
 
@@ -560,9 +656,12 @@ not a list of the functions below it, which the code already carries.
 - The first entry, at the lowest version the file's own history reaches,
   reads only `Initial release.` and nothing else.
 
-#### 2.7.2 Module Version Numbering
+#### 2.7.2 Source File Version Numbering
 
-- Versions use a two-level `major.minor` scheme.
+These rules apply to individual source files that carry their own version
+history. Repository release versions are governed separately.
+
+- Source file versions use a two-level `major.minor` scheme.
 - When incrementing `minor` would reach `10`, roll over instead: increment
   `major` by 1 and reset `minor` to `0` (for example `v0.9` -> `v1.0`,
   `v1.9` -> `v2.0`, `v2.9` -> `v3.0`).

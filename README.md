@@ -810,17 +810,14 @@ ideology.
 
 ## 17. License
 
-Two separate questions, and conflating them would be the most consequential
-mistake a reader of this file could make.
+### Source Code
 
-### The source code
-
-**This repository** is dual licensed under the
+The source code in this repository is dual licensed under the
 [GPL version 3](https://www.gnu.org/licenses/gpl-3.0.html) or the
 [LGPL version 3](https://www.gnu.org/licenses/lgpl-3.0.html), at your option.
-For full details, please refer to [`doc/LICENSE.md`](doc/LICENSE.md). See also
-[`doc/COPYING`](doc/COPYING) and [`doc/COPYING.LESSER`](doc/COPYING.LESSER) for
-the complete license texts.
+For full details, please refer to [doc/LICENSE.md](doc/LICENSE.md). See also
+[doc/COPYING](doc/COPYING) and [doc/COPYING.LESSER](doc/COPYING.LESSER) for the
+complete license texts.
 
 `pyproject.toml` carries the matching `license` field, and every source module
 repeats the terms in its header block.
@@ -828,18 +825,21 @@ repeats the terms in its header block.
 Third-party components keep their own licenses. This repository bundles none.
 Its dependencies are installed from PyPI and are listed in `pyproject.toml`.
 
-### The market data
+### Market Data
 
-**The data this software fetches is not covered by that license, and does not
-become freely usable by passing through code that is.** It is obtained from the
-J-Quants API and remains governed by that provider's terms of service, which
-permit use for personal investment analysis and prohibit redistributing the data
-or providing a continuing analysis service to third parties. Read them before
-using this, and follow them.
+The market data used by this software is not covered by the source code
+license.
 
-Publishing this source code is not publishing the data. Nothing in the GPL or
-the LGPL grants anything over prices, indicators derived from them, or charts
-drawn from them, and no wording in this repository should be read as suggesting
-otherwise. The generated files are excluded from version control for that
-reason, and no market data obtained from the provider is committed as a test
-fixture.
+Prices, indicators derived from them, and charts based on them originate
+from the J-Quants API and remain subject to the provider's terms of service.
+Those terms permit personal investment analysis and prohibit redistributing
+the data or providing a continuing analysis service to third parties.
+
+Publishing the source code does not grant permission to publish the data.
+Nothing in the GPL or LGPL grants rights to the market data or its derived
+content.
+
+Read and follow the provider's terms of service before using this software.
+
+The generated files are excluded from version control, and no market data
+obtained from the provider is committed as a test fixture.
