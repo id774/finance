@@ -1,8 +1,8 @@
 finance Repository Version History
 ==================================
 
-v1.0.3 (Release Date: TBD)
---------------------------
+v1.0.3 (2026-11-24)
+-------------------
 - Preserve five-day T3 Bollinger bands with current TA-Lib releases.
 - Require pull request workflows for agents and clarify policy boundaries.
 - Normalize English prose across documentation and source comments.
